@@ -95,10 +95,27 @@ const ALEV = [
 // Juvenil se deja editable hasta introducir la plantilla definitiva.
 const JUV = [["1","Jugador 1"],["2","Jugador 2"],["3","Jugador 3"],["4","Jugador 4"],["5","Jugador 5"],["6","Jugador 6"],["7","Jugador 7"],["8","Jugador 8"],["9","Jugador 9"],["10","Jugador 10"],["11","Jugador 11"],["12","Jugador 12"],["13","Jugador 13"],["14","Jugador 14"]];
 
+// Plantillas AESE introducidas a partir de las listas facilitadas.
+const CADETE_M = [["1","ARES FRANCIS AYEN DOMINICI"],["2","DAMIAN SOVA"],["3","DANIEL PINEDA JIMENO"],["4","DANIEL SANCHEZ GORGOSO"],["5","EDUARD DANIEL MARE"],["6","EDUARD GRAU PELEGRIN"],["7","ERIC CARBONELL CALVET"],["8","ERIC GRACIA ROMAN"],["9","ERIC MUZAS BARRERA"],["10","GERARD CASANOVAS GUTIERREZ"],["11","HUGO GONZALEZ BENAVIDES"],["12","JAN GINESTA GORRO"],["13","JOSEP CASTAN MARCO"],["14","LLUÍS RODRIGUEZ FORTUNY"],["15","MANEL ROJAS AGUAS"],["16","MARIO CRUZ ALONSO"],["17","MARTIN ORTIZ ITURRALDE"],["18","POL CARBONELL CALVET"],["19","QUIM ESTERAS CONTRERAS"],["20","SANTIAGO CABRERA PEREZ"],["21","SANTIAGO DAVID PEÑA PERNIA"],["22","XAVIER LUCAS VERA"]];
+const JUV_M = [["1","ADRIA MOYANO MORAY"],["2","ADRIAN LOPEZ SAIZ"],["3","AITOR GERARD GODOY LOZANO"],["4","ALEIX LOPEZ PARRA"],["5","ANGEL REGUE IRO MUÑOZ"],["6","ARES FRANCIS AYEN DOMINICI"],["7","DAMIAN SOVA"],["8","DANIEL PINEDA JIMENO"],["9","DANIEL SANCHEZ GORGOSO"],["10","EDUARD DANIEL MARE"],["11","EDUARD GRAU PELEGRIN"],["12","ERIC CARBONELL CALVET"],["13","ERIC GRACIA ROMAN"],["14","ERIC MUZAS BARRERA"],["15","GERARD CASANOVAS GUTIERREZ"],["16","HUGO GONZALEZ BENAVIDES"],["17","JAN GINESTA GORRO"],["18","JOSEP CASTAN MARCO"],["19","LLUÍS RODRIGUEZ FORTUNY"],["20","MANEL ROJAS AGUAS"],["21","MARIO CRUZ ALONSO"],["22","MARTIN ORTIZ ITURRALDE"],["23","POL CARBONELL CALVET"],["24","QUIM ESTERAS CONTRERAS"],["25","SANTIAGO CABRERA PEREZ"],["26","SANTIAGO DAVID PEÑA PERNIA"],["27","XAVIER LUCAS VERA"]];
+const JUV_F = [["1","ALBA LIRIO GARCIA"],["2","ALBA LOPEZ SAIZ"],["3","ANDREA CORIA RISUEÑO"],["4","ANGELA MARTIN CABALLERO"],["5","ANNA GARCIA TERUEL"],["6","ANNA SANCHEZ MORENO"],["7","CANDELA BLASCO JIMENEZ"],["8","CARLOTA ORTIZ ITURRALDE"],["9","CLAUDIA RODRIGUEZ SIRERA"],["10","EHARI RODRIGUEZ RUEDA"],["11","GEORGIA MARIAH CARBONELL FORDAN"],["12","JULIETA CALZOLARI"],["13","KAYLEE ABELLAN PAZ"],["14","LUCIA COCA CANO"],["15","NAIA CORIA RISUEÑO"],["16","NOA LOPEZ PARRA"],["17","NOA RODRIGUEZ GARCIA"],["18","NORA ABELLA PEREZ"],["19","PAULA ARJONA CHIVA"],["20","SALMA BOUCHRAIT DRAOUI"]];
+const ABS_M = [["1","ADRIA MOYANO MORAY"],["2","ADRIAN LOPEZ SAIZ"],["3","AITOR GERARD GODOY LOZANO"],["4","ALEIX LOPEZ PARRA"],["5","ANGEL REGUE IRO MUÑOZ"],["6","DEREK BAZAN PETIT"],["7","EGOR RUDNEV"],["8","ERIC FORTUNATO BENITO"],["9","ERIC MONTES MEDRAN"],["10","ERIK MONTORO BENITEZ"],["11","GUILLERMO GORDO NATAL"],["12","HUGO MEJIAS GARCIA"],["13","IKER ROMERO RODRIGUEZ"],["14","IKER RUIZ MOLINO"],["15","IVAN GARRIDO CHAVES"],["16","MARC ARJONA CHIVA"],["17","MARC DIAZ CUESTA"],["18","MIQUEL NAVARRO PARERA"],["19","NIKOLAY ALBERTO KORYAVOCHKIN RONQUILLO"],["21","PAU DURAN GIMENEZ"],["22","PAU ESTERAS GONZALEZ"],["23","PAU LARA SALIDO"]];
+const ABS_FA = [["1","AINA CARBONELL MIR"],["2","ANGELA GABRIELA OLIVER PRIETO"],["3","EIRE AÑO LOPEZ"],["4","GEMMA CAMPDEPADROS ROIG"],["5","GEMMA MONTSERRAT CODINACHS"],["6","JUDITH AGUDO LECHA"],["7","JULIA CARNERO CRUZ"],["8","LENI HARMS"],["9","MAR PAVIA SAEZ"],["10","MARIA OTAVIA AUGUSTO PITTIGLIANI"],["11","NADIA PEREZ ARIAS"],["12","NATALIA DIAZ GIL"],["13","NICOL JEREZ TORRES"],["14","PAULA RODRIGUEZ FERNANDEZ"],["15","RAQUEL ARGENTE CALDERON"],["16","SARA JORDI DE LA CRUZ"]];
+const ABS_FB = [["1","ABRIL HERNANDEZ GARCIA"],["2","AINA OROZCO GONZALEZ"],["3","ALBA LIRIO GARCIA"],["4","ANGELA MARTIN CABALLERO"],["5","ANNA GARCIA TERUEL"],["6","ANNA RODRIGUEZ GARCIA"],["7","ANNA SANCHEZ MORENO"],["8","CARLA ROMERO RODRIGUEZ"],["9","CARLOTA GARCIA LOPEZ"],["10","CARLOTA ORTIZ ITURRALDE"],["11","CLAUDIA RODRIGUEZ SIRERA"],["12","GEORGIA MARIAH CARBONELL FORDAN"],["13","GISELA ESTEVE VILHES"],["14","IDOIA GRANADOS RICO"],["15","KAYLEE ABELLAN PAZ"],["16","LEONOR MUÑOZ PAZ"],["17","LUCIA COCA CANO"],["18","NAIA CORIA RISUEÑO"],["19","NOA RODRIGUEZ GARCIA"],["20","ONA ESTERAS GONZALEZ"],["21","PAULA ARJONA CHIVA"],["22","SALMA BOUCHRAIT DRAOUI"]];
+
+const CATEGORY_ROSTERS = {"Alevín":ALEV,"Cadete masculino":CADETE_M,"Juvenil masculino":JUV_M,"Juvenil femenino":JUV_F,"Absoluto masculino":ABS_M,"Absoluto femenino A":ABS_FA,"Absoluto femenino B":ABS_FB};
+
 const RULES = {
   "Alevín": {periods:6, periodSeconds:240, intervalSeconds:120, halftimeSeconds:120, timeout:false, timeoutSeconds:0, possession:'30" / 20"', exclusionSeconds:20},
   // Juvenil: configuración provisional basada en WA; el PDF FCN aportado confirma 3' de descanso P2-P3.
-  "Juvenil": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20}
+  "Juvenil": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
+  // Configuración provisional para las categorías incorporadas. Se ajustará cuando definamos sus reglas específicas.
+  "Cadete masculino": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
+  "Juvenil masculino": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
+  "Juvenil femenino": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
+  "Absoluto masculino": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
+  "Absoluto femenino A": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
+  "Absoluto femenino B": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20}
 };
 let state = {
  screen:"home", category:null, rival:"", venue:"local", date:new Date().toISOString().slice(0,10),
@@ -133,19 +150,17 @@ a.innerHTML=`<section class="screen">
 function startNew(){state={...state,screen:"new",category:null,rival:"",venue:"local",date:new Date().toISOString().slice(0,10)};render()}
 function newMatch(a){
 a.innerHTML=`<section class="screen"><div class="card"><h2>1. Nuevo partido</h2><p class="muted">Selecciona la categoría. La aplicación cargará sus reglas y plantilla habitual.</p>
-<div class="grid grid2"><button class="choice secondary" onclick="chooseCat('Alevín')"><b>🟩 ALEVÍN</b><span>6 períodos · control P1-P4</span></button>
-<button class="choice secondary" onclick="chooseCat('Juvenil')"><b>🟦 JUVENIL</b><span>Reglas específicas Juvenil</span></button></div></div></section>`;
+<div class="grid grid2">
+<button class="choice secondary" onclick="chooseCat('Alevín')"><b>🟩 ALEVÍN</b><span>Equipo Alevín</span></button>
+<button class="choice secondary" onclick="chooseCat('Cadete masculino')"><b>🟦 CADETE MASCULINO</b><span>Equipo Cadete masculino</span></button>
+<button class="choice secondary" onclick="chooseCat('Juvenil masculino')"><b>🟦 JUVENIL MASCULINO</b><span>Equipo Juvenil masculino</span></button>
+<button class="choice secondary" onclick="chooseCat('Juvenil femenino')"><b>🩷 JUVENIL FEMENINO</b><span>Equipo Juvenil femenino</span></button>
+<button class="choice secondary" onclick="chooseCat('Absoluto masculino')"><b>🟦 ABSOLUTO MASCULINO</b><span>Equipo Absoluto masculino</span></button>
+<button class="choice secondary" onclick="chooseCat('Absoluto femenino A')"><b>🩷 ABSOLUTO FEMENINO A</b><span>Equipo Absoluto femenino A</span></button>
+<button class="choice secondary" onclick="chooseCat('Absoluto femenino B')"><b>🩷 ABSOLUTO FEMENINO B</b><span>Equipo Absoluto femenino B</span></button>
+</div></div></section>`;
 }
-function chooseCat(cat){state.category=cat;state.roster=(cat==="Alevín"?ALEV:JUV).map(x=>({num:x[0],name:x[1],selected:true,periods:0,goals:0}));state.players=state.roster.filter(p=>p.selected);state.screen="roster";render()}
-function roster(a){
-const n=state.players.length; const valid=n>=11&&n<=14;
-a.innerHTML=`<section class="screen"><div class="card"><h2>2. Convocatoria — ${state.category}</h2>
-<div class="grid grid2"><div class="field"><label>Rival</label><input id="rival" value="${state.rival}" placeholder="Nombre del rival"></div>
-<div class="field"><label>Fecha</label><input id="date" type="date" value="${state.date}"></div></div>
-<p><span class="badge">${n} jugadores</span> <span class="${valid?'ok':'warn'}">${valid?'Convocatoria dentro del máximo':'Revisa el número de jugadores'}</span></p>
-<div class="players">${state.roster.map((p,i)=>`<button class="player ${p.selected?'active':''}" onclick="togglePlayer(${i})"><small>Nº ${p.num}</small><strong>${p.name}</strong><span>${p.selected?'✓ Convocado':'No convocado'}</span></button>`).join("")}</div>
-<div class="actions"><button class="ghost" onclick="startNew()">← Atrás</button><button class="primary" onclick="confirmRoster()">CONFIRMAR Y PREPARAR PARTIDO →</button></div></div></section>`;
-}
+function chooseCat(cat){state.category=cat;state.roster=(CATEGORY_ROSTERS[cat]||[]).map(x=>({num:x[0],name:x[1],selected:true,periods:0,goals:0}));state.players=state.roster.filter(p=>p.selected);state.screen="roster";render()}
 function togglePlayer(i){state.roster[i].selected=!state.roster[i].selected;state.players=state.roster.filter(p=>p.selected);render()}
 function confirmRoster(){state.rival=document.getElementById("rival").value||"Rival";state.date=document.getElementById("date").value;state.screen="match";state.started=false;state.timerRunning=false;state.period=1;state.score=[0,0];state.partials=[];state.events=[];state.expulsions={};state.players=state.roster.filter(p=>p.selected);state.timeouts=[0,0];state.remainingMs=RULES[state.category].periodSeconds*1000;saveLocal();render()}
 function currentGameSeconds(){const r=state.remainingMs;return Math.max(0,Math.round(RULES[state.category].periodSeconds-r/1000))}
