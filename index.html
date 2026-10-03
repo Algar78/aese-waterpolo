@@ -190,6 +190,38 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
 }
 </style>
 
+<style id="phone-force-layout">
+/* Teléfonos: aplicar interfaz móvil aunque el navegador entregue viewport apaisado */
+@media (pointer:coarse) and (max-width:1200px){
+  html,body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+  .app{width:100%!important;max-width:100%!important;min-width:0!important}
+  .screen{width:100%!important;min-width:0!important;padding:10px!important}
+  .card{min-width:0!important}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr!important}
+  .players{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .actions button{min-width:0!important}
+  .matchLineupLive{grid-template-columns:1fr!important}
+  .substitutionSidebar{position:static!important;max-height:none!important}
+  .poolWrap,.poolHalf{width:100%!important;max-width:100%!important;min-width:0!important}
+  .poolSlot{width:88px!important}
+}
+</style>
+<script>
+(function(){
+  function lockPortrait(){
+    try{
+      if(screen.orientation && screen.orientation.lock){
+        screen.orientation.lock('portrait').catch(function(){});
+      }
+    }catch(e){}
+  }
+  lockPortrait();
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden) lockPortrait();
+  });
+})();
+</script>
+
 </head>
 <body>
 <div class="app">
