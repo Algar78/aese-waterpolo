@@ -162,6 +162,34 @@ html{background:var(--navy)}body{font-family:"Trebuchet MS","Avenir Next",Avenir
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AESE Waterpolo">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<style id="mobile-app-fix">
+/* === PWA MÓVIL: VISTA VERTICAL Y SIN DESBORDAMIENTO === */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{min-width:0}
+.app{width:100%;max-width:1180px;min-width:0;margin:0 auto}
+img,video,canvas,svg{max-width:100%}
+button,input,select,textarea{max-width:100%;box-sizing:border-box}
+
+@media(max-width:700px){
+  .top{width:100%;min-width:0}
+  .screen{width:100%;min-width:0;padding:10px}
+  .card{width:100%;min-width:0;padding:14px}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr!important}
+  .players{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .actions{width:100%;min-width:0}
+  .actions button{min-width:0!important;width:100%;max-width:100%}
+  .matchLineupLive,.livePoolColumn,.substitutionSidebar{width:100%;min-width:0}
+  .poolWrap,.poolHalf{width:100%;max-width:100%;min-width:0}
+  .poolHalf{overflow:hidden}
+  .rivalGrid{width:100%;min-width:0}
+  .modalbox{width:100%;max-width:100%;min-width:0}
+  .homeHeroExact{width:100%;max-width:100%;min-width:0}
+  .homeHeroExact .heroCenter{width:100%;min-width:0}
+  table{max-width:100%}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
