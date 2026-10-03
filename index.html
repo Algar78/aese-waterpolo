@@ -134,21 +134,22 @@ html{background:var(--navy)}body{font-family:"Trebuchet MS","Avenir Next",Avenir
 /* === PORTADA FINAL: réplica de la propuesta aprobada === */
 .homeScreen{padding:0!important}
 .homeHeroExact:before{display:none!important;content:none!important;background:none!important}
-.homeHeroExact{position:relative!important;min-height:calc(100vh - 80px)!important;margin:0!important;border-radius:0!important;overflow:hidden!important;background:#031a38!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;box-shadow:none!important;isolation:isolate!important}
-.homeHeroExact .heroBackdrop{position:absolute;inset:0;z-index:0;background-image:linear-gradient(180deg,rgba(2,18,43,.04) 0%,rgba(2,18,43,.06) 45%,rgba(2,18,43,.62) 78%,rgba(2,18,43,.90) 100%),url('assets/aese-waterpolo-hero-mixed.jpg');background-size:cover;background-position:center center;background-repeat:no-repeat;transform:scale(1.015)}
-.homeHeroExact .heroCenter{position:relative;z-index:2;text-align:center;color:#fff;max-width:900px;margin:0 auto auto;padding:70px 24px 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1}
-.homeHeroExact .heroLogoExact{width:190px;height:132px;object-fit:contain;background:transparent!important;border-radius:0!important;padding:0!important;margin:0 0 16px;filter:drop-shadow(0 7px 16px rgba(0,0,0,.38))}
-.homeHeroExact .eyebrow{justify-content:center;color:#ffe900;font-size:13px;letter-spacing:.19em;margin:0 0 16px;text-transform:uppercase}
-.homeHeroExact .eyebrow:before{width:34px;height:3px}
-.homeHeroExact h1{font-size:clamp(58px,8vw,104px)!important;line-height:.86!important;letter-spacing:-.06em!important;margin:0 0 20px!important;text-shadow:0 4px 25px rgba(0,0,0,.28);font-weight:900}
+.homeHeroExact:before{display:none!important;content:none!important;background:none!important}
+.homeHeroExact{position:relative!important;min-height:0!important;height:auto!important;aspect-ratio:900/384!important;margin:0!important;border-radius:0!important;overflow:hidden!important;background:#031a38!important;display:block!important;box-shadow:none!important;isolation:isolate!important}
+.homeHeroExact .heroBackdrop{position:absolute;inset:0;z-index:0;background-image:linear-gradient(180deg,rgba(2,18,43,.02) 0%,rgba(2,18,43,.04) 48%,rgba(2,18,43,.42) 78%,rgba(2,18,43,.86) 100%),url('assets/aese-waterpolo-hero-mixed.jpg');background-size:100% 100%;background-position:center top;background-repeat:no-repeat;transform:none}
+.homeHeroExact .heroCenter{position:absolute;inset:0;z-index:2;text-align:center;color:#fff;max-width:none;margin:0;padding:30px 24px 112px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.homeHeroExact .heroLogoExact{width:170px;height:100px;object-fit:contain;background:transparent!important;border-radius:0!important;padding:0!important;margin:0 0 4px;filter:drop-shadow(0 5px 12px rgba(0,0,0,.42))}
+.homeHeroExact .heroCenter .eyebrow{justify-content:center;color:#ffe900;font-size:12px;letter-spacing:.19em;margin:0 0 10px;text-transform:uppercase}
+.homeHeroExact .heroCenter .eyebrow:before{width:28px;height:3px}
+.homeHeroExact h1{font-size:clamp(50px,6.4vw,88px)!important;line-height:.86!important;letter-spacing:-.06em!important;margin:0 0 14px!important;text-shadow:0 4px 20px rgba(0,0,0,.35);font-weight:900}
 .homeHeroExact h1 span{display:block;color:#ffe900}
-.homeHeroExact p{max-width:650px!important;font-size:20px!important;line-height:1.45!important;margin:0!important;color:rgba(255,255,255,.94)!important;text-shadow:0 2px 10px rgba(0,0,0,.32)}
-.homeHeroExact .heroButtonsExact{position:relative;z-index:3;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;width:calc(100% - 72px)!important;max-width:1460px!important;margin:0 auto 34px!important;padding:0!important;background:none!important}
-.homeHeroExact .heroButtonsExact button{min-width:0!important;width:100%!important;min-height:76px!important;border-radius:16px!important;font-size:18px!important;font-weight:900!important;letter-spacing:.01em!important;padding:16px 18px!important;box-shadow:0 10px 28px rgba(0,0,0,.22)!important;backdrop-filter:blur(7px)!important}
+.homeHeroExact p{max-width:650px!important;font-size:17px!important;line-height:1.35!important;margin:0!important;color:rgba(255,255,255,.96)!important;text-shadow:0 2px 9px rgba(0,0,0,.4)}
+.homeHeroExact .heroButtonsExact{position:absolute!important;z-index:3;left:36px;right:36px;bottom:24px;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;width:auto!important;max-width:none!important;margin:0!important;padding:0!important;background:none!important}
+.homeHeroExact .heroButtonsExact button{min-width:0!important;width:100%!important;min-height:68px!important;border-radius:14px!important;font-size:16px!important;font-weight:900!important;letter-spacing:.01em!important;padding:14px 14px!important;box-shadow:0 8px 22px rgba(0,0,0,.22)!important;backdrop-filter:blur(7px)!important}
 .homeHeroExact .heroButtonsExact .primary{background:#ffe900!important;color:#062044!important;border:1px solid rgba(255,255,255,.2)!important}
-.homeHeroExact .heroButtonsExact .secondary{background:rgba(3,27,61,.76)!important;color:#fff!important;border:1px solid rgba(160,205,255,.75)!important}
-.heroBtnIcon{font-size:24px;margin-right:8px;vertical-align:-2px}
-.homeHeroExact:after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;z-index:4;background:linear-gradient(90deg,#ffe900 0 67%,#fff 67% 72%,#0b60af 72%)}
+.homeHeroExact .heroButtonsExact .secondary{background:rgba(3,27,61,.72)!important;color:#fff!important;border:1px solid rgba(160,205,255,.78)!important}
+.heroBtnIcon{font-size:22px;margin-right:7px;vertical-align:-2px}
+.homeHeroExact:after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;z-index:4;background:linear-gradient(90deg,#ffe900 0 67%,#fff 67% 72%,#0b60af 72%)}
 .historyRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch;margin-bottom:9px}
 .historyOpenBtn{margin:0!important}.historyDeleteBtn{white-space:nowrap;min-width:120px}
 @media(max-width:900px){.homeHeroExact{min-height:calc(100svh - 60px)!important}.homeHeroExact .heroCenter{padding-top:45px}.homeHeroExact .heroButtonsExact{grid-template-columns:repeat(2,minmax(0,1fr))!important;width:calc(100% - 32px)!important;margin-bottom:24px}.homeHeroExact .heroButtonsExact button{min-height:68px!important;font-size:14px!important}.homeHeroExact p{font-size:17px!important}}
