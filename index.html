@@ -287,7 +287,7 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
 <div id="modal" class="modal hidden"></div>
 <div id="toast" class="toast hidden"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <script src="supabase-config.js"></script>
 <script src="supabase-client.js"></script>
 <script src="supabase-rosters.js"></script>
@@ -532,17 +532,35 @@ async function confirmRoster(){
   saveLocal();render();toast("Partido guardado en Supabase");
  }catch(error){console.error("[AESE] No se pudo crear el partido.",error);toast(error.message||"No se pudo guardar el partido.")}
 }
+let saveRequestSeq=0;
+function setSaveStatus(text){
+ const status=document.getElementById("saveStatus");
+ if(status)status.textContent=text;
+}
 async function persistMatchState(){
- if(!state.matchId||!window.AESE_AUTH?.client)return;
+ if(!state.matchId||!window.AESE_AUTH?.client)return {ok:false,reason:"no-match"};
  const client=window.AESE_AUTH.client;
+ const requestSeq=++saveRequestSeq;
+ setSaveStatus("↻ Guardando…");
  const snapshot={...state,matchId:undefined};
  delete snapshot.matchId;
  const result=await client.from("matches").update({
   status:state.screen==="final"?"completed":(state.started?"in_progress":"draft"),
   score_aese:state.score[0],score_opponent:state.score[1],current_period:state.period,
   period_remaining_ms:Math.max(0,Math.round(state.remainingMs)),state_snapshot:snapshot,updated_at:new Date().toISOString()
- }).eq("id",state.matchId);
- if(result.error)console.warn("[AESE] No se pudo sincronizar el partido.",result.error);
+ }).eq("id",state.matchId).select("id").maybeSingle();
+ if(result.error){
+  if(requestSeq===saveRequestSeq)setSaveStatus("⚠ No sincronizado");
+  console.warn("[AESE] No se pudo sincronizar el partido.",result.error);
+  return {ok:false,error:result.error};
+ }
+ if(!result.data){
+  if(requestSeq===saveRequestSeq)setSaveStatus("⚠ No sincronizado");
+  console.warn("[AESE] La actualización no afectó a ningún partido. Puede haber una restricción RLS.");
+  return {ok:false,error:new Error("La actualización no afectó a ningún partido.")};
+ }
+ if(requestSeq===saveRequestSeq)setSaveStatus("● Guardado");
+ return {ok:true};
 }
 function currentGameSeconds(){const r=state.remainingMs;return Math.max(0,Math.round(RULES[state.category].periodSeconds-r/1000))}
 function clockText(ms){const sec=Math.max(0,Math.ceil(ms/1000));return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`}
@@ -947,7 +965,7 @@ function lineupParticipationMarkup(){
 
 function match(a){
 const p=state.period,r=RULES[state.category],isA=state.category==='Alevín Mixto A';const partText=state.partials.map((x,i)=>`P${i+1} ${x[0]}-${x[1]}`).join(' · ');const recent=state.events.slice().reverse().slice(0,10);const periodLabel=`${formatMinutes(r.periodSeconds)} por período`;const aeseLocal=state.venue!=='away';const leftName=aeseLocal?'AESE':state.rival;const rightName=aeseLocal?state.rival:'AESE';const leftScore=aeseLocal?state.score[0]:state.score[1];const rightScore=aeseLocal?state.score[1]:state.score[0];
-a.innerHTML=`<section class="screen"><div class="scoreboard"><div style="display:flex;justify-content:space-between;gap:10px"><span>${state.category}</span><span>${state.rival}</span></div><div class="period">PERÍODO ${p} · ${periodLabel}</div><div id="gameTimer" class="timer">${clockText(state.remainingMs)}</div><div id="timerState" class="timerState">${state.timerRunning?'EN JUEGO':'PAUSADO'}</div><div class="score"><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(leftName)}</span><small>${aeseLocal?'LOCAL':'LOCAL'}</small>${leftScore}<span class="venueBadge">${aeseLocal?'AESE':'RIVAL'}</span></div><div>–</div><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(rightName)}</span><small>VISITANTE</small>${rightScore}<span class="venueBadge">${aeseLocal?'RIVAL':'AESE'}</span></div></div><div class="rulebar"><span class="badge">Posesión ${r.possession}</span><span class="badge">Expulsión ${r.exclusionSeconds}s</span>${!r.timeout?'<span class="badge">Sin tiempos muertos</span>':`<span class="badge">TM AESE ${state.timeouts[0]}/${r.maxTimeouts}</span><span class="badge">TM Rival ${state.timeouts[1]}/${r.maxTimeouts}</span>`}</div><div class="timerMainRow"><button class="primary" onclick="startPause()">${state.timerRunning?'⏸ PAUSAR':'▶ INICIAR / CONTINUAR'}</button><button class="secondary finishPeriodTop" onclick="endPeriod()">⏭ FINALIZAR PERÍODO</button></div><div class="timerAdjustRow"><button class="ghost" onclick="adjustClock(-1000)">−1 s</button><button class="ghost" onclick="adjustClock(1000)">+1 s</button></div>${!state.started&&!state.timerRunning?'<div class="actions" style="margin-top:10px"><button class="ghost mini" onclick="state.preMatchReviewPending=true;showPreMatchReview()">🔎 REVISAR CONVOCATORIA Y GORROS</button></div>':''}</div>
+a.innerHTML=`<section class="screen"><div class="scoreboard"><div style="display:flex;justify-content:space-between;gap:10px"><span>${escapeRosterText(state.category)}</span><span>${escapeRosterText(state.rival)}</span></div><div class="period">PERÍODO ${p} · ${periodLabel}</div><div id="gameTimer" class="timer">${clockText(state.remainingMs)}</div><div id="timerState" class="timerState">${state.timerRunning?'EN JUEGO':'PAUSADO'}</div><div class="score"><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(leftName)}</span><small>${aeseLocal?'LOCAL':'LOCAL'}</small>${leftScore}<span class="venueBadge">${aeseLocal?'AESE':'RIVAL'}</span></div><div>–</div><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(rightName)}</span><small>VISITANTE</small>${rightScore}<span class="venueBadge">${aeseLocal?'RIVAL':'AESE'}</span></div></div><div class="rulebar"><span class="badge">Posesión ${r.possession}</span><span class="badge">Expulsión ${r.exclusionSeconds}s</span>${!r.timeout?'<span class="badge">Sin tiempos muertos</span>':`<span class="badge">TM AESE ${state.timeouts[0]}/${r.maxTimeouts}</span><span class="badge">TM Rival ${state.timeouts[1]}/${r.maxTimeouts}</span>`}</div><div class="timerMainRow"><button class="primary" onclick="startPause()">${state.timerRunning?'⏸ PAUSAR':'▶ INICIAR / CONTINUAR'}</button><button class="secondary finishPeriodTop" onclick="endPeriod()">⏭ FINALIZAR PERÍODO</button></div><div class="timerAdjustRow"><button class="ghost" onclick="adjustClock(-1000)">−1 s</button><button class="ghost" onclick="adjustClock(1000)">+1 s</button></div>${!state.started&&!state.timerRunning?'<div class="actions" style="margin-top:10px"><button class="ghost mini" onclick="state.preMatchReviewPending=true;showPreMatchReview()">🔎 REVISAR CONVOCATORIA Y GORROS</button></div>':''}</div>
 <div class="card"><div class="eventbar"><button class="primary big ${state.timerRunning?'':'eventLocked'}" onclick="goal(true)">⚽ GOL AESE</button><button class="secondary big ${state.timerRunning?'':'eventLocked'}" onclick="goal(false)">🔵 GOL RIVAL</button><button class="danger big ${state.timerRunning?'':'eventLocked'}" onclick="expulsion()">🚨 EXPULSIÓN</button></div><div class="actions"><button class="green ${state.timerRunning?'':'eventLocked'}" onclick="penalty(true)">🥅 PENAL AESE</button><button class="ghost ${state.timerRunning?'':'eventLocked'}" onclick="penalty(false)">🥅 PENAL RIVAL</button>${r.timeout?`<button class="timeoutBtn ${state.timerRunning?'':'eventLocked'}" onclick="startTimeout(0)">⏱ TM AESE</button><button class="timeoutBtn ${state.timerRunning?'':'eventLocked'}" onclick="startTimeout(1)">⏱ TM RIVAL</button>`:''}<button class="ghost" onclick="showMore()">☰ MÁS</button></div>${state.timeoutRunning?`<div class="card" style="margin:14px 0 0;background:#fff8df;text-align:center"><b>TIEMPO MUERTO</b><div id="timeoutTimer" style="font-size:38px;font-weight:950">${clockText(state.timeoutRemainingMs)}</div><button class="primary mini" onclick="finishTimeout()">▶ REANUDAR PARTIDO</button></div>`:''}</div>
 ${lineupParticipationMarkup()}
 <div class="card"><h3>Parciales</h3><div class="muted">${partText||'Todavía no hay períodos cerrados.'}</div><div class="timeline">${recent.map(e=>`<div class="event"><span><span class="eventTime">${String(Math.floor(e.time/60)).padStart(2,'0')}:${String(e.time%60).padStart(2,'0')}</span> ${escapeRosterText(e.text)}</span><span class="muted">P${e.period}</span></div>`).join('')}</div><div class="actions"><button class="ghost" onclick="undo()">↩ DESHACER</button><button class="danger" onclick="finishMatch()">🏁 FINALIZAR PARTIDO</button></div></div></section>`;
@@ -1348,7 +1366,18 @@ function playerPick(i){const cb=window._playerCb;const p=state.players[i];closeM
 function openModal(content){const m=document.getElementById("modal");m.innerHTML=`<div class="modalbox">${content}<div class="actions"><button class="ghost" onclick="closeModal()">CANCELAR</button></div></div>`;m.classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 function undo(){if(state.lastSnapshot){const snap=state.lastSnapshot;state.score=snap.score;state.players=snap.players;state.expulsions=snap.expulsions;state.events=snap.events;state.period=snap.period;state.partials=snap.partials;state.remainingMs=snap.remainingMs;state.timerRunning=snap.timerRunning;state.timerStartedAt=snap.timerStartedAt;state.screen=snap.screen;state.periodLineups=snap.periodLineups||{};state.substitutionMode=snap.substitutionMode||false;state.pendingSubOut=snap.pendingSubOut??null;state.pendingSubIn=snap.pendingSubIn??null;state.selectedSubstitutionIndex=snap.selectedSubstitutionIndex??null;state.selectedSubstitutionSide=snap.selectedSubstitutionSide??null;state.lastSnapshot=null;saveLocal();render();toast('Última acción revertida')}else toast('No hay una acción reversible reciente')}
-function saveLocal(){localStorage.setItem("aese_prototype",JSON.stringify(state));const status=document.getElementById("saveStatus");if(status)status.textContent="● Guardado";persistMatchState()}
+function saveLocal(){
+ try{
+  localStorage.setItem("aese_prototype",JSON.stringify(state));
+ }catch(error){
+  setSaveStatus("⚠ Sin guardado local");
+  console.warn("[AESE] No se pudo guardar la copia local.",error);
+  return false;
+ }
+ if(state.matchId)persistMatchState();
+ else setSaveStatus("● Guardado local");
+ return true;
+}
 function shareSummary(){if(navigator.share)navigator.share({title:"Resumen AESE Waterpolo",text:`${state.category}: AESE ${state.score[0]}-${state.score[1]} ${state.rival}`}).catch(()=>{});else{navigator.clipboard?.writeText(`AESE ${state.score[0]}-${state.score[1]} ${state.rival} · ${state.category}`);toast("Resumen copiado al portapapeles")}}
 function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.remove("hidden");setTimeout(()=>x.classList.add("hidden"),2200)}
 if(!timerHandle){timerHandle=setInterval(()=>{tick();tickTimeout()},1000)}
