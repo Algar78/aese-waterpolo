@@ -376,13 +376,57 @@ function validateSupabaseRosters(data){
  }
  return {teamsByName,totalPlayers};
 }
+async function ensureAlevinMixtoB(data){
+ if(!window.aeseIsAdmin||!window.aeseIsAdmin())return data;
+ if(!data||!Array.isArray(data.teams))return data;
+ if(data.teams.some(team=>team&&team.name==="Alevín Mixto B"))return data;
+ const client=window.AESE_AUTH?.client;
+ const season=data.season;
+ const teamA=data.teams.find(team=>team&&team.name==="Alevín Mixto A");
+ if(!client||!season||!teamA?.categoryId)throw new Error("No se puede crear Alevín Mixto B: falta la categoría de Alevín Mixto A.");
+ const rosterNames=["Adriana Puig Moreno","Bryce Villarroel Alba","Carla Freixanet Gran","Carla Guillen Prieto","Hugo Carrasco Ferreiro","Julen Vigara Silvan","Juno Abella Perez","Marc Esteras Contreras","Odett Ileana Dutu Cucunuba","Sergi Lopez Jimenez","Valeria Botia Valenzuela"];
+ let team=(await client.from("teams").select("id,category_id,code,name,squad_label,is_active").eq("name","Alevín Mixto B").maybeSingle()).data;
+ if(!team){
+  const created=await client.from("teams").insert({
+   category_id:teamA.categoryId,code:"ALEVIN_MIXTO_B",name:"Alevín Mixto B",squad_label:"Alevín Mixto B",is_active:true
+  }).select("id,category_id,code,name,squad_label,is_active").single();
+  if(created.error)throw created.error;
+  team=created.data;
+ }else if(!team.is_active){
+  const activated=await client.from("teams").update({is_active:true,category_id:teamA.categoryId}).eq("id",team.id).select("id,category_id,code,name,squad_label,is_active").single();
+  if(activated.error)throw activated.error;
+  team=activated.data;
+ }
+ for(const fullName of rosterNames){
+  let player=(await client.from("players").select("id").eq("full_name",fullName).maybeSingle()).data;
+  if(!player){
+   const createdPlayer=await client.from("players").insert({full_name:fullName}).select("id").single();
+   if(createdPlayer.error)throw createdPlayer.error;
+   player=createdPlayer.data;
+  }
+  const membership=await client.from("team_players").select("id,is_active").eq("season_id",season.id).eq("team_id",team.id).eq("player_id",player.id).maybeSingle();
+  if(membership.error)throw membership.error;
+  if(!membership.data){
+   const inserted=await client.from("team_players").insert({season_id:season.id,team_id:team.id,player_id:player.id,is_active:true}).select("id").single();
+   if(inserted.error)throw inserted.error;
+  }else if(!membership.data.is_active){
+   const activated=await client.from("team_players").update({is_active:true}).eq("id",membership.data.id);
+   if(activated.error)throw activated.error;
+  }
+ }
+ const refreshed=await window.AESE_ROSTERS.getCurrentSeasonRoster();
+ if(!refreshed||!Array.isArray(refreshed.teams)||!refreshed.teams.some(team=>team.name==="Alevín Mixto B"))throw new Error("Alevín Mixto B no aparece tras su creación.");
+ return refreshed;
+}
+
 async function loadMasterRosters(){
  if(masterRostersLoading||masterRostersReady)return;
  masterRostersLoading=true;
  let timeoutId=null;
  try{
   if(!window.AESE_ROSTERS||typeof window.AESE_ROSTERS.getCurrentSeasonRoster!=="function")throw new Error("No está disponible AESE_ROSTERS.getCurrentSeasonRoster().");
-  const data=await Promise.race([window.AESE_ROSTERS.getCurrentSeasonRoster(),new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error("La consulta de plantillas ha superado el tiempo de espera.")),12000)})]);
+  let data=await Promise.race([window.AESE_ROSTERS.getCurrentSeasonRoster(),new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error("La consulta de plantillas ha superado el tiempo de espera.")),12000)})]);
+  data=await ensureAlevinMixtoB(data);
   const validated=validateSupabaseRosters(data);
   supabaseRosterByTeam=validated.teamsByName;
   activeRosterTeams=Array.from(supabaseRosterByTeam.values());
