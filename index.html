@@ -1015,7 +1015,7 @@ function lineupParticipationMarkup(){
  const cards=state.players.map((player,i)=>{
   const inLineup=lineup.starters.includes(i),autoNo=!inLineup&&starters===7,assignedPos=Object.entries(lineup.positions||{}).find(([k,v])=>v===i)?.[0]||null;
   const posLabel=assignedPos?POOL_POSITIONS[assignedPos]?.short:'';
-  return `<button type="button" class="player ${inLineup?'active':''} ${selected===i?'lineupSelected':''}" ${locked?'disabled':''} onclick="selectLineupPlayer(${i})"><strong>${isGoalkeeper(player)?'🧤 ':''}${playerLabel(player)}</strong><span>${inLineup?'✓ EN EL 7':autoNo?'NO PARTICIPA · automático':'CONVOCADO'}${posLabel?' · '+posLabel:''}${selected===i?' · ELEGIDO':''}</span></button>`;
+  return `<button type="button" class="player ${inLineup?'active':''} ${selected===i?'lineupSelected':''}" ${locked?'disabled':''} onclick="selectLineupPlayer(${i})"><strong>${isGoalkeeper(player)?'🧤 ':''}${escapeRosterText(playerLabel(player))}</strong><span>${inLineup?'✓ EN EL 7':autoNo?'NO PARTICIPA · automático':'CONVOCADO'}${posLabel?' · '+posLabel:''}${selected===i?' · ELEGIDO':''}</span></button>`;
  }).join('');
  let changePanel='';
  if(state.started){
@@ -1031,7 +1031,7 @@ function lineupParticipationMarkup(){
    // siguiente período y desde aquí se puede cambiar cualquiera por un suplente.
    return `<div class="card" id="participationCard"><div class="matchLineupLive"><div class="livePoolColumn">${poolFieldMarkup()}</div>${changePanel}</div></div>`;
  }
- return `<div class="card" id="participationCard"><h3>🏊 Alineación · P${period}</h3><div class="grid grid3" style="margin-bottom:12px"><div class="badge" style="text-align:center;font-size:15px">Jugadores <b>${starters}/7</b></div><div class="badge" style="text-align:center;font-size:15px">Campo <b>${fieldStarters}/6</b></div><div class="badge" style="text-align:center;font-size:15px">Portero <b>${selectedGoalkeeper?playerLabel(selectedGoalkeeper):'PENDIENTE'}</b></div></div><p class="muted" style="font-size:13px">Selecciona los jugadores desde la lista completa de convocados y colócalos en la piscina. Los gorros <b>1 y 13</b> son los candidatos a portero.</p>${selectionHint}${poolFieldMarkup()}<details open style="margin-top:14px"><summary style="cursor:pointer;font-weight:850">👥 Lista completa de convocados · selección</summary><div class="players" style="margin-top:10px">${cards}</div></details></div>`;
+ return `<div class="card" id="participationCard"><h3>🏊 Alineación · P${period}</h3><div class="grid grid3" style="margin-bottom:12px"><div class="badge" style="text-align:center;font-size:15px">Jugadores <b>${starters}/7</b></div><div class="badge" style="text-align:center;font-size:15px">Campo <b>${fieldStarters}/6</b></div><div class="badge" style="text-align:center;font-size:15px">Portero <b>${selectedGoalkeeper?escapeRosterText(playerLabel(selectedGoalkeeper)):'PENDIENTE'}</b></div></div><p class="muted" style="font-size:13px">Selecciona los jugadores desde la lista completa de convocados y colócalos en la piscina. Los gorros <b>1 y 13</b> son los candidatos a portero.</p>${selectionHint}${poolFieldMarkup()}<details open style="margin-top:14px"><summary style="cursor:pointer;font-weight:850">👥 Lista completa de convocados · selección</summary><div class="players" style="margin-top:10px">${cards}</div></details></div>`;
 }
 
 
