@@ -356,16 +356,7 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)maintainWa
 const EXPECTED_TEAM_ROSTER_COUNTS={"Alevín Mixto A":22,"Alevín Mixto B":11,"Infantil Mixto A":16,"Infantil Mixto B":21,"Cadete Masculino":22,"Juvenil Femenino":21,"Juv Fem A 1a Div":22,"1a Div Fem Absoluta B":22,"Juvenil Masculino":30,"Absoluto Masculino":26};
 const TEAM_ICONS={"Alevín Mixto A":"🟩","Alevín Mixto B":"🟩","Infantil Mixto A":"🟨","Infantil Mixto B":"🟨","Cadete Masculino":"🟦","Juvenil Femenino":"🩷","Juv Fem A 1a Div":"🩷","1a Div Fem Absoluta B":"🩷","Juvenil Masculino":"🟦","Absoluto Masculino":"🟦"};
 let masterRostersReady=false,masterRostersLoading=false,masterRosterSource="fallback";
-const TEAM_CATEGORY_ORDER=["Alevín Mixto A","Alevín Mixto B","Infantil Mixto A","Infantil Mixto B","Cadete Masculino","Juvenil Femenino","Juv Fem A 1a Div","Juvenil Masculino","1a Div Fem Absoluta B","Absoluto Masculino"];
-function sortRosterTeams(teams){
- const order=new Map(TEAM_CATEGORY_ORDER.map((name,index)=>[name,index]));
- return [...(teams||[])].sort((a,b)=>{
-  const ai=order.has(a?.name)?order.get(a.name):999;
-  const bi=order.has(b?.name)?order.get(b.name):999;
-  return ai-bi||String(a?.name||"").localeCompare(String(b?.name||""),"es");
- });
-}
-let activeRosterTeams=sortRosterTeams(Object.keys(CATEGORY_ROSTERS).map(name=>({name}));
+let activeRosterTeams=Object.keys(CATEGORY_ROSTERS).map(name=>({name}));
 let supabaseRosterByTeam=new Map();
 
 function activateLocalRosterFallback(reason){
@@ -438,7 +429,7 @@ async function loadMasterRosters(){
   data=await ensureAlevinMixtoB(data);
   const validated=validateSupabaseRosters(data);
   supabaseRosterByTeam=validated.teamsByName;
-  activeRosterTeams=sortRosterTeams(Array.from(supabaseRosterByTeam.values()));
+  activeRosterTeams=Array.from(supabaseRosterByTeam.values());
   masterRosterSource="supabase";
   const teamCounts=Object.fromEntries(activeRosterTeams.map(team=>[team.name,team.players.length]));
   console.info("[AESE] Plantillas cargadas desde Supabase.",{season:data.season?.code||null,teamCount:activeRosterTeams.length,totalPlayers:validated.totalPlayers,teamCounts});
