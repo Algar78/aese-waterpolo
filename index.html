@@ -321,6 +321,7 @@ const CATEGORY_ROSTERS = {"Alevín A":ALEV_A,"Alevín B":ALEV_B,"Cadete masculin
 
 const RULES = {
   "Alevín Mixto A": {periods:6, periodSeconds:240, intervalSeconds:120, halftimeSeconds:120, timeout:false, timeoutSeconds:0, possession:'30" / 20"', exclusionSeconds:20},
+  "Alevín Mixto B": {periods:6, periodSeconds:240, intervalSeconds:120, halftimeSeconds:120, timeout:false, timeoutSeconds:0, possession:'30" / 20"', exclusionSeconds:20},
   "Infantil Mixto A": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
   "Infantil Mixto B": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
   "Cadete Masculino": {periods:4, periodSeconds:480, intervalSeconds:120, halftimeSeconds:180, timeout:true, timeoutSeconds:60, maxTimeouts:2, possession:'25"', exclusionSeconds:20},
@@ -352,8 +353,8 @@ async function maintainWakeLock(){
 }
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)maintainWakeLock()});
 
-const EXPECTED_TEAM_ROSTER_COUNTS={"Alevín Mixto A":22,"Infantil Mixto A":16,"Infantil Mixto B":21,"Cadete Masculino":22,"Juvenil Femenino":21,"Juv Fem A 1a Div":22,"1a Div Fem Absoluta B":22,"Juvenil Masculino":30,"Absoluto Masculino":26};
-const TEAM_ICONS={"Alevín Mixto A":"🟩","Infantil Mixto A":"🟨","Infantil Mixto B":"🟨","Cadete Masculino":"🟦","Juvenil Femenino":"🩷","Juv Fem A 1a Div":"🩷","1a Div Fem Absoluta B":"🩷","Juvenil Masculino":"🟦","Absoluto Masculino":"🟦"};
+const EXPECTED_TEAM_ROSTER_COUNTS={"Alevín Mixto A":22,"Alevín Mixto B":11,"Infantil Mixto A":16,"Infantil Mixto B":21,"Cadete Masculino":22,"Juvenil Femenino":21,"Juv Fem A 1a Div":22,"1a Div Fem Absoluta B":22,"Juvenil Masculino":30,"Absoluto Masculino":26};
+const TEAM_ICONS={"Alevín Mixto A":"🟩","Alevín Mixto B":"🟩","Infantil Mixto A":"🟨","Infantil Mixto B":"🟨","Cadete Masculino":"🟦","Juvenil Femenino":"🩷","Juv Fem A 1a Div":"🩷","1a Div Fem Absoluta B":"🩷","Juvenil Masculino":"🟦","Absoluto Masculino":"🟦"};
 let masterRostersReady=false,masterRostersLoading=false,masterRosterSource="fallback";
 let activeRosterTeams=Object.keys(CATEGORY_ROSTERS).map(name=>({name}));
 let supabaseRosterByTeam=new Map();
