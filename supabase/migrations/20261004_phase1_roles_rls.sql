@@ -228,6 +228,7 @@ with check (
     select 1 from public.matches m
     where m.id = match_players.match_id
       and m.created_by = (select auth.uid())
+      and m.status <> 'completed'
   )
 );
 
