@@ -281,7 +281,7 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="brand">AESE WATERPOLO</div><div style="display:flex;align-items:center;gap:8px"><span class="badge" id="userRoleBadge" style="background:rgba(255,255,255,.12);color:#fff">CUENTA</span><div class="status" id="saveStatus">● Guardado</div></div></header>
+<header class="top"><div class="brand">AESE WATERPOLO</div><div style="display:flex;align-items:center;gap:8px"><span class="badge" id="userRoleBadge" style="background:rgba(255,255,255,.12);color:#fff">CUENTA</span><button type="button" id="signOutButton" class="hidden" onclick="aeseSignOut()" style="min-height:34px;padding:7px 10px;font-size:11px;white-space:nowrap;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.24)">🚪 CERRAR SESIÓN</button><div class="status" id="saveStatus">● Guardado</div></div></header>
 <main id="app"></main>
 </div>
 <div id="modal" class="modal hidden"></div>
@@ -468,11 +468,12 @@ function renderRoleGate(){
 }
 function updateRoleBadge(){
  const n=document.getElementById("userRoleBadge");
- if(!n)return;
  const auth=window.AESE_AUTH;
- n.textContent=auth?.role==="admin"?"👑 ADMIN":"👤 USUARIO";
+ if(n)n.textContent=auth?.role==="admin"?"👑 ADMIN":"👤 USUARIO";
+ const signOut=document.getElementById("signOutButton");
+ if(signOut)signOut.classList.toggle("hidden",!(auth?.session&&auth.view==="app"));
 }
-function render(){const auth=window.AESE_AUTH;if(!auth||!auth.ready||!auth.session||auth.view!=="app"){renderAuthGate();return}if(auth.roleLoading||!auth.role){renderRoleGate();return}if(!masterRostersReady){const a=document.getElementById("app"); if(masterRosterSource==="error"){a.innerHTML='<section class="screen"><div class="card" style="max-width:620px;margin:8vh auto;text-align:center"><h2>⚠️ No se pudieron cargar las plantillas</h2><p class="muted">La aplicación no utilizará una plantilla antigua de respaldo. Comprueba la conexión con Supabase y vuelve a cargar.</p><button class="primary big" onclick="masterRostersLoading=false;masterRosterSource=&quot;loading&quot;;loadMasterRosters()">🔄 REINTENTAR</button></div></section>';} else {a.innerHTML='<section class="screen"><div class="card" style="max-width:520px;margin:8vh auto;text-align:center"><h2>Cargando equipos</h2><p class="muted">Consultando las plantillas disponibles.</p></div></section>';loadMasterRosters();}return}const a=document.getElementById("app"); a.innerHTML=""; updateRoleBadge(); if(state.screen==="home") home(a); if(state.screen==="new") newMatch(a); if(state.screen==="roster") roster(a); if(state.screen==="match") match(a); if(state.screen==="final") finalScreen(a); if(state.screen==="history") history(a); if(state.screen==="historyDetail") historyDetail(a); if(state.screen==="matches") matchesScreen(a); if(state.screen==="playerStats") playerStats(a); if(state.screen==="playerStatsDetail") playerStatsDetail(a); if(state.screen!=="home") addGlobalHomeButton(a); maintainWakeLock();}
+function render(){updateRoleBadge();const auth=window.AESE_AUTH;if(!auth||!auth.ready||!auth.session||auth.view!=="app"){renderAuthGate();return}if(auth.roleLoading||!auth.role){renderRoleGate();return}if(!masterRostersReady){const a=document.getElementById("app"); if(masterRosterSource==="error"){a.innerHTML='<section class="screen"><div class="card" style="max-width:620px;margin:8vh auto;text-align:center"><h2>⚠️ No se pudieron cargar las plantillas</h2><p class="muted">La aplicación no utilizará una plantilla antigua de respaldo. Comprueba la conexión con Supabase y vuelve a cargar.</p><button class="primary big" onclick="masterRostersLoading=false;masterRosterSource=&quot;loading&quot;;loadMasterRosters()">🔄 REINTENTAR</button></div></section>';} else {a.innerHTML='<section class="screen"><div class="card" style="max-width:520px;margin:8vh auto;text-align:center"><h2>Cargando equipos</h2><p class="muted">Consultando las plantillas disponibles.</p></div></section>';loadMasterRosters();}return}const a=document.getElementById("app"); a.innerHTML=""; if(state.screen==="home") home(a); if(state.screen==="new") newMatch(a); if(state.screen==="roster") roster(a); if(state.screen==="match") match(a); if(state.screen==="final") finalScreen(a); if(state.screen==="history") history(a); if(state.screen==="historyDetail") historyDetail(a); if(state.screen==="matches") matchesScreen(a); if(state.screen==="playerStats") playerStats(a); if(state.screen==="playerStatsDetail") playerStatsDetail(a); if(state.screen!=="home") addGlobalHomeButton(a); maintainWakeLock();}
 function addGlobalHomeButton(a){const wrap=document.createElement("div");wrap.className="globalHomeNav";wrap.innerHTML='<button type="button" class="ghost globalHomeBtn" onclick="goHome()">🏠 INICIO</button>';a.prepend(wrap)}
 function goHome(){saveLocal();state.screen="home";render()}
 function home(a){
