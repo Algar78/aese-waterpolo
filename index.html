@@ -156,9 +156,12 @@ html{background:var(--navy)}body{font-family:"Trebuchet MS","Avenir Next",Avenir
 @media(max-width:600px){.homeHeroExact .heroBackdrop{background-position:center center}.homeHeroExact .heroCenter{padding:34px 18px 18px}.homeHeroExact .heroLogoExact{width:132px;height:92px;margin-bottom:12px;background:transparent!important;padding:0!important;border-radius:0!important}.homeHeroExact .eyebrow{font-size:10px;margin-bottom:10px}.homeHeroExact h1{font-size:clamp(42px,13vw,62px)!important;margin-bottom:13px!important}.homeHeroExact p{font-size:14px!important;max-width:360px!important}.homeHeroExact .heroButtonsExact{grid-template-columns:1fr 1fr!important;gap:9px!important;width:calc(100% - 20px)!important;margin-bottom:18px}.homeHeroExact .heroButtonsExact button{min-height:62px!important;font-size:11px!important;padding:10px 7px!important}.heroBtnIcon{font-size:18px;margin-right:4px}.historyRow{grid-template-columns:1fr}.historyDeleteBtn{min-height:44px}}
 </style>
 <style id="home-hero-portrait-image-fix">
-/* Portada vertical: mantener la foto panorámica en su proporción natural. */
+/* Portada vertical: foto panorámica sin deformar y controles dentro del ancho. */
 @media(max-width:600px) and (orientation:portrait){
+  .homeHeroExact{height:max(680px,calc(100svh - 60px))!important;min-height:0!important;aspect-ratio:auto!important}
   .homeHeroExact .heroBackdrop{background-size:100% 100%,100% auto!important;background-position:center top,center top!important;background-repeat:no-repeat!important}
+  .homeHeroExact .heroCenter{inset:24% 0 160px!important;padding:12px 18px!important;justify-content:center!important}
+  .homeHeroExact .heroButtonsExact{left:10px!important;right:10px!important;bottom:18px!important;width:auto!important;margin:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
 }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
