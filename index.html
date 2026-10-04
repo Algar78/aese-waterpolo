@@ -1466,7 +1466,7 @@ function saveLocal(syncRemote=true){
   console.warn("[AESE] No se pudo guardar la copia local.",error);
   return false;
  }
- if(state.matchId&&syncRemote)pendingMatchSave=persistMatchState().catch(error=>({ok:false,error}));
+ if(state.matchId&&syncRemote)pendingMatchSave=pendingMatchSave.catch(()=>({ok:false})).then(()=>persistMatchState()).catch(error=>({ok:false,error}));
  else if(!state.matchId)setSaveStatus("● Guardado local");
  return true;
 }
