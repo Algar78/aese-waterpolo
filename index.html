@@ -559,10 +559,12 @@ async function confirmRoster(){
  if(!rivalInput.reportValidity()||!dateInput.reportValidity()||!venueInput.reportValidity())return;
  state.rival=rivalInput.value.trim();state.date=dateInput.value;state.venue=venueInput.value==='away'?'away':'local';
  const client=window.AESE_AUTH?.client;
+ const createdBy=window.AESE_AUTH?.session?.user?.id;
  if(!client){toast("No hay conexión con Supabase.");return}
+ if(!createdBy){toast("No se pudo identificar al usuario para guardar el partido.");return}
  try{
   const matchResult=await client.from("matches").insert({
-   season_id:state.seasonId,team_id:state.teamId,rival:state.rival,match_date:state.date,venue:state.venue,status:"draft",
+   created_by:createdBy,season_id:state.seasonId,team_id:state.teamId,rival:state.rival,match_date:state.date,venue:state.venue,status:"draft",
    score_aese:0,score_opponent:0,current_period:1,period_remaining_ms:RULES[state.category].periodSeconds*1000,state_snapshot:{}
   }).select("id").single();
   if(matchResult.error)throw matchResult.error;
