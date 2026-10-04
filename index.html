@@ -222,6 +222,62 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
 })();
 </script>
 
+
+<style id="pool-mobile-vertical-fix">
+/* === MAPA PISCINA · AJUSTE MÓVIL VERTICAL === */
+@media (pointer:coarse) and (max-width:700px) and (orientation:portrait){
+  .poolWrap{
+    padding:8px!important;
+    border-radius:18px!important;
+    margin-top:10px!important;
+  }
+  .poolHalf{
+    width:100%!important;
+    max-width:none!important;
+    aspect-ratio:1.12 / 1!important;
+    border-width:4px!important;
+    border-radius:15px 15px 9px 9px!important;
+  }
+  .poolSlot{
+    width:70px!important;
+    min-height:54px!important;
+    padding:5px 3px!important;
+    border-width:2px!important;
+    border-radius:11px!important;
+    gap:1px!important;
+  }
+  .poolSlot .cap{
+    font-size:15px!important;
+  }
+  .poolSlot .nm{
+    font-size:9px!important;
+    line-height:1.05!important;
+  }
+  .poolSlot .pos{
+    font-size:7px!important;
+  }
+  .poolSlot.gkSlot{left:50%!important;top:11%!important}
+  .poolSlot.cf{left:50%!important;top:29%!important}
+  .poolSlot.w1{left:19%!important;top:31%!important}
+  .poolSlot.w2{left:81%!important;top:31%!important}
+  .poolSlot.d1{left:34%!important;top:49%!important}
+  .poolSlot.d2{left:66%!important;top:49%!important}
+  .poolSlot.point{left:50%!important;top:68%!important}
+}
+@media (pointer:coarse) and (max-width:380px) and (orientation:portrait){
+  .poolSlot{
+    width:64px!important;
+    min-height:51px!important;
+  }
+  .poolSlot .cap{font-size:14px!important}
+  .poolSlot .nm{font-size:8px!important}
+  .poolSlot.w1{left:18%!important}
+  .poolSlot.w2{left:82%!important}
+  .poolSlot.d1{left:33%!important}
+  .poolSlot.d2{left:67%!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
