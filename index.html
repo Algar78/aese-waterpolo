@@ -1284,8 +1284,8 @@ async function history(a){
 function adminDeleteButton(id,detail){
  if(!aeseIsAdmin())return '';
  const safeId=String(id||'').replace(/'/g,"\\'");
- if(detail)return '${adminDeleteButton(m.id,true)}';
- return '<button type="button" class="danger historyDeleteBtn" onclick="event.stopPropagation();deleteHistoryMatch(\''+safeId+'\')">🗑 ELIMINAR</button>';
+ if(detail)return '<button class="danger" onclick="deleteHistoryMatch(\\''+safeId+'\\')">🗑 ELIMINAR PARTIDO</button>';
+ return '<button type="button" class="danger historyDeleteBtn" onclick="event.stopPropagation();deleteHistoryMatch(\\''+safeId+'\\')">🗑 ELIMINAR</button>';
 }
 async function deleteHistoryMatch(id){
   const client=window.AESE_AUTH?.client;if(!client)return;
@@ -1318,7 +1318,7 @@ function historyDetail(a){
   <div class="card"><h2>🚨 Expulsiones</h2><h4>🟢 AESE</h4>${Object.keys(expulsions.aese||{}).length?Object.entries(expulsions.aese).map(([n,c])=>{const p=players.find(x=>String(x.teamPlayerId??'')===String(n)||String(x.playerId??'')===String(n)||String(x.capNumber??x.num??'')===String(n)||String(x.name??'')===String(n));return `<div class="event"><span>${escapeRosterText(p?.name||('Nº '+n))}${p?.capNumber?` · Nº ${p.capNumber}`:''}</span><b>${c}</b></div>`}).join(''):'<p class="muted">Sin expulsiones AESE.</p>'}<h4>🔵 Rival</h4>${Object.keys(expulsions.rival||{}).length?Object.entries(expulsions.rival).map(([n,c])=>`<div class="event"><span>Nº ${escapeRosterText(n)}</span><b>${c}</b></div>`).join(''):'<p class="muted">Sin expulsiones rival.</p>'}</div>
   <div class="card"><h2>👥 Participación</h2>${players.length?players.map(p=>`<div class="event"><span>${escapeRosterText(p.name||'Jugador')} ${p.capNumber?`· Nº ${p.capNumber}`:''}</span><b>${p.participatedPeriods?.length||p.periods||0} períodos</b></div>`).join(''):'<p class="muted">Sin datos de participación.</p>'}</div>
   <div class="card"><h2>📝 Incidencias</h2>${events.filter(e=>e.eventType==='incident').length?events.filter(e=>e.eventType==='incident').map(e=>`<div class="event"><span>${escapeRosterText(e.incidentText||e.text||'')}</span><b>P${e.period}</b></div>`).join(''):'<p class="muted">Sin incidencias registradas.</p>'}</div>
-  <div class="card"><h2>📝 Todos los eventos</h2>${events.length?`<div class="timeline">${events.map(e=>`<div class="event"><span><span class="eventTime">${String(Math.floor((e.time||0)/60)).padStart(2,'0')}:${String((e.time||0)%60).padStart(2,'0')}</span> ${escapeRosterText(e.text||'')}</span><span>P${e.period||''}</span></div>`).join('')}</div>`:'<p class="muted">Sin eventos registrados.</p>'}<div class="actions"><button class="primary" onclick="printHistory()">📄 IMPRIMIR / GUARDAR PDF</button><button class="danger" onclick="deleteHistoryMatch('${m.id}')">🗑 ELIMINAR PARTIDO</button><button class="ghost" onclick="state.screen='history';render()">← Historial</button></div></div></section>`;
+  <div class="card"><h2>📝 Todos los eventos</h2>${events.length?`<div class="timeline">${events.map(e=>`<div class="event"><span><span class="eventTime">${String(Math.floor((e.time||0)/60)).padStart(2,'0')}:${String((e.time||0)%60).padStart(2,'0')}</span> ${escapeRosterText(e.text||'')}</span><span>P${e.period||''}</span></div>`).join('')}</div>`:'<p class="muted">Sin eventos registrados.</p>'}<div class="actions"><button class="primary" onclick="printHistory()">📄 IMPRIMIR / GUARDAR PDF</button>${adminDeleteButton(m.id,true)}<button class="ghost" onclick="state.screen='history';render()">← Historial</button></div></div></section>`;
 }
 function printHistory(){window.print()}
 function showHistory(){state.screen="history";render()}
