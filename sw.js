@@ -1,4 +1,4 @@
-const CACHE="aese-waterpolo-v20";
+const CACHE="aese-waterpolo-v21";
 const CORE=[
   "./",
   "./index.html",
