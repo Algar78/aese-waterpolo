@@ -3,6 +3,9 @@
     ready: false,
     configured: false,
     session: null,
+    role: null,
+    roleLoading: false,
+    roleError: null,
     error: null,
     client: null,
     view: "login",
@@ -17,6 +20,41 @@
   function refreshView() {
     if (typeof window.render === "function") window.render();
   }
+
+  async function loadUserRole(session) {
+    if (!session || !session.user || !authState.client) {
+      authState.role = null;
+      authState.roleError = null;
+      return;
+    }
+    authState.roleLoading = true;
+    authState.roleError = null;
+    try {
+      const result = await authState.client
+        .from("profiles")
+        .select("id,role")
+        .eq("id", session.user.id)
+        .maybeSingle();
+      if (result.error) throw result.error;
+      if (!result.data || !["admin","user"].includes(result.data.role)) {
+        throw new Error("La cuenta no tiene un rol válido en AESE Waterpolo. Contacta con el administrador.");
+      }
+      authState.role = result.data.role;
+    } catch (error) {
+      authState.role = null;
+      authState.roleError = error.message || "No se pudo comprobar el rol de la cuenta.";
+    } finally {
+      authState.roleLoading = false;
+      refreshView();
+    }
+  }
+
+  window.aeseIsAdmin = function () {
+    return window.AESE_AUTH?.role === "admin";
+  };
+  window.aeseUserRoleLabel = function () {
+    return window.AESE_AUTH?.role === "admin" ? "ADMINISTRADOR" : "USUARIO";
+  };
 
   const config = window.AESE_SUPABASE_CONFIG || {};
   const url = typeof config.url === "string" ? config.url.trim() : "";
@@ -49,6 +87,8 @@
     authState.client.auth.onAuthStateChange(function (event, session) {
       authState.session = session;
       authState.ready = true;
+      if (session) loadUserRole(session); else { authState.role = null; authState.roleError = null; }
+      if (session) loadUserRole(session); else { authState.role = null; authState.roleError = null; }
       authState.error = null;
       if (event === "PASSWORD_RECOVERY") {
         authState.passwordRecovery = true;
@@ -77,6 +117,7 @@
     authState.client.auth.getSession().then(function (result) {
       if (result.error) throw result.error;
       authState.session = result.data.session;
+      if (authState.session) await loadUserRole(authState.session);
       if (authState.session && authState.resetRequested) {
         authState.passwordRecovery = true;
         authState.view = "recovery";
@@ -87,6 +128,8 @@
       refreshView();
     }).catch(function (error) {
       authState.session = null;
+      authState.role = null;
+      authState.roleError = null;
       authState.ready = true;
       authState.error = error.message || "No se pudo comprobar la sesión.";
       refreshView();
@@ -140,7 +183,7 @@ window.aeseRequestPasswordReset = async function (event) {
 
   try {
     const result = await authState.client.auth.resetPasswordForEmail(email, {
-      redirectTo: "http://localhost:3000/?reset=1"
+      redirectTo: window.location.origin + window.location.pathname + "?reset=1"
     });
     if (result.error) throw result.error;
     authState.emailDraft = email;
