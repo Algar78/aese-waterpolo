@@ -585,7 +585,7 @@ function setSaveStatus(text){
 }
 async function persistMatchState(){
  if(!state.matchId||!window.AESE_AUTH?.client)return {ok:false,reason:"no-match"};
- if(completedMatchPersistedId===state.matchId){
+ if(!aeseIsAdmin()&&completedMatchPersistedId===state.matchId){
   setSaveStatus("🔒 Partido finalizado");
   return {ok:false,reason:"completed"};
  }
@@ -606,7 +606,7 @@ async function persistMatchState(){
   return {ok:false,error:result.error};
  }
  if(!result.data){
-  if(completedMatchPersistedId===state.matchId){
+  if(!aeseIsAdmin()&&completedMatchPersistedId===state.matchId){
    if(requestSeq===saveRequestSeq)setSaveStatus("🔒 Partido finalizado");
    return {ok:true,alreadyCompleted:true};
   }
