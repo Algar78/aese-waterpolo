@@ -337,6 +337,18 @@ let state = {
   timerRunning:false, remainingMs:240000, timerStartedAt:null, timeouts:[0,0], timeoutRunning:false, timeoutRemainingMs:0, lastSnapshot:null,
   periodLineups:{}, periodParticipation:{}, substitutionMode:false, pendingSubOut:null, pendingSubIn:null, selectedSubstitutionIndex:null, selectedSubstitutionSide:null, preMatchReviewPending:false, previousConvocationLoaded:false, selectedLineupPlayer:null
 };
+function restoreLocalMatch(){
+ try{
+  const saved=JSON.parse(localStorage.getItem("aese_prototype")||"null");
+  if(!saved||!saved.matchId)return;
+  const resumable=saved.screen==="match"||saved.screen==="roster";
+  const retryableFinal=saved.screen==="final"&&(saved.finalSyncStatus==="failed"||saved.finalSyncStatus==="pending");
+  if(!resumable&&!retryableFinal)return;
+  Object.assign(state,saved);
+  state.finishingMatch=false;state.timerRunning=false;state.timeoutRunning=false;state.timerStartedAt=null;
+ }catch(error){console.warn("[AESE] No se pudo recuperar la copia local.",error)}
+}
+restoreLocalMatch();
 let timerHandle=null;
 let wakeLockSentinel=null;
 async function maintainWakeLock(){
@@ -581,6 +593,7 @@ async function confirmRoster(){
  }catch(error){console.error("[AESE] No se pudo crear el partido.",error);toast(error.message||"No se pudo guardar el partido.")}
 }
 let saveRequestSeq=0;
+let pendingMatchSave=Promise.resolve({ok:true});
 let completedMatchPersistedId=null;
 function setSaveStatus(text){
  const status=document.getElementById("saveStatus");
@@ -1109,14 +1122,34 @@ function togglePeriod(i){
  if(lineup.active.length>=7){toast('Hay 7 jugadores en el agua: selecciona primero quién sale');return}
  snapshot();lineup.active.push(i);lineup.substitutions.push({out:null,in:i});lineup.initialsLocked=true;markPlayerParticipation(player,period);state.substitutionMode=false;addEvent(`🔄 Entrada por sustitución P${period} · ${playerLabel(player)}`);saveLocal();render()
 }
-function finishMatch(){syncTimer();state.timerRunning=false;state.timeoutRunning=false;state.preMatchReviewPending=false;state.screen='final';saveLocal();render()}
+async function finishMatch(){
+ if(state.finishingMatch)return;
+ syncTimer();state.timerRunning=false;state.timeoutRunning=false;state.preMatchReviewPending=false;
+ state.screen='final';state.finalSyncStatus='pending';state.finishingMatch=true;
+ const localSaved=saveLocal(false);
+ try{
+  await pendingMatchSave;
+  const result=await persistMatchState();
+  state.finalSyncStatus=result?.ok?'synced':'failed';
+ }catch(error){console.warn("[AESE] Falló la sincronización al finalizar.",error);state.finalSyncStatus='failed'}
+ state.finishingMatch=false;saveLocal(false);render();
+ if(state.finalSyncStatus==='failed')toast(localSaved?'Partido finalizado, NO sincronizado. Los datos locales siguen disponibles.':'Partido finalizado, NO sincronizado. Falló también la copia local.');
+}
 function snapshot(){state.lastSnapshot=JSON.parse(JSON.stringify({score:state.score,players:state.players,expulsions:state.expulsions,events:state.events,period:state.period,partials:state.partials,remainingMs:state.remainingMs,timerRunning:state.timerRunning,timerStartedAt:state.timerStartedAt,screen:state.screen,periodLineups:state.periodLineups,periodParticipation:state.periodParticipation,substitutionMode:state.substitutionMode,pendingSubOut:state.pendingSubOut,pendingSubIn:state.pendingSubIn,selectedSubstitutionIndex:state.selectedSubstitutionIndex,selectedSubstitutionSide:state.selectedSubstitutionSide}))}
 function openRivalNumber(){return}
 function findPlayerForExpulsionKey(key){
  const k=String(key??'');
  return state.players.find(p=>String(p.teamPlayerId??'')===k||String(p.playerId??'')===k||String(p.capNumber??p.num??'')===k||String(p.name??'')===k)||null;
 }
-function finalScreen(a){const goals=state.players.filter(p=>p.goals>0);const aeseLocal=state.venue!=='away';const leftName=aeseLocal?'AESE':state.rival;const rightName=aeseLocal?state.rival:'AESE';const leftScore=aeseLocal?state.score[0]:state.score[1];const rightScore=aeseLocal?state.score[1]:state.score[0];a.innerHTML=`<section class="screen"><div class="card"><h2>🏁 Partido finalizado</h2><div class="score"><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(leftName)}</span>${leftScore}</div><div>–</div><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(rightName)}</span>${rightScore}</div></div><p class="muted">${escapeRosterText(state.category)} · ${escapeRosterText(state.date)} · ${aeseLocal?'AESE LOCAL':'AESE VISITANTE'}</p></div><div class="card"><h2>Resumen</h2><h3>Goles</h3>${goals.length?goals.map(p=>`<div class="event"><span>${escapeRosterText(playerLabel(p))}</span><b>${p.goals}</b></div>`).join(''):'<p class="muted">Sin goles registrados individualmente.</p>'}<h3 style="margin-top:18px">Expulsiones</h3>
+async function retryFinalSync(){
+ if(state.finalSyncStatus==='pending')return;
+ state.finalSyncStatus='pending';saveLocal(false);render();
+ try{const result=await persistMatchState();state.finalSyncStatus=result?.ok?'synced':'failed'}
+ catch(error){console.warn("[AESE] Falló el reintento de sincronización.",error);state.finalSyncStatus='failed'}
+ saveLocal(false);render();
+ toast(state.finalSyncStatus==='synced'?'Partido sincronizado correctamente.':'Sigue sin sincronizar. Los datos locales se conservan.');
+}
+function finalScreen(a){const goals=state.players.filter(p=>p.goals>0);const aeseLocal=state.venue!=='away';const leftName=aeseLocal?'AESE':state.rival;const rightName=aeseLocal?state.rival:'AESE';const leftScore=aeseLocal?state.score[0]:state.score[1];const rightScore=aeseLocal?state.score[1]:state.score[0];a.innerHTML=`<section class="screen"><div class="card"><h2>🏁 Partido finalizado</h2>${state.finalSyncStatus==='failed'?'<p class="err" role="alert"><b>NO SINCRONIZADO.</b> Los datos de este partido siguen guardados en este dispositivo. Pulsa para reintentar.</p><button class="secondary" onclick="retryFinalSync()">🔄 REINTENTAR SINCRONIZACIÓN</button>':state.finalSyncStatus==='pending'?'<p class="warn" role="status">Sincronización en curso…</p>':state.finalSyncStatus==='synced'?'<p class="ok" role="status">Partido sincronizado.</p>':''}<div class="score"><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(leftName)}</span>${leftScore}</div><div>–</div><div class="scoreSide"><span class="scoreTeamName">${escapeRosterText(rightName)}</span>${rightScore}</div></div><p class="muted">${escapeRosterText(state.category)} · ${escapeRosterText(state.date)} · ${aeseLocal?'AESE LOCAL':'AESE VISITANTE'}</p></div><div class="card"><h2>Resumen</h2><h3>Goles</h3>${goals.length?goals.map(p=>`<div class="event"><span>${escapeRosterText(playerLabel(p))}</span><b>${p.goals}</b></div>`).join(''):'<p class="muted">Sin goles registrados individualmente.</p>'}<h3 style="margin-top:18px">Expulsiones</h3>
 <h4>🟢 AESE</h4>${Object.keys((state.expulsions&&state.expulsions.aese)||{}).length?Object.entries(state.expulsions.aese).map(([n,c])=>{const p=findPlayerForExpulsionKey(n);return `<div class="event"><span>${escapeRosterText(p?playerLabel(p):`Nº ${n}`)}</span><b>${c}</b></div>`}).join(''):'<p class="muted">Sin expulsiones AESE.</p>'}
 <h4>🔵 Rival</h4>${Object.keys((state.expulsions&&state.expulsions.rival)||{}).length?Object.entries(state.expulsions.rival).map(([n,c])=>`<div class="event"><span>Nº${escapeRosterText(n)}</span><b>${c}</b></div>`).join(''):'<p class="muted">Sin expulsiones rival.</p>'}<div class="actions"><button class="primary" onclick="window.print()">📄 IMPRIMIR / GUARDAR PDF</button><button class="secondary" onclick="shareSummary()">📤 COMPARTIR</button></div></div><div class="card"><h2>Eventos cronológicos</h2><div class="timeline">${state.events.map(e=>`<div class="event"><span><span class="eventTime">${String(Math.floor(e.time/60)).padStart(2,'0')}:${String(e.time%60).padStart(2,'0')}</span> ${escapeRosterText(e.text)}</span><span>P${e.period}</span></div>`).join('')}</div><div class="actions"><button class="ghost" onclick="state.screen='home';render()">🏠 INICIO</button></div></div></section>`}
 
@@ -1425,7 +1458,7 @@ function playerPick(i){const cb=window._playerCb;const p=state.players[i];closeM
 function openModal(content){const m=document.getElementById("modal");m.innerHTML=`<div class="modalbox">${content}<div class="actions"><button class="ghost" onclick="closeModal()">CANCELAR</button></div></div>`;m.classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 function undo(){if(state.lastSnapshot){const snap=state.lastSnapshot;state.score=snap.score;state.players=snap.players;state.expulsions=snap.expulsions;state.events=snap.events;state.period=snap.period;state.partials=snap.partials;state.remainingMs=snap.remainingMs;state.timerRunning=snap.timerRunning;state.timerStartedAt=snap.timerStartedAt;state.screen=snap.screen;state.periodLineups=snap.periodLineups||{};state.substitutionMode=snap.substitutionMode||false;state.pendingSubOut=snap.pendingSubOut??null;state.pendingSubIn=snap.pendingSubIn??null;state.selectedSubstitutionIndex=snap.selectedSubstitutionIndex??null;state.selectedSubstitutionSide=snap.selectedSubstitutionSide??null;state.lastSnapshot=null;saveLocal();render();toast('Última acción revertida')}else toast('No hay una acción reversible reciente')}
-function saveLocal(){
+function saveLocal(syncRemote=true){
  try{
   localStorage.setItem("aese_prototype",JSON.stringify(state));
  }catch(error){
@@ -1433,8 +1466,8 @@ function saveLocal(){
   console.warn("[AESE] No se pudo guardar la copia local.",error);
   return false;
  }
- if(state.matchId)persistMatchState();
- else setSaveStatus("● Guardado local");
+ if(state.matchId&&syncRemote)pendingMatchSave=persistMatchState().catch(error=>({ok:false,error}));
+ else if(!state.matchId)setSaveStatus("● Guardado local");
  return true;
 }
 function shareSummary(){if(navigator.share)navigator.share({title:"Resumen AESE Waterpolo",text:`${state.category}: AESE ${state.score[0]}-${state.score[1]} ${state.rival}`}).catch(()=>{});else{navigator.clipboard?.writeText(`AESE ${state.score[0]}-${state.score[1]} ${state.rival} · ${state.category}`);toast("Resumen copiado al portapapeles")}}
