@@ -191,8 +191,8 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
 </style>
 
 <style id="phone-force-layout">
-/* Teléfonos: aplicar interfaz móvil aunque el navegador entregue viewport apaisado */
-@media (pointer:coarse) and (max-width:1200px){
+/* Teléfonos: mantener la interfaz compacta en vertical y aprovechar el ancho en horizontal. */
+@media (pointer:coarse) and (max-width:1200px) and (orientation:portrait){
   html,body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
   .app{width:100%!important;max-width:100%!important;min-width:0!important}
   .screen{width:100%!important;min-width:0!important;padding:10px!important}
@@ -205,22 +205,44 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
   .poolWrap,.poolHalf{width:100%!important;max-width:100%!important;min-width:0!important}
   .poolSlot{width:88px!important}
 }
+
+/* Modo partido horizontal: prioridad a piscina, banquillo y controles visibles a la vez. */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:700px){
+  html,body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+  .app{width:100%!important;max-width:100%!important;min-width:0!important}
+  .top{height:52px!important;padding:6px 10px!important}
+  .screen{width:100%!important;min-width:0!important;padding:7px!important}
+  .card{padding:10px!important;margin-bottom:8px!important;border-radius:14px!important}
+  .scoreboard{padding:10px 12px!important;border-radius:14px!important}
+  .score{font-size:34px!important;gap:14px!important}
+  .scoreboard .timer{font-size:42px!important;margin:2px 0 3px!important}
+  .scoreboard .timerState{font-size:10px!important}
+  .rulebar{margin-top:5px!important;gap:5px!important}
+  .rulebar .badge{font-size:10px!important;padding:4px 7px!important}
+  .timerMainRow{margin-top:7px!important;grid-template-columns:1.15fr 1fr!important}
+  .timerMainRow button{min-height:46px!important;padding:8px 9px!important;font-size:12px!important}
+  .timerAdjustRow{margin-top:5px!important}
+  .timerAdjustRow button{min-height:38px!important;padding:6px 8px!important;font-size:11px!important}
+  .eventbar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+  .eventbar button{min-height:50px!important;padding:7px 5px!important;font-size:12px!important}
+  .actions{gap:7px!important;margin-top:8px!important}
+  .actions button{min-width:0!important;padding:8px 9px!important;font-size:11px!important}
+  .matchLineupLive{grid-template-columns:minmax(0,1fr) 250px!important;gap:9px!important}
+  .substitutionSidebar{position:sticky!important;top:7px!important;max-height:calc(100svh - 72px)!important;padding:9px!important;border-radius:14px!important}
+  .substitutionInstruction{margin:7px 0!important;padding:7px!important;font-size:10px!important}
+  .substitutionBenchList{gap:5px!important}
+  .substitutionBenchPlayer{padding:7px!important;border-radius:10px!important}
+  .substitutionBenchPlayer strong{font-size:11px!important}
+  .substitutionBenchPlayer .subCap,.substitutionBenchPlayer .subRole{font-size:8px!important}
+  .poolWrap{padding:8px!important;margin-top:7px!important;border-radius:16px!important}
+  .poolHalf{width:100%!important;max-width:none!important;aspect-ratio:1.55/1!important;border-width:4px!important;border-radius:16px 16px 10px 10px!important}
+  .poolSlot{width:76px!important;min-height:50px!important;padding:4px 3px!important;border-radius:10px!important}
+  .poolSlot .cap{font-size:13px!important}
+  .poolSlot .nm{font-size:8px!important;line-height:1.05!important}
+  .poolSlot .pos{font-size:7px!important}
+  .poolFieldNote{font-size:10px!important;margin:4px 2px 0!important}
+}
 </style>
-<script>
-(function(){
-  function lockPortrait(){
-    try{
-      if(screen.orientation && screen.orientation.lock){
-        screen.orientation.lock('portrait').catch(function(){});
-      }
-    }catch(e){}
-  }
-  lockPortrait();
-  document.addEventListener('visibilitychange',function(){
-    if(!document.hidden) lockPortrait();
-  });
-})();
-</script>
 
 
 <style id="pool-mobile-vertical-fix">
@@ -1122,7 +1144,7 @@ function togglePeriod(i){
  if(lineup.active.length>=7){toast('Hay 7 jugadores en el agua: selecciona primero quién sale');return}
  snapshot();lineup.active.push(i);lineup.substitutions.push({out:null,in:i});lineup.initialsLocked=true;markPlayerParticipation(player,period);state.substitutionMode=false;addEvent(`🔄 Entrada por sustitución P${period} · ${playerLabel(player)}`);saveLocal();render()
 }
-async async function finishMatch(){
+async function finishMatch(){
  if(state.finishingMatch)return;
  syncTimer();state.timerRunning=false;state.timeoutRunning=false;state.preMatchReviewPending=false;
  state.screen='final';state.finalSyncStatus='pending';state.finishingMatch=true;
