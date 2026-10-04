@@ -88,7 +88,6 @@
       authState.session = session;
       authState.ready = true;
       if (session) loadUserRole(session); else { authState.role = null; authState.roleError = null; }
-      if (session) loadUserRole(session); else { authState.role = null; authState.roleError = null; }
       authState.error = null;
       if (event === "PASSWORD_RECOVERY") {
         authState.passwordRecovery = true;
@@ -114,7 +113,7 @@
       refreshView();
     });
 
-    authState.client.auth.getSession().then(function (result) {
+    authState.client.auth.getSession().then(async function (result) {
       if (result.error) throw result.error;
       authState.session = result.data.session;
       if (authState.session) await loadUserRole(authState.session);
