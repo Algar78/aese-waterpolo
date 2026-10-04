@@ -957,19 +957,21 @@ function openRivalModal(title,cb){openModal(`<h2>${title}</h2><p class="muted">S
 function rivalPick(n){const cb=window._rivalCb;closeModal();cb(n)}
 function expulsion(){if(!state.timerRunning){toast('Inicia el cronómetro antes de registrar una expulsión.');return}openModal(`<h2>🚨 EXPULSIÓN</h2><p class="muted">Indica primero a qué equipo corresponde la expulsión.</p><div class="actions"><button class="primary big" onclick="expulsionTeam(true)">🟢 AESE</button><button class="secondary big" onclick="expulsionTeam(false)">🔵 RIVAL</button></div>`)}
 function expulsionTeam(ae){
-  if(ae){openPlayerModal('🚨 EXPULSIÓN AESE',p=>registerExpulsion(true,p.num,p.name));}
+  if(ae){openPlayerModal('🚨 EXPULSIÓN AESE',p=>registerExpulsion(true,p));}
   else{openRivalModal('🚨 EXPULSIÓN RIVAL',n=>registerExpulsion(false,n,`Rival Nº${n}`));}
 }
-function registerExpulsion(ae,num,name){
+function registerExpulsion(ae,playerOrNum,name){
   snapshot();
   if(!state.expulsions || Array.isArray(state.expulsions) || (!state.expulsions.aese && !state.expulsions.rival)) state.expulsions={aese:{},rival:{}};
   const team=ae?'aese':'rival';
-  const playerKey=ae&&(num===null||num===undefined||num==='')?name:num;
-  const label=ae?playerLabel({num,name}):`Nº ${num}`;
+  const player=ae&&playerOrNum&&typeof playerOrNum==='object'?playerOrNum:null;
+  const num=player?player.capNumber??player.num??null:playerOrNum;
+  const label=ae?(player?playerLabel(player):`Nº ${num}`):`Nº ${num}`;
+  const playerKey=ae&&player?.teamPlayerId?String(player.teamPlayerId):(ae&&player?.playerId?String(player.playerId):(ae&&num!==null&&num!==undefined&&num!==''?String(num):String(name||num)));
   state.expulsions[team][playerKey]=(state.expulsions[team][playerKey]||0)+1;
   const count=state.expulsions[team][playerKey];
-  const player=ae?state.players.find(p=>String(p.num)===String(num)||String(p.capNumber)===String(num)||p.name===name):null;
-  addEvent(`🚨 Expulsión ${ae?'AESE':'rival'} · ${label}`,{eventType:'exclusion',team, ...(player?eventPlayerMeta(player):{playerCapNumber:num,playerName:name})});
+  const meta=ae&&player?eventPlayerMeta(player):{playerCapNumber:num,playerName:name||label};
+  addEvent(`🚨 Expulsión ${ae?'AESE':'rival'} · ${label}`,{eventType:'exclusion',team,...meta});
   saveLocal();render();
   if(count===2){
     openModal(`<h2>⚠️ SEGUNDA EXPULSIÓN</h2><div class="card" style="margin:12px 0"><strong>${ae?'AESE':'RIVAL'}</strong><br><span style="font-size:1.25rem">${label}</span><br><b>Ya tiene 2 expulsiones registradas.</b></div><p class="muted">Revisa la situación del jugador.</p>`);
@@ -1273,10 +1275,17 @@ async function history(a){
   if(result.error){console.error('[AESE] Historial:',result.error);document.getElementById('historyList').innerHTML='<p class="muted">No se pudo cargar el historial.</p>';return}
   const rows=result.data||[];
   if(!rows.length){document.getElementById('historyList').innerHTML='<p class="muted">Todavía no hay partidos finalizados.</p>';return}
-  document.getElementById('historyList').innerHTML=rows.map(m=>`<div class="historyRow"><button class="event historyOpenBtn" style="width:100%;text-align:left;cursor:pointer" onclick="openHistoryMatch('${m.id}')"><span><b>${escapeRosterText(m.teams?.name||'Equipo')}</b><br><span class="muted">${escapeRosterText(m.match_date||'')} · ${escapeRosterText(m.rival||'')}</span></span><b>${m.score_aese}-${m.score_opponent}</b></button><button type="button" class="danger historyDeleteBtn" onclick="event.stopPropagation();deleteHistoryMatch('${m.id}')">🗑 ELIMINAR</button></div>`).join('');
+  document.getElementById('historyList').innerHTML=rows.map(m=>`<div class="historyRow"><button class="event historyOpenBtn" style="width:100%;text-align:left;cursor:pointer" onclick="openHistoryMatch('${m.id}')"><span><b>${escapeRosterText(m.teams?.name||'Equipo')}</b><br><span class="muted">${escapeRosterText(m.match_date||'')} · ${escapeRosterText(m.rival||'')}</span></span><b>${m.score_aese}-${m.score_opponent}</b></button>${adminDeleteButton(m.id,false)}</div>`).join('');
+}
+function adminDeleteButton(id,detail){
+ if(!aeseIsAdmin())return '';
+ const safeId=String(id||'').replace(/'/g,"\\'");
+ if(detail)return '${adminDeleteButton(m.id,true)}';
+ return '<button type="button" class="danger historyDeleteBtn" onclick="event.stopPropagation();deleteHistoryMatch(\''+safeId+'\')">🗑 ELIMINAR</button>';
 }
 async function deleteHistoryMatch(id){
   const client=window.AESE_AUTH?.client;if(!client)return;
+  if(!aeseIsAdmin()){toast('Solo el administrador puede eliminar partidos.');return}
   if(!id)return;
   const ok=window.confirm('¿Eliminar definitivamente este partido del historial? Se borrarán sus convocados y el registro del partido. Esta acción no se puede deshacer.');
   if(!ok)return;
