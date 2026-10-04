@@ -1283,9 +1283,9 @@ async function history(a){
 }
 function adminDeleteButton(id,detail){
  if(!aeseIsAdmin())return '';
- const safeId=String(id||'').replace(/'/g,"\\'");
- if(detail)return '<button class="danger" onclick="deleteHistoryMatch(\\''+safeId+'\\')">🗑 ELIMINAR PARTIDO</button>';
- return '<button type="button" class="danger historyDeleteBtn" onclick="event.stopPropagation();deleteHistoryMatch(\\''+safeId+'\\')">🗑 ELIMINAR</button>';
+ const safeId=String(id||'');
+ if(detail)return '<button class="danger" onclick="deleteHistoryMatch(&quot;'+safeId+'&quot;)">🗑 ELIMINAR PARTIDO</button>';
+ return '<button type="button" class="danger historyDeleteBtn" onclick="event.stopPropagation();deleteHistoryMatch(&quot;'+safeId+'&quot;)">🗑 ELIMINAR</button>';
 }
 async function deleteHistoryMatch(id){
   const client=window.AESE_AUTH?.client;if(!client)return;
