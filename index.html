@@ -1122,7 +1122,7 @@ function togglePeriod(i){
  if(lineup.active.length>=7){toast('Hay 7 jugadores en el agua: selecciona primero quién sale');return}
  snapshot();lineup.active.push(i);lineup.substitutions.push({out:null,in:i});lineup.initialsLocked=true;markPlayerParticipation(player,period);state.substitutionMode=false;addEvent(`🔄 Entrada por sustitución P${period} · ${playerLabel(player)}`);saveLocal();render()
 }
-async function finishMatch(){
+async async function finishMatch(){
  if(state.finishingMatch)return;
  syncTimer();state.timerRunning=false;state.timeoutRunning=false;state.preMatchReviewPending=false;
  state.screen='final';state.finalSyncStatus='pending';state.finishingMatch=true;
