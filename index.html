@@ -578,19 +578,25 @@ async function confirmRoster(){
  }catch(error){console.error("[AESE] No se pudo crear el partido.",error);toast(error.message||"No se pudo guardar el partido.")}
 }
 let saveRequestSeq=0;
+let completedMatchPersistedId=null;
 function setSaveStatus(text){
  const status=document.getElementById("saveStatus");
  if(status)status.textContent=text;
 }
 async function persistMatchState(){
  if(!state.matchId||!window.AESE_AUTH?.client)return {ok:false,reason:"no-match"};
+ if(completedMatchPersistedId===state.matchId){
+  setSaveStatus("🔒 Partido finalizado");
+  return {ok:false,reason:"completed"};
+ }
  const client=window.AESE_AUTH.client;
  const requestSeq=++saveRequestSeq;
  setSaveStatus("↻ Guardando…");
  const snapshot={...state,matchId:undefined};
  delete snapshot.matchId;
+ const persistedStatus=state.screen==="final"?"completed":(state.started?"in_progress":"draft");
  const result=await client.from("matches").update({
-  status:state.screen==="final"?"completed":(state.started?"in_progress":"draft"),
+  status:persistedStatus,
   score_aese:state.score[0],score_opponent:state.score[1],current_period:state.period,
   period_remaining_ms:Math.max(0,Math.round(state.remainingMs)),state_snapshot:snapshot,updated_at:new Date().toISOString()
  }).eq("id",state.matchId).select("id").maybeSingle();
@@ -600,11 +606,16 @@ async function persistMatchState(){
   return {ok:false,error:result.error};
  }
  if(!result.data){
+  if(completedMatchPersistedId===state.matchId){
+   if(requestSeq===saveRequestSeq)setSaveStatus("🔒 Partido finalizado");
+   return {ok:true,alreadyCompleted:true};
+  }
   if(requestSeq===saveRequestSeq)setSaveStatus("⚠ No sincronizado");
   console.warn("[AESE] La actualización no afectó a ningún partido. Puede haber una restricción RLS.");
   return {ok:false,error:new Error("La actualización no afectó a ningún partido.")};
  }
- if(requestSeq===saveRequestSeq)setSaveStatus("● Guardado");
+ if(persistedStatus==="completed")completedMatchPersistedId=state.matchId;
+ if(requestSeq===saveRequestSeq)setSaveStatus(persistedStatus==="completed"?"🔒 Partido finalizado":"● Guardado");
  return {ok:true};
 }
 function currentGameSeconds(){const r=state.remainingMs;return Math.max(0,Math.round(RULES[state.category].periodSeconds-r/1000))}
