@@ -30,6 +30,9 @@ where lower(id::text) = lower(id::text)
 alter table public.matches
   add column if not exists created_by uuid references auth.users(id) on delete set null;
 
+alter table public.matches
+  alter column created_by set default auth.uid();
+
 update public.matches
 set created_by = null
 where created_by is not null
@@ -103,7 +106,7 @@ begin
 end $$;
 
 revoke all on table public.profiles from anon;
-grant select on table public.profiles to authenticated;
+grant select, update on table public.profiles to authenticated;
 
 create policy "profiles_select_own_or_admin"
 on public.profiles for select
@@ -117,7 +120,7 @@ using ((select private.is_admin()))
 with check ((select private.is_admin()));
 
 revoke all on table public.seasons, public.categories, public.teams, public.players, public.team_players from anon;
-grant select on table public.seasons, public.categories, public.teams, public.players, public.team_players to authenticated;
+grant select, insert, update, delete on table public.seasons, public.categories, public.teams, public.players, public.team_players to authenticated;
 
 create policy "seasons_select_authenticated" on public.seasons
 for select to authenticated using (true);
