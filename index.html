@@ -241,7 +241,7 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
   .poolSlot .nm{font-size:8px!important;line-height:1.05!important}
   .poolSlot .pos{font-size:7px!important}
   .poolFieldNote{font-size:10px!important;margin:4px 2px 0!important}
-}
+
   /* Convocatoria en horizontal: todas las opciones visibles sin scroll lateral. */
   .rosterCard .players{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
   .rosterCard .player{min-width:0!important;width:100%!important;padding:8px!important;min-height:64px!important;gap:6px!important}
@@ -252,8 +252,24 @@ button,input,select,textarea{max-width:100%;box-sizing:border-box}
   .rosterCard .grid.grid3{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
   .rosterCard .actions{display:grid!important;grid-template-columns:1fr 1.4fr!important}
   .rosterCard .actions button{width:100%!important}
+}
 </style>
 
+
+<style id="roster-responsive-layout">
+/* Convocatoria vertical: dos columnas legibles dentro del ancho del móvil. */
+@media (pointer:coarse) and (max-width:700px) and (orientation:portrait){
+  .rosterCard,.rosterCard .players,.rosterCard .player{min-width:0!important;max-width:100%!important}
+  .rosterCard .players{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .rosterCard .player{padding:7px!important;min-height:68px!important;gap:4px!important;overflow:hidden}
+  .rosterCard .player>button{min-width:0!important;padding:6px 3px!important}
+  .rosterCard .player strong{font-size:clamp(10px,3.2vw,13px)!important;line-height:1.15!important;overflow-wrap:anywhere}
+  .rosterCard .player span{font-size:10px!important;line-height:1.15!important}
+  .rosterCard .player input{width:48px!important;flex:0 0 48px!important;padding:8px 3px!important;font-size:13px!important}
+  .rosterCard .grid.grid3{grid-template-columns:1fr!important;gap:8px!important}
+  .rosterCard .actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+}
+</style>
 
 <style id="pool-mobile-vertical-fix">
 /* === MAPA PISCINA · AJUSTE MÓVIL VERTICAL === */
