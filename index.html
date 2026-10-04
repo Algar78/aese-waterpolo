@@ -1355,7 +1355,14 @@ if(!timerHandle){timerHandle=setInterval(()=>{tick();tickTimeout()},1000)}
 render();
 </script>
 <script>
-if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('[AESE] SW',err)));
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message',event=>{
+    if(event.data?.type==='AESE_UPDATE_READY'){
+      setTimeout(()=>toast('🆕 Hay una nueva versión de AESE Waterpolo. Recarga la aplicación.'),500);
+    }
+  });
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('[AESE] SW',err)));
+}
 </script>
 </body>
 </html>
