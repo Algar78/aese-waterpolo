@@ -171,8 +171,17 @@ with check ((select auth.uid()) = created_by);
 create policy "matches_update_own_or_admin"
 on public.matches for update
 to authenticated
-using ((select auth.uid()) = created_by or (select private.is_admin()))
-with check ((select auth.uid()) = created_by or (select private.is_admin()));
+using (
+  (select private.is_admin())
+  or (
+    (select auth.uid()) = created_by
+    and status <> 'completed'
+  )
+)
+with check (
+  (select private.is_admin())
+  or (select auth.uid()) = created_by
+);
 
 create policy "matches_delete_admin"
 on public.matches for delete
@@ -197,6 +206,7 @@ with check (
     select 1 from public.matches m
     where m.id = match_players.match_id
       and m.created_by = (select auth.uid())
+      and m.status <> 'completed'
   )
 );
 
@@ -209,6 +219,7 @@ using (
     select 1 from public.matches m
     where m.id = match_players.match_id
       and m.created_by = (select auth.uid())
+      and m.status <> 'completed'
   )
 )
 with check (
