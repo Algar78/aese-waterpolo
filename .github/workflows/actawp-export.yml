@@ -8,6 +8,10 @@ on:
     - cron: '*/15 * * * *'
       timezone: 'Europe/Madrid'
 
+concurrency:
+  group: actawp-export
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
