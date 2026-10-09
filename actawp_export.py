@@ -9,23 +9,26 @@ import requests
 from actawp_sync import CALENDARS, calendar_url, parse_calendar_html
 
 OUT = Path("data/actawp_matches.json")
+JINA_BASE = "https://r.jina.ai/"
 
 
 def fetch_with_retry(category, tournament_id, calendar_id):
-    url = calendar_url(tournament_id, calendar_id)
+    target_url = calendar_url(tournament_id, calendar_id)
+    proxy_url = JINA_BASE + target_url
     headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; AESE-Waterpolo-Calendar-Sync/1.0)",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "ca-ES,ca;q=0.9,es;q=0.8,en;q=0.7",
-        "Cache-Control": "no-cache",
+        "Accept": "text/html",
+        "X-Respond-With": "html",
+        "X-No-Cache": "true",
+        "User-Agent": "AESE-Waterpolo-Calendar-Sync/1.0",
     }
     last = None
-    for attempt in range(5):
+    for attempt in range(3):
         try:
-            response = requests.get(url, timeout=30, headers=headers)
-            if response.status_code == 429:
-                wait = 15 * (attempt + 1)
-                print(f"429 en {category}; esperando {wait}s")
+            response = requests.get(proxy_url, timeout=90, headers=headers)
+            if response.status_code in (429, 503):
+                retry_after = response.headers.get("Retry-After")
+                wait = int(retry_after) if retry_after and retry_after.isdigit() else 20 * (attempt + 1)
+                print(f"{response.status_code} en Jina para {category}; esperando {wait}s")
                 time.sleep(wait)
                 continue
             response.raise_for_status()
@@ -35,18 +38,19 @@ def fetch_with_retry(category, tournament_id, calendar_id):
             return matches
         except Exception as exc:
             last = exc
-            if attempt < 4:
-                time.sleep(5 * (attempt + 1))
+            if attempt < 2:
+                time.sleep(10 * (attempt + 1))
             else:
                 raise
-    raise last or RuntimeError("No se pudo consultar ActaWP")
+    raise last or RuntimeError("No se pudo consultar ActaWP mediante Jina")
 
 
 def main():
     all_matches = []
     for index, (category, (tournament_id, calendar_id)) in enumerate(CALENDARS.items()):
         if index:
-            time.sleep(8)
+            # Stay comfortably below Jina's unauthenticated request-rate limit.
+            time.sleep(5)
         matches = fetch_with_retry(category, tournament_id, calendar_id)
         print(f"{category}: {len(matches)} partidos")
         all_matches.extend(match.to_dict() for match in matches)
