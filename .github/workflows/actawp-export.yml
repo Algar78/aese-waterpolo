@@ -1,0 +1,38 @@
+name: ActaWP export
+
+on:
+  push:
+    branches: [actawp-calendar-sync]
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+      timezone: 'Europe/Madrid'
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements-actawp.txt
+
+      - name: Fetch ActaWP calendars
+        run: python actawp_export.py
+
+      - name: Publish JSON snapshot
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/actawp_matches.json
+          git diff --cached --quiet || git commit -m 'Update ActaWP calendar snapshot'
+          git push
