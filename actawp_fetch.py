@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 
 import requests
 
@@ -26,7 +26,7 @@ def _solve_pow(seed: str, bits: int) -> int:
         nonce += 1
 
 
-def fetch_html(url: str, timeout: int = 30) -> str:
+def _fetch_direct(url: str, timeout: int) -> str:
     response = _SESSION.get(url, headers=_HEADERS, timeout=timeout)
     if response.status_code == 200 and 'Comprovant el teu navegador' not in response.text:
         return response.text
@@ -56,3 +56,20 @@ def fetch_html(url: str, timeout: int = 30) -> str:
     if 'Comprovant el teu navegador' in final.text:
         raise RuntimeError('ActaWP sigue mostrando el desafío PoW tras resolverlo')
     return final.text
+
+
+def _fetch_translate(url: str, timeout: int) -> str:
+    proxy = 'https://translate.google.com/translate?sl=auto&tl=en&u=' + quote(url, safe='')
+    response = requests.get(proxy, headers=_HEADERS, timeout=timeout)
+    response.raise_for_status()
+    if 'tabletype-public' not in response.text and '/match/' not in response.text:
+        raise RuntimeError('Google Translate no devolvió el HTML de ActaWP esperado')
+    return response.text
+
+
+def fetch_html(url: str, timeout: int = 30) -> str:
+    try:
+        return _fetch_direct(url, timeout)
+    except (requests.RequestException, RuntimeError) as exc:
+        print(f'ActaWP directo falló ({exc}); probando Google Translate proxy')
+        return _fetch_translate(url, timeout)
