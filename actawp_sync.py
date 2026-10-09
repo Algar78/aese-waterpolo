@@ -1,14 +1,9 @@
-"""Extractor independiente de calendarios públicos ActaWP para AESE Waterpolo.
-
-No modifica la aplicación ni el flujo actual Clupik -> Gmail -> Calendar.
-Lee el HTML server-rendered de los calendarios públicos y devuelve partidos
-normalizados por el ID estable de ActaWP.
-"""
+"""Extractor independiente de calendarios públicos ActaWP para AESE Waterpolo."""
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from html import unescape
 import re
 from zoneinfo import ZoneInfo
@@ -66,25 +61,31 @@ def _extract_round(soup: BeautifulSoup) -> str | None:
     if not heading:
         return None
     text = _clean(heading.get_text(" ", strip=True))
-    match = re.search(r"Jornada\s+(.+?)(?:\s*\(|$)", text, re.I)
+    match = re.search(r"Jornada\s+\d+(?:\s*[-–]\s*\d+)?", text, re.I)
     return match.group(0).strip() if match else None
 
 
 def _extract_local_datetime(data_sort: str, display_text: str) -> datetime:
+    """Return the displayed Europe/Madrid time.
+
+    ActaWP exposes a data-sort timestamp that is UTC-like while the page also
+    displays the actual local time with GMT offset. When the explicit display
+    is present, use that offset directly; otherwise fall back to data-sort as
+    UTC and convert to Europe/Madrid.
+    """
     displayed = _clean(display_text)
-    explicit = re.search(r"(\d{1,2}:\d{2})\s+GMT([+-]\d{1,2})", displayed)
+    explicit = re.search(
+        r"(\d{1,2})/(\d{1,2})/(\d{2,4}).*?(\d{1,2}:\d{2})\s+GMT([+-]\d{1,2})",
+        displayed,
+    )
     if explicit:
-        time_text = explicit.group(1)
-        offset_hours = int(explicit.group(2))
-        date_match = re.search(r"(\d{1,2})/(\d{1,2})/(\d{2,4})", displayed)
-        if date_match:
-            day, month, year = map(int, date_match.groups())
-            if year < 100:
-                year += 2000
-            hour, minute = map(int, time_text.split(":"))
-            from datetime import timedelta
-            fixed = datetime(year, month, day, hour, minute, tzinfo=timezone.utc)
-            return (fixed + timedelta(hours=offset_hours)).astimezone(MADRID)
+        day, month, year = map(int, explicit.group(1, 2, 3))
+        if year < 100:
+            year += 2000
+        hour, minute = map(int, explicit.group(4).split(":"))
+        offset_hours = int(explicit.group(5))
+        fixed_zone = timezone(timedelta(hours=offset_hours))
+        return datetime(year, month, day, hour, minute, tzinfo=fixed_zone).astimezone(MADRID)
 
     match = re.search(r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})", data_sort)
     if not match:
