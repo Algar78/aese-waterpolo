@@ -11,7 +11,7 @@ r = requests.get(
     timeout=60,
     headers={
         'X-Respond-With': 'html',
-        'X-Engine': 'browser',
+        'X-Engine': 'direct',
         'X-No-Cache': 'true',
         'User-Agent': 'AESE-Waterpolo-Calendar-Sync/1.0',
     },
