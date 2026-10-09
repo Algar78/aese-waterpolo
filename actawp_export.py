@@ -15,10 +15,7 @@ def fetch_with_retry(category, tournament_id, calendar_id):
     for attempt in range(2):
         try:
             html = fetch_html(url, timeout=30)
-            matches = parse_calendar_html(html, category, tournament_id, calendar_id)
-            if not matches:
-                raise RuntimeError(f"Calendario {category} respondió pero no contiene partidos extraíbles")
-            return matches
+            return parse_calendar_html(html, category, tournament_id, calendar_id)
         except Exception as exc:
             print(f"Error en {category}: {exc}")
             if attempt == 0:
@@ -34,16 +31,16 @@ def main():
         if index:
             time.sleep(2)
         matches = fetch_with_retry(category, tournament_id, calendar_id)
-        print(f"{category}: {len(matches)} partidos")
+        print(f"{category}: {len(matches)} partidos AESE")
         all_matches.extend(match.to_dict() for match in matches)
 
     unique = {item["match_id"]: item for item in all_matches}
     output = sorted(unique.values(), key=lambda item: item["start"])
     if not output:
-        raise RuntimeError("No se han extraído partidos; no se publica snapshot vacío")
+        raise RuntimeError("No se han encontrado partidos AESE; no se publica snapshot vacío")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"TOTAL: {len(output)} partidos únicos")
+    print(f"TOTAL: {len(output)} partidos AESE únicos")
 
 
 if __name__ == "__main__":
