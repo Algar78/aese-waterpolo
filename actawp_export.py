@@ -17,6 +17,15 @@ def fetch_with_retry(category, tournament_id, calendar_id):
         try:
             html = fetch_html(url, timeout=30)
             matches = parse_calendar_html(html, category, tournament_id, calendar_id)
+
+            # Un calendario puede ser perfectamente válido y no tener todavía
+            # ningún partido de AESE. Solo tratamos como error una respuesta
+            # que no parezca el calendario público esperado de ActaWP.
+            if not matches and 'tabletype-public' not in html:
+                raise RuntimeError(
+                    f"Calendario {category} respondió pero no contiene la tabla pública esperada"
+                )
+
             print(f"{category}: {len(matches)} partidos AESE")
             return matches
         except Exception as exc:
