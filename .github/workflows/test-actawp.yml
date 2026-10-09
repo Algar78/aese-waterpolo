@@ -1,0 +1,40 @@
+name: Test ActaWP extractor
+
+on:
+  push:
+    branches:
+      - actawp-calendar-sync
+  workflow_dispatch:
+
+jobs:
+  test-actawp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements-actawp.txt
+
+      - name: Test ActaWP calendar
+        run: |
+          python - <<'PY'
+          from actawp_sync import fetch_calendar
+
+          matches = fetch_calendar('Absoluto Masculino', 1339803, 3714121)
+          print(f'Matches found: {len(matches)}')
+          target = next((m for m in matches if m.match_id == 145573547), None)
+          if target is None:
+              raise SystemExit('Known match 145573547 was not found')
+          print(target)
+          if target.home_team != 'A.E. SANTA EULÀLIA' or target.away_team != 'C.N. MARTORELL':
+              raise SystemExit(f'Unexpected teams: {target.home_team} vs {target.away_team}')
+          if not target.start.startswith('2026-09-26T16:00:'):
+              raise SystemExit(f'Unexpected local start: {target.start}')
+          print('ACTAWP TEST OK')
+          PY
