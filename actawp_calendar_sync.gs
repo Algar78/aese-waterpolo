@@ -7,7 +7,7 @@
  */
 
 const ACTAWP_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/Algar78/aese-waterpolo/actawp-calendar-sync/data/actawp_matches.json';
+  'https://raw.githubusercontent.com/Algar78/aese-waterpolo/main/data/actawp_matches.json';
 
 const ACTAWP_CALENDAR_ID =
   '68af70845551fc729e20ff0ff1ca9f69bbbadade7031e6b90ace51fbcd279c7f@group.calendar.google.com';
@@ -17,7 +17,6 @@ const ACTAWP_SYNC_PROPERTY = 'ACTAWP_LAST_SYNC';
 const ACTAWP_MARKER = 'ACTAWP_MATCH_ID:';
 const DEFAULT_DURATION_MINUTES = 90;
 
-/** Main entry point. Run this once manually after pasting into Apps Script. */
 function syncActaWPToCalendar() {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -90,7 +89,6 @@ function reconcileActaWPMatch_(calendar, match) {
     }
   }
 
-  // Recovery path if Script Properties were lost or the event was recreated.
   if (!event) {
     event = findActaWPEvent_(calendar, id, start);
   }
@@ -147,7 +145,7 @@ function formatActaWPTitle_(match, start) {
 }
 
 function buildActaWPDescription_(match) {
-  const lines = [
+  return [
     ACTAWP_MARKER + match.match_id,
     'Categoría: ' + (match.category || ''),
     'Jornada: ' + (match.round_name || ''),
@@ -155,11 +153,9 @@ function buildActaWPDescription_(match) {
     'ActaWP: ' + (match.url || ''),
     '',
     'Evento sincronizado automáticamente desde ActaWP.'
-  ];
-  return lines.join('\n');
+  ].join('\n');
 }
 
-/** Creates the recurring trigger used in production. Safe to run repeatedly. */
 function installActaWPSyncTrigger() {
   const functionName = 'syncActaWPToCalendar';
   ScriptApp.getProjectTriggers().forEach(trigger => {
@@ -174,7 +170,6 @@ function installActaWPSyncTrigger() {
     .create();
 }
 
-/** Diagnostic: prints current sync timestamp and configured calendar. */
 function checkActaWPConfig() {
   const calendar = CalendarApp.getCalendarById(ACTAWP_CALENDAR_ID);
   console.log('Calendar: ' + (calendar ? calendar.getName() : 'NOT FOUND'));
