@@ -58,9 +58,18 @@ def _fetch_direct(url: str, timeout: int) -> str:
     return final.text
 
 
+def _fetch_corsfix(url: str, timeout: int) -> str:
+    proxy = 'https://proxy-eu.corsfix.com/?' + url
+    response = requests.get(proxy, headers=_HEADERS, timeout=min(timeout, 20))
+    response.raise_for_status()
+    if 'tabletype-public' not in response.text and '/match/' not in response.text:
+        raise RuntimeError('Corsfix no devolvió el HTML de ActaWP esperado')
+    return response.text
+
+
 def _fetch_translate(url: str, timeout: int) -> str:
     proxy = 'https://translate.google.com/translate?sl=auto&tl=en&u=' + quote(url, safe='')
-    response = requests.get(proxy, headers=_HEADERS, timeout=timeout)
+    response = requests.get(proxy, headers=_HEADERS, timeout=min(timeout, 20))
     response.raise_for_status()
     if 'tabletype-public' not in response.text and '/match/' not in response.text:
         raise RuntimeError('Google Translate no devolvió el HTML de ActaWP esperado')
@@ -70,6 +79,10 @@ def _fetch_translate(url: str, timeout: int) -> str:
 def fetch_html(url: str, timeout: int = 30) -> str:
     try:
         return _fetch_direct(url, timeout)
-    except (requests.RequestException, RuntimeError) as exc:
-        print(f'ActaWP directo falló ({exc}); probando Google Translate proxy')
-        return _fetch_translate(url, timeout)
+    except (requests.RequestException, RuntimeError) as direct_exc:
+        print(f'ActaWP directo falló ({direct_exc}); probando Corsfix EU')
+        try:
+            return _fetch_corsfix(url, timeout)
+        except (requests.RequestException, RuntimeError) as proxy_exc:
+            print(f'Corsfix EU falló ({proxy_exc}); probando Google Translate')
+            return _fetch_translate(url, timeout)
