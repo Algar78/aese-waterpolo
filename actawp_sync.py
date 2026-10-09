@@ -13,8 +13,9 @@ from html import unescape
 import re
 from zoneinfo import ZoneInfo
 
-import requests
 from bs4 import BeautifulSoup
+
+from actawp_fetch import fetch_html
 
 MADRID = ZoneInfo("Europe/Madrid")
 
@@ -70,13 +71,6 @@ def _extract_round(soup: BeautifulSoup) -> str | None:
 
 
 def _extract_local_datetime(data_sort: str, display_text: str) -> datetime:
-    """Return Europe/Madrid time.
-
-    ActaWP's data-sort timestamp is observed two hours behind the displayed
-    GMT+2 time in the 2026-27 calendar. We therefore interpret data-sort as
-    UTC and convert it to Europe/Madrid instead of treating it as local time.
-    If a displayed time contains an explicit GMT offset, it is preferred.
-    """
     displayed = _clean(display_text)
     explicit = re.search(r"(\d{1,2}:\d{2})\s+GMT([+-]\d{1,2})", displayed)
     if explicit:
@@ -88,11 +82,8 @@ def _extract_local_datetime(data_sort: str, display_text: str) -> datetime:
             if year < 100:
                 year += 2000
             hour, minute = map(int, time_text.split(":"))
-            fixed = datetime(year, month, day, hour, minute, tzinfo=timezone.utc).replace(
-                tzinfo=timezone.utc
-            )
-            # GMT+2 is enough for the displayed timestamp; final output is Madrid.
             from datetime import timedelta
+            fixed = datetime(year, month, day, hour, minute, tzinfo=timezone.utc)
             return (fixed + timedelta(hours=offset_hours)).astimezone(MADRID)
 
     match = re.search(r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})", data_sort)
@@ -111,18 +102,13 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
         link = row.select_one('a[href*="/match/"][href$="/results"]')
         if not link:
             continue
-
         match_id_match = re.search(r"/match/(\d+)/results", link.get("href", ""))
         if not match_id_match:
             continue
         match_id = int(match_id_match.group(1))
 
-        teams = [
-            _clean(node.get("title") or node.get_text(" ", strip=True))
-            for node in row.select(".colstyle-equipo span.ellipsis")
-        ]
+        teams = [_clean(node.get("title") or node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo span.ellipsis")]
         if len(teams) < 2:
-            # Fallback: use team links when the ellipsis spans differ by page version.
             teams = [_clean(node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo a")]
         if len(teams) < 2:
             continue
@@ -135,7 +121,6 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
             continue
         data_sort = date_node.get("data-sort", "")
         display_text = _clean(date_cell.get_text(" ", strip=True))
-
         try:
             start = _extract_local_datetime(data_sort, display_text)
         except ValueError:
@@ -144,40 +129,27 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
         venue_node = date_cell.select_one("span.ellipsis[title]")
         venue = _clean(venue_node.get("title") if venue_node else "")
         href = link.get("href", "")
-        if href.startswith("/"):
-            url = "https://actawp.natacio.cat" + href
-        else:
-            url = href
+        url = "https://actawp.natacio.cat" + href if href.startswith("/") else href
 
-        matches.append(
-            Match(
-                category=category,
-                tournament_id=tournament_id,
-                calendar_id=calendar_id,
-                match_id=match_id,
-                home_team=teams[0],
-                away_team=teams[1],
-                start=start.isoformat(),
-                venue=venue,
-                round_name=round_name,
-                url=url,
-            )
-        )
+        matches.append(Match(
+            category=category,
+            tournament_id=tournament_id,
+            calendar_id=calendar_id,
+            match_id=match_id,
+            home_team=teams[0],
+            away_team=teams[1],
+            start=start.isoformat(),
+            venue=venue,
+            round_name=round_name,
+            url=url,
+        ))
 
-    # Stable unique key: ActaWP match ID.
     unique: dict[int, Match] = {match.match_id: match for match in matches}
     return sorted(unique.values(), key=lambda match: match.start)
 
 
 def fetch_calendar(category: str, tournament_id: int, calendar_id: int, timeout: int = 30) -> list[Match]:
-    url = calendar_url(tournament_id, calendar_id)
-    response = requests.get(
-        url,
-        timeout=timeout,
-        headers={"User-Agent": "AESE-Waterpolo-Calendar-Sync/1.0"},
-    )
-    response.raise_for_status()
-    return parse_calendar_html(response.text, category, tournament_id, calendar_id)
+    return parse_calendar_html(fetch_html(calendar_url(tournament_id, calendar_id), timeout), category, tournament_id, calendar_id)
 
 
 def fetch_all() -> list[Match]:
@@ -190,5 +162,4 @@ def fetch_all() -> list[Match]:
 
 if __name__ == "__main__":
     import json
-
     print(json.dumps([match.to_dict() for match in fetch_all()], ensure_ascii=False, indent=2))
