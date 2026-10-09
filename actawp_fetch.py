@@ -7,28 +7,27 @@ from urllib.parse import urlencode
 import requests
 
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36'
+_SESSION = requests.Session()
+_HEADERS = {
+    'User-Agent': UA,
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'ca-ES,ca;q=0.9,en;q=0.8',
+}
 
 
 def _solve_pow(seed: str, bits: int) -> int:
     nonce = 0
     prefix = seed.encode()
-    mask_shift = 64 - bits
+    shift = 64 - bits
     while True:
         digest = hashlib.sha256(prefix + str(nonce).encode()).digest()
-        if (int.from_bytes(digest[:8], 'big') >> mask_shift) == 0:
+        if (int.from_bytes(digest[:8], 'big') >> shift) == 0:
             return nonce
         nonce += 1
 
 
 def fetch_html(url: str, timeout: int = 30) -> str:
-    session = requests.Session()
-    headers = {
-        'User-Agent': UA,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'ca-ES,ca;q=0.9,en;q=0.8',
-    }
-
-    response = session.get(url, headers=headers, timeout=timeout)
+    response = _SESSION.get(url, headers=_HEADERS, timeout=timeout)
     if response.status_code == 200 and 'Comprovant el teu navegador' not in response.text:
         return response.text
 
@@ -48,11 +47,11 @@ def fetch_html(url: str, timeout: int = 30) -> str:
         '_pow_n': str(nonce),
     })
 
-    proof = session.get(proof_url, headers=headers, timeout=timeout)
+    proof = _SESSION.get(proof_url, headers=_HEADERS, timeout=timeout)
     if proof.status_code not in (200, 204):
         raise RuntimeError(f'ActaWP PoW rechazado: HTTP {proof.status_code}')
 
-    final = session.get(url, headers=headers, timeout=timeout)
+    final = _SESSION.get(url, headers=_HEADERS, timeout=timeout)
     final.raise_for_status()
     if 'Comprovant el teu navegador' in final.text:
         raise RuntimeError('ActaWP sigue mostrando el desafío PoW tras resolverlo')
