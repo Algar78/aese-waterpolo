@@ -21,37 +21,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-actawp.txt
 
-      - name: Test ActaWP calendar through Jina
-        run: |
-          python - <<'PY'
-          import requests
-          from actawp_sync import calendar_url, parse_calendar_html
-
-          target_url = calendar_url(1339803, 3714121)
-          proxy_url = 'https://r.jina.ai/' + target_url
-          response = requests.get(
-              proxy_url,
-              timeout=90,
-              headers={
-                  'Accept': 'text/html',
-                  'X-Respond-With': 'html',
-                  'X-No-Cache': 'true',
-                  'User-Agent': 'AESE-Waterpolo-Calendar-Sync/1.0',
-              },
-          )
-          print('Jina status:', response.status_code)
-          print('Content length:', len(response.text))
-          response.raise_for_status()
-
-          matches = parse_calendar_html(response.text, 'Absoluto Masculino', 1339803, 3714121)
-          print(f'Matches found: {len(matches)}')
-          target = next((m for m in matches if m.match_id == 145573547), None)
-          if target is None:
-              raise SystemExit('Known match 145573547 was not found')
-          print(target)
-          if target.home_team != 'A.E. SANTA EULÀLIA' or target.away_team != 'C.N. MARTORELL':
-              raise SystemExit(f'Unexpected teams: {target.home_team} vs {target.away_team}')
-          if not target.start.startswith('2026-09-26T16:00:'):
-              raise SystemExit(f'Unexpected local start: {target.start}')
-          print('ACTAWP JINA TEST OK')
-          PY
+      - name: Inspect ActaWP through Jina Reader
+        run: python actawp_jina_test.py
