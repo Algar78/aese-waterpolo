@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from actawp_fetch import fetch_html
 
 MADRID = ZoneInfo("Europe/Madrid")
+AESE_MARKER = "SANTA EULÀLIA"
 
 CALENDARS = {
     "Absoluto Masculino": (1339803, 3714121),
@@ -66,13 +67,6 @@ def _extract_round(soup: BeautifulSoup) -> str | None:
 
 
 def _extract_local_datetime(data_sort: str, display_text: str) -> datetime:
-    """Return the displayed Europe/Madrid time.
-
-    ActaWP exposes a data-sort timestamp that is UTC-like while the page also
-    displays the actual local time with GMT offset. When the explicit display
-    is present, use that offset directly; otherwise fall back to data-sort as
-    UTC and convert to Europe/Madrid.
-    """
     displayed = _clean(display_text)
     explicit = re.search(
         r"(\d{1,2})/(\d{1,2})/(\d{2,4}).*?(\d{1,2}:\d{2})\s+GMT([+-]\d{1,2})",
@@ -112,6 +106,11 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
         if len(teams) < 2:
             teams = [_clean(node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo a")]
         if len(teams) < 2:
+            continue
+
+        # ActaWP calendar pages contain the complete competition calendar.
+        # Only keep matches involving A.E. Santa Eulàlia.
+        if not any(AESE_MARKER in team.upper() for team in teams):
             continue
 
         date_cell = row.select_one(".colstyle-fecha")
