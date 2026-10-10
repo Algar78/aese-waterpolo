@@ -1,0 +1,27 @@
+{
+  "complete": true,
+  "categories_expected": [
+    "Absoluto Masculino",
+    "Alevín Mixto A",
+    "Alevín Mixto B",
+    "Cadete Masculino",
+    "Infantil Mixto A",
+    "Infantil Mixto B",
+    "Juvenil Femenino",
+    "1a Div Fem Absoluta B",
+    "Juvenil Masculino"
+  ],
+  "counts": {
+    "Absoluto Masculino": 16,
+    "Alevín Mixto A": 2,
+    "Alevín Mixto B": 12,
+    "Cadete Masculino": 2,
+    "Infantil Mixto A": 3,
+    "Infantil Mixto B": 20,
+    "Juvenil Femenino": 5,
+    "1a Div Fem Absoluta B": 18,
+    "Juvenil Masculino": 2
+  },
+  "total_matches_found": 80,
+  "errors": []
+}
