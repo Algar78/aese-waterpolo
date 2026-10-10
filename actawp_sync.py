@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from html import unescape
 import re
+import unicodedata
 from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
@@ -13,7 +14,11 @@ from bs4 import BeautifulSoup
 from actawp_fetch import fetch_html
 
 MADRID = ZoneInfo("Europe/Madrid")
-AESE_MARKER = "SANTA EULÀLIA"
+AESE_MARKER = "SANTA EULALIA"
+TEAM_SUFFIX = {
+    'Alevín Mixto A': 'A', 'Alevín Mixto B': 'B',
+    'Infantil Mixto A': 'A', 'Infantil Mixto B': 'B',
+}
 
 CALENDARS = {
     "Absoluto Masculino": (1339803, 3714121),
@@ -53,6 +58,14 @@ def _clean(value: str | None) -> str:
     if not value:
         return ""
     return re.sub(r"\s+", " ", unescape(value)).strip()
+
+
+def _normalized(value: str) -> str:
+    return ''.join(char for char in unicodedata.normalize('NFKD', value.upper()) if not unicodedata.combining(char))
+
+
+def _is_aese(value: str) -> bool:
+    return AESE_MARKER in _normalized(value)
 
 
 def _extract_round(soup: BeautifulSoup) -> str | None:
@@ -110,7 +123,63 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
 
         # ActaWP calendar pages contain the complete competition calendar.
         # Only keep matches involving A.E. Santa Eulàlia.
-        if not any(AESE_MARKER in team.upper() for team in teams):
+        aese_teams = [team for team in teams if _is_aese(team)]
+        if not aese_teams:
+            continue
+        expected_suffix = TEAM_SUFFIX.get(category)
+        if expected_suffix and not any(re.search(r'\\b' + expected_suffix + r'\\s*
+
+        date_cell = row.select_one(".colstyle-fecha")
+        if not date_cell:
+            continue
+        date_node = date_cell.find(attrs={"data-sort": True})
+        if not date_node:
+            continue
+        data_sort = date_node.get("data-sort", "")
+        display_text = _clean(date_cell.get_text(" ", strip=True))
+        try:
+            start = _extract_local_datetime(data_sort, display_text)
+        except ValueError:
+            continue
+
+        venue_node = date_cell.select_one("span.ellipsis[title]")
+        venue = _clean(venue_node.get("title") if venue_node else "")
+        href = link.get("href", "")
+        url = "https://actawp.natacio.cat" + href if href.startswith("/") else href
+
+        matches.append(Match(
+            category=category,
+            tournament_id=tournament_id,
+            calendar_id=calendar_id,
+            match_id=match_id,
+            home_team=teams[0],
+            away_team=teams[1],
+            start=start.isoformat(),
+            venue=venue,
+            round_name=round_name,
+            url=url,
+        ))
+
+    unique: dict[int, Match] = {match.match_id: match for match in matches}
+    return sorted(unique.values(), key=lambda match: match.start)
+
+
+def fetch_calendar(category: str, tournament_id: int, calendar_id: int, timeout: int = 30) -> list[Match]:
+    return parse_calendar_html(fetch_html(calendar_url(tournament_id, calendar_id), timeout), category, tournament_id, calendar_id)
+
+
+def fetch_all() -> list[Match]:
+    all_matches: list[Match] = []
+    for category, (tournament_id, calendar_id) in CALENDARS.items():
+        all_matches.extend(fetch_calendar(category, tournament_id, calendar_id))
+    unique: dict[int, Match] = {match.match_id: match for match in all_matches}
+    return sorted(unique.values(), key=lambda match: match.start)
+
+
+if __name__ == "__main__":
+    import json
+    print(json.dumps([match.to_dict() for match in fetch_all()], ensure_ascii=False, indent=2))
+, _normalized(team)) for team in aese_teams):
             continue
 
         date_cell = row.select_one(".colstyle-fecha")
