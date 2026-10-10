@@ -3,7 +3,7 @@ name: ActaWP export
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '17 */6 * * *'
       timezone: 'Europe/Madrid'
 
 concurrency:
@@ -48,5 +48,20 @@ jobs:
       - name: Confirm complete export
         if: steps.fetch.outputs.complete != 'true'
         run: |
-          echo 'ActaWP no devolvió las 9 categorías: se conserva snapshot existente y se ha guardado progreso de descubrimiento' >&2
-          exit 1
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          status = json.loads(Path("data/actawp_last_attempt.json").read_text(encoding="utf-8"))
+          errors = status.get("errors", [])
+          # ActaWP rate limiting is temporary; keep the last good snapshot
+          # and report a warning instead of failing the scheduled workflow.
+          if errors and any("429" in error for error in errors) and all(
+              "429" in error or "pendiente por límite" in error for error in errors
+          ):
+              print("::warning::ActaWP limita las consultas (HTTP 429). Se conserva el último calendario válido; se reintentará en la siguiente ejecución.")
+          else:
+              print("::error::Exportación ActaWP incompleta por un motivo distinto de HTTP 429.")
+              for error in errors:
+                  print("::error::" + error)
+              raise SystemExit(1)
+          PY
