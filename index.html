@@ -963,8 +963,6 @@ function prepareNextPeriodLineup(){
 function endPeriod(){
  syncTimer();
  if(state.timeoutRunning){toast('No se puede finalizar el período mientras hay un tiempo muerto activo.');return}
- if(!participationComplete()){const missing=participationMissing();toast(`Antes de cerrar P${state.period}, completa la alineación: ${missing.map(p=>p.name).join(', ')}`);return}
- if(isAlevinCategory()&&state.period===4){const missing=state.players.filter(player=>!((player.participatedPeriods||[]).some(period=>period>=1&&period<=4)));if(missing.length){toast(`Antes de cerrar P4, registra al menos un período para: ${missing.map(player=>player.name).join(', ')}`);return}}
  snapshot();state.timerRunning=false;state.timerStartedAt=null;state.partials.push([...state.score]);addEvent('⏹ Fin del período');
  if(state.period>=RULES[state.category].periods){finishMatch();return}
  const finishedPeriod=state.period;state.period++;state.substitutionMode=false;state.pendingSubOut=null;state.periodLineups=state.periodLineups||{};state.periodParticipation=state.periodParticipation||{};state.pendingSubIn=null;state.selectedSubstitutionIndex=null;state.selectedSubstitutionSide=null;prepareNextPeriodLineup();resetPeriodClock();saveLocal();render();toast(`P${finishedPeriod} finalizado. P${state.period} preparado: puedes cambiar jugadores antes de iniciar.`)}
