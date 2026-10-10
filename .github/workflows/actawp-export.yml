@@ -31,12 +31,24 @@ jobs:
         run: pip install -r requirements-actawp.txt
 
       - name: Fetch ActaWP calendars
-        run: python actawp_export.py
+        id: fetch
+        run: |
+          if python actawp_export.py; then
+            echo 'complete=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'complete=false' >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Publish JSON snapshot
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/actawp_matches.json
+          git add data/actawp_matches.json data/actawp_calendar_overrides.json data/actawp_export_status.json
           git diff --cached --quiet || git commit -m 'Update ActaWP calendar snapshot'
           git push
+
+      - name: Confirm complete export
+        if: steps.fetch.outputs.complete != 'true'
+        run: |
+          echo 'ActaWP no devolvió las 9 categorías: se conserva snapshot existente y se ha guardado progreso de descubrimiento' >&2
+          exit 1
