@@ -127,7 +127,8 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
         if not aese_teams:
             continue
         expected_suffix = TEAM_SUFFIX.get(category)
-        if expected_suffix and not any(re.search(r'\\b' + expected_suffix + r'\\s*
+        if expected_suffix and not any(_normalized(team).rstrip().endswith(' ' + expected_suffix) for team in aese_teams):
+            continue
 
         date_cell = row.select_one(".colstyle-fecha")
         if not date_cell:
