@@ -1,8 +1,6 @@
 name: ActaWP export
 
 on:
-  push:
-    branches: [main, actawp-calendar-sync]
   workflow_dispatch:
   schedule:
     - cron: '*/15 * * * *'
