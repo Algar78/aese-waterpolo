@@ -1,0 +1,42 @@
+name: Calendarios de familias
+on:
+  push:
+    branches: [main]
+    paths: ['data/actawp_matches.json', 'data/actawp_export_status.json', 'scripts/calendar-feeds.mjs', '.github/workflows/calendar-feeds.yml']
+  pull_request:
+    paths: ['calendars/**', 'scripts/calendar-feeds.mjs', 'tests/calendar-feeds.test.mjs', 'mi-calendario.*', '.github/workflows/calendar-feeds.yml']
+  workflow_dispatch:
+  # Los commits del bot ActaWP no disparan otros workflows; leer el snapshot periódicamente.
+  schedule:
+    - cron: '7,37 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: family-calendar-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  feeds:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/calendar-feeds.test.mjs
+      - run: node scripts/calendar-feeds.mjs
+      - name: Publicar feeds validados
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add calendars/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update validated family calendar feeds'
+            git pull --rebase origin main
+            node scripts/calendar-feeds.mjs
+            git add calendars/
+            git diff --cached --quiet || git commit -m 'Refresh feeds after snapshot update'
+            git push origin HEAD:main
+          fi

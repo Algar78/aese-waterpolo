@@ -1,7 +1,10 @@
-const CACHE="aese-waterpolo-v21";
+const CACHE="aese-waterpolo-v22";
 const CORE=[
   "./",
   "./index.html",
+  "./mi-calendario.html",
+  "./mi-calendario.js",
+  "./calendars/index.json",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

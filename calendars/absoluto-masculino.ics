@@ -1,0 +1,219 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AESE Waterpolo//Calendarios familias//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:AESE · Absoluto Masculino
+X-WR-TIMEZONE:Europe/Madrid
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:actawp-1339803-145573547@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20260926T140000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.N. MARTORELL
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573547/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573547/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573552@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261031T123000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.N. CALDES — A.E. SANTA EULÀLIA
+LOCATION:177 - Caldes\, C.N.
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573552/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573552/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573556@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261113T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.N. VALLIRANA
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573556/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573556/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573561@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261024T113000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.N. OLOT — A.E. SANTA EULÀLIA
+LOCATION:173 - Olot\, CN
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573561/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573561/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573564@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261009T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.N. GRANOLLERS
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573564/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573564/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573570@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261114T164500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: BARCELONA WATERPOLO CLUB — A.E. SANTA EULÀLI
+ A
+LOCATION:185 - Sant Feliu\, CN
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573570/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573570/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573576@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261120T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.E.F. CREU GROGA
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573576/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573576/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573582@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261128T164500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.N. BADIA — A.E. SANTA EULÀLIA
+LOCATION:195 - Badia\, CN - 25m
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573582/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573582/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573592@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261219T100000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.N. MARTORELL — A.E. SANTA EULÀLIA
+LOCATION:175 - Martorell\, CN
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573592/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573592/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573597@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20270108T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.N. CALDES
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573597/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573597/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573601@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20270115T190000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.N. VALLIRANA — A.E. SANTA EULÀLIA
+LOCATION:188 - Vallirana\, C.N.
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573601/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573601/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573606@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20270122T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.N. OLOT
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573606/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573606/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573609@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261030T190000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.N. GRANOLLERS — A.E. SANTA EULÀLIA
+LOCATION:100 - Granollers\, CN - P3 - 25m coberta
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573609/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573609/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573615@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20270212T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — BARCELONA WATERPOLO CLU
+ B
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573615/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573615/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573621@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20270206T103000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: C.E.F. CREU GROGA — A.E. SANTA EULÀLIA
+LOCATION:291 - Calella\, Crol Centre
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573621/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573621/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339803-145573627@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20270305T184500Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Absoluto Masculino: A.E. SANTA EULÀLIA — C.N. BADIA
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339803/match/145573627/results
+URL:https://actawp.natacio.cat/ca/tournament/1339803/match/145573627/result
+ s
+END:VEVENT
+END:VCALENDAR

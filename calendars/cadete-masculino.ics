@@ -1,0 +1,35 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AESE Waterpolo//Calendarios familias//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:AESE · Cadete Masculino
+X-WR-TIMEZONE:Europe/Madrid
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:actawp-1339808-145574486@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261003T150000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Cadete Masculino: C.N. BANYOLES — A.E. SANTA EULÀLIA
+LOCATION:171 - Banyoles\, CN
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339808/match/145574486/results
+URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339808-145574490@aese-waterpolo
+DTSTAMP:20261010T071235Z
+DTSTART:20261017T164000Z
+SEQUENCE:0
+LAST-MODIFIED:20261010T071235Z
+SUMMARY:Cadete Masculino: A.E. SANTA EULÀLIA — C.N. MATARÓ A
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339808/match/145574490/results
+URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145574490/result
+ s
+END:VEVENT
+END:VCALENDAR
