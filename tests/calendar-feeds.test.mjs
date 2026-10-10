@@ -56,3 +56,10 @@ test('regresión del primer snapshot: 80 partidos',()=>{
   const manifest=JSON.parse(readFileSync(new URL('../calendars/index.json',import.meta.url)));
   if(manifest.snapshot_sha256==='228e8fe83cc1acf87a275f7868e73448be387e419a5ed442ab8c573a83d776aa') assert.equal(manifest.total,80);
 });
+test('workflow_run genera desde main publicado, sin depender del push de GITHUB_TOKEN',()=>{
+  const workflow=readFileSync(new URL('../.github/workflows/calendar-feeds.yml',import.meta.url),'utf8');
+  assert.match(workflow,/workflow_run:/);
+  assert.match(workflow,/workflows: \['ActaWP export'\]/);
+  assert.match(workflow,/ref: \$\{\{ github.event_name == 'workflow_run' && 'main' \|\| github.ref \}\}/);
+  assert.match(workflow,/github.event.workflow_run.conclusion == 'success'/);
+});

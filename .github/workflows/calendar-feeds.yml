@@ -1,7 +1,7 @@
 name: Calendarios de familias
 on:
   pull_request:
-    paths: ['calendars/**', 'scripts/calendar-feeds.mjs', 'tests/calendar-feeds.test.mjs', 'mi-calendario.*', '.github/workflows/calendar-feeds.yml']
+    paths: ['calendars/**', 'data/**', 'actawp_*.py', 'requirements-actawp.txt', 'scripts/calendar-feeds.mjs', 'tests/**', 'mi-calendario.*', '.github/workflows/*.yml']
   workflow_dispatch:
   # Ejecutar después de publicar el snapshot evita competir con el push de ActaWP.
   # workflow_run también se dispara cuando el workflow anterior usa GITHUB_TOKEN.
@@ -22,9 +22,18 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # workflow_run.head_sha precede al commit JSON que publica el exportador.
+          # En PR se conserva el merge ref para probar los cambios propuestos.
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-actawp.txt
+      - run: python -m unittest discover -s tests -p 'test_*.py'
       - run: node --test tests/calendar-feeds.test.mjs
       - run: node scripts/calendar-feeds.mjs
       - name: Publicar feeds validados
