@@ -1,0 +1,62 @@
+{
+  "source": "data/actawp_matches.json",
+  "snapshot_sha256": "228e8fe83cc1acf87a275f7868e73448be387e419a5ed442ab8c573a83d776aa",
+  "total": 80,
+  "timeZone": "Europe/Madrid",
+  "categories": [
+    {
+      "name": "Absoluto Masculino",
+      "slug": "absoluto-masculino",
+      "count": 16,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/absoluto-masculino.ics"
+    },
+    {
+      "name": "Alevín Mixto A",
+      "slug": "alevin-mixto-a",
+      "count": 2,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/alevin-mixto-a.ics"
+    },
+    {
+      "name": "Alevín Mixto B",
+      "slug": "alevin-mixto-b",
+      "count": 12,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/alevin-mixto-b.ics"
+    },
+    {
+      "name": "Cadete Masculino",
+      "slug": "cadete-masculino",
+      "count": 2,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/cadete-masculino.ics"
+    },
+    {
+      "name": "Infantil Mixto A",
+      "slug": "infantil-mixto-a",
+      "count": 3,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/infantil-mixto-a.ics"
+    },
+    {
+      "name": "Infantil Mixto B",
+      "slug": "infantil-mixto-b",
+      "count": 20,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/infantil-mixto-b.ics"
+    },
+    {
+      "name": "Juvenil Femenino",
+      "slug": "juvenil-femenino",
+      "count": 5,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/juvenil-femenino.ics"
+    },
+    {
+      "name": "1a Div Fem Absoluta B",
+      "slug": "absoluta-femenina-b",
+      "count": 18,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/absoluta-femenina-b.ics"
+    },
+    {
+      "name": "Juvenil Masculino",
+      "slug": "juvenil-masculino",
+      "count": 2,
+      "url": "https://algar78.github.io/aese-waterpolo/calendars/juvenil-masculino.ics"
+    }
+  ]
+}

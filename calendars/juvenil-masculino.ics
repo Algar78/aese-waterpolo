@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AESE Waterpolo//Calendarios familias//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:AESE · Juvenil Masculino
+X-WR-TIMEZONE:Europe/Madrid
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:actawp-1339807-145574246@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261010T152000Z
+SUMMARY:Juvenil Masculino: A.E. SANTA EULÀLIA — CN BADIA/CN MARTORELL
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339807/match/145574246/results
+URL:https://actawp.natacio.cat/ca/tournament/1339807/match/145574246/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339807-145574248@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261011T150000Z
+SUMMARY:Juvenil Masculino: C.N. POBLE NOU — A.E. SANTA EULÀLIA
+LOCATION:183 - Poble Nou\, CN - Can Felipa
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339807/match/145574248/results
+URL:https://actawp.natacio.cat/ca/tournament/1339807/match/145574248/result
+ s
+END:VEVENT
+END:VCALENDAR

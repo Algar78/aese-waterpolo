@@ -1,0 +1,141 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AESE Waterpolo//Calendarios familias//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:AESE · Alevín Mixto B
+X-WR-TIMEZONE:Europe/Madrid
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:actawp-1339810-145608988@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261003T151500Z
+SUMMARY:Alevín Mixto B: C.E. MEDITERRANI B — A.E. SANTA EULÀLIA B
+LOCATION:174 - Mediterrani CE\, Regent Mendieta
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145608988/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145608996@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261017T140000Z
+SUMMARY:Alevín Mixto B: A.E. SANTA EULÀLIA B — C.N. SABADELL B
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145608996/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145608996/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609003@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261024T133000Z
+SUMMARY:Alevín Mixto B: C.N. SANT ANDREU B — A.E. SANTA EULÀLIA B
+LOCATION:297 - Sant Andreu\, CN - Trinitat Vella
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609003/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609003/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609011@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261107T140000Z
+SUMMARY:Alevín Mixto B: A.E. SANTA EULÀLIA B — C.N. TERRASSA B
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609011/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609011/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609018@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261114T144500Z
+SUMMARY:Alevín Mixto B: C.N. RUBÍ B — A.E. SANTA EULÀLIA B
+LOCATION:186 - Rubí\, CN - Can Rosés
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609018/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609018/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609026@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261128T140000Z
+SUMMARY:Alevín Mixto B: A.E. SANTA EULÀLIA B — C.N. MATARÓ
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609026/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609026/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609048@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261212T093000Z
+SUMMARY:Alevín Mixto B: U.E. D'HORTA B — A.E. SANTA EULÀLIA B
+LOCATION:179 - D'Horta\, UE - 33m
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609048/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609048/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609062@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20270110T073000Z
+SUMMARY:Alevín Mixto B: A.E. SANTA EULÀLIA B — C.N. CATALUNYA B
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609062/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609062/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609069@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20270116T090000Z
+SUMMARY:Alevín Mixto B: C.N. MANRESA B — A.E. SANTA EULÀLIA B
+LOCATION:346 - Manresa\, CN - 50m
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609069/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609069/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609071@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20270130T140000Z
+SUMMARY:Alevín Mixto B: A.E. SANTA EULÀLIA B — C.N. BARCELONA B
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609071/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609071/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609079@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20270206T070000Z
+SUMMARY:Alevín Mixto B: C.N. ATL BARCELONETA B — A.E. SANTA EULÀLIA B
+LOCATION:166 - Atlètic Barceloneta\, CN - 33m coberta
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609079/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609079/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145609087@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20270213T152000Z
+SUMMARY:Alevín Mixto B: A.E. SANTA EULÀLIA B — C.N. POBLE NOU B
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339810/match/145609087/results
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145609087/result
+ s
+END:VEVENT
+END:VCALENDAR

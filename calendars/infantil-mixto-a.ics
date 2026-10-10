@@ -1,0 +1,42 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AESE Waterpolo//Calendarios familias//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:AESE · Infantil Mixto A
+X-WR-TIMEZONE:Europe/Madrid
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+BEGIN:VEVENT
+UID:actawp-1339809-145574534@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261017T152000Z
+SUMMARY:Infantil Mixto A: A.E. SANTA EULÀLIA A — GEiEG
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339809/match/145574534/results
+URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574534/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339809-145574536@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261011T081500Z
+SUMMARY:Infantil Mixto A: C.N. CATALUNYA — A.E. SANTA EULÀLIA A
+LOCATION:165 - Catalunya\, CN - Can Toda
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339809/match/145574536/results
+URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574536/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339809-145574539@aese-waterpolo
+DTSTAMP:20261010T000000Z
+DTSTART:20261024T152000Z
+SUMMARY:Infantil Mixto A: A.E. SANTA EULÀLIA A — C.N. TARRACO
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
+ p.natacio.cat/ca/tournament/1339809/match/145574539/results
+URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574539/result
+ s
+END:VEVENT
+END:VCALENDAR
