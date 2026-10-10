@@ -119,7 +119,7 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
         if len(teams) < 2:
             teams = [_clean(node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo a")]
         if len(teams) < 2:
-            continue
+            raise ValueError(f"Fila de partido {match_id} sin dos equipos; snapshot bloqueado")
 
         # ActaWP calendar pages contain the complete competition calendar.
         # Only keep matches involving A.E. Santa Eulàlia.
@@ -130,18 +130,21 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
         if expected_suffix and not any(_normalized(team).rstrip().endswith(' ' + expected_suffix) for team in aese_teams):
             continue
 
+        if re.search(r'\b(ajornat|aplazado|cancelado|cancel·lat|anul·lat|suspès)\b', row.get_text(' ', strip=True), re.I):
+            raise ValueError(f"Partido AESE {match_id} aplazado/cancelado: revisar estado explícito antes de publicar")
+
         date_cell = row.select_one(".colstyle-fecha")
         if not date_cell:
-            continue
+            raise ValueError(f"Partido AESE {match_id} sin fecha; snapshot bloqueado")
         date_node = date_cell.find(attrs={"data-sort": True})
         if not date_node:
-            continue
+            raise ValueError(f"Partido AESE {match_id} sin fecha ordenable; snapshot bloqueado")
         data_sort = date_node.get("data-sort", "")
         display_text = _clean(date_cell.get_text(" ", strip=True))
         try:
             start = _extract_local_datetime(data_sort, display_text)
-        except ValueError:
-            continue
+        except ValueError as exc:
+            raise ValueError(f"Partido AESE {match_id}: fecha inválida; snapshot bloqueado") from exc
 
         venue_node = date_cell.select_one("span.ellipsis[title]")
         venue = _clean(venue_node.get("title") if venue_node else "")
@@ -157,11 +160,15 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
             away_team=teams[1],
             start=start.isoformat(),
             venue=venue,
-            round_name=round_name,
+            round_name=round_name or '',
             url=url,
         ))
 
-    unique: dict[int, Match] = {match.match_id: match for match in matches}
+    unique: dict[int, Match] = {}
+    for match in matches:
+        if match.match_id in unique and unique[match.match_id] != match:
+            raise ValueError(f"Partido {match.match_id} duplicado con datos contradictorios")
+        unique[match.match_id] = match
     return sorted(unique.values(), key=lambda match: match.start)
 
 

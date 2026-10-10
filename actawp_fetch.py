@@ -14,6 +14,9 @@ _HEADERS = {
     'Accept-Language': 'ca-ES,ca;q=0.9,en;q=0.8',
 }
 
+def _rate_limited(exc):
+    return getattr(getattr(exc, 'response', None), 'status_code', None) == 429 or '429' in str(exc)
+
 
 def _solve_pow(seed: str, bits: int) -> int:
     nonce = 0
@@ -28,6 +31,8 @@ def _solve_pow(seed: str, bits: int) -> int:
 
 def _fetch_direct(url: str, timeout: int) -> str:
     response = _SESSION.get(url, headers=_HEADERS, timeout=timeout)
+    if response.status_code == 429:
+        response.raise_for_status()
     if response.status_code == 200 and 'Comprovant el teu navegador' not in response.text:
         return response.text
 
@@ -80,9 +85,13 @@ def fetch_html(url: str, timeout: int = 30) -> str:
     try:
         return _fetch_direct(url, timeout)
     except (requests.RequestException, RuntimeError) as direct_exc:
+        if _rate_limited(direct_exc):
+            raise
         print(f'ActaWP directo falló ({direct_exc}); probando Corsfix EU')
         try:
             return _fetch_corsfix(url, timeout)
         except (requests.RequestException, RuntimeError) as proxy_exc:
+            if _rate_limited(proxy_exc):
+                raise
             print(f'Corsfix EU falló ({proxy_exc}); probando Google Translate')
             return _fetch_translate(url, timeout)
