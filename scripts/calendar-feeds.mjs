@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { mapsURL } from './venues.mjs';
 
 export const baseURL = 'https://algar78.github.io/aese-waterpolo/';
 export const categories = {
@@ -39,14 +40,18 @@ export function validate(matches, status) {
     for (const key of ['home_team','away_team','venue','round_name','url']) if (typeof match[key] !== 'string' || /[\r\n]/.test(match.url)) throw Error('Campos inválidos');
     if (!match.url.startsWith('https://actawp.natacio.cat/')) throw Error('URL no válida');
     counts[match.category]++;
+    if (!['confirmed','tentative','cancelled'].includes(match.status || 'confirmed')) throw Error('Estado desconocido');
+    mapsURL(match.venue);
   }
   if (matches.length !== status.total_matches_found || Object.keys(categories).some(name => !counts[name] || counts[name] !== status.counts[name] || !status.categories_expected.includes(name))) throw Error('Conteos del snapshot no coinciden');
   return counts;
 }
 export function eventState(matches, previous = {}, now = '20261010T000000Z') {
+  const current = new Set(matches.map(uid));
+  if (Object.keys(previous).some(id => !current.has(id))) throw Error('Partido desaparecido sin cancelación explícita: se conservan los feeds');
   return Object.fromEntries(matches.map(m => {
     const id = uid(m);
-    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.round_name,m.url])).digest('hex');
+    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.round_name,m.url,m.status || 'confirmed',mapsURL(m.venue)])).digest('hex');
     const old = previous[id];
     return [id, old?.hash === hash ? old : {hash,sequence:old ? old.sequence+1 : 0,stamp:now}];
   }));
@@ -56,7 +61,7 @@ export function feed(name, matches, state = eventState(matches)) {
   for (const m of matches.filter(m => m.category === name).sort((a,b) => a.match_id-b.match_id)) {
     // No se inventa una duración: el snapshot solo contiene la hora de inicio.
     const revision = state[uid(m)];
-    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`${m.round_name}\nHorario Europe/Madrid. Fuente: ActaWP\n${m.url}`)}`,`URL:${m.url}`,'END:VEVENT');
+    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`STATUS:${(m.status || 'confirmed').toUpperCase()}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`${m.round_name}\nHorario Europe/Madrid. Fuente: ActaWP\n${m.url}\nEstado: ${m.status || 'confirmed'}\nGoogle Maps: ${mapsURL(m.venue)}`)}`,`URL:${m.url}`,'END:VEVENT');
   }
   lines.push('END:VCALENDAR');
   return lines.map(fold).join('\r\n')+'\r\n';
@@ -64,7 +69,9 @@ export function feed(name, matches, state = eventState(matches)) {
 export function generate(root = new URL('../', import.meta.url)) {
   const raw = readFileSync(new URL('data/actawp_matches.json',root));
   const matches = JSON.parse(raw);
-  const counts = validate(matches, JSON.parse(readFileSync(new URL('data/actawp_export_status.json',root))));
+  const status = JSON.parse(readFileSync(new URL('data/actawp_export_status.json',root)));
+  if (status.snapshot_sha256 && status.snapshot_sha256 !== createHash('sha256').update(raw).digest('hex')) throw Error('Hash del snapshot no coincide: se conservan los feeds');
+  const counts = validate(matches, status);
   let previous = {};
   try { previous = JSON.parse(readFileSync(new URL('calendars/event-state.json',root))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const state = eventState(matches, previous, utc(new Date()));

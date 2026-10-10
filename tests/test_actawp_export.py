@@ -74,6 +74,19 @@ class ExportSafetyTests(unittest.TestCase):
                 exporter.main()
         self.assert_preserved()
 
+    def test_one_missing_match_in_nonempty_category_blocks_publication(self):
+        def missing(category, *args):
+            rows, group = self.fetched(category, *args)
+            return (rows[1:] if category == 'Absoluto Masculino' else rows), group
+        with patch.object(exporter, 'fetch_category', side_effect=missing):
+            with self.assertRaises(RuntimeError): exporter.main()
+        self.assert_preserved()
+
+    def test_fresh_cache_each_export(self):
+        exporter.CACHE[(1,2)] = 'stale'
+        with patch.object(exporter, 'fetch_category', side_effect=self.fetched): exporter.main()
+        self.assertEqual(exporter.CACHE, {})
+
 
 if __name__ == '__main__':
     unittest.main()

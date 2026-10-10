@@ -36,7 +36,7 @@ test('escapes ICS y plegado UTF-8 sin romper caracteres',()=>{
   assert.equal(escapeICS('A\\B;C,D\r\nE'),'A\\\\B\\;C\\,D\\nE');
   const value='SUMMARY:'+ 'À🎉'.repeat(60); assert.equal(unfold(fold(value)),value);
   for(const line of fold(value).split('\r\n')) assert.ok(Buffer.byteLength(line)<=75);
-  const m={...matches[0],venue:'Piscina, A; B\\C\nentrada'}; assert.ok(unfold(feed(m.category,[m])).includes('LOCATION:Piscina\\, A\\; B\\\\C\\nentrada'));
+  const m={...matches[0],home_team:'Equipo, A; B\\C\nentrada'}; assert.ok(unfold(feed(m.category,[m])).includes('Equipo\\, A\\; B\\\\C\\nentrada'));
 });
 test('snapshot parcial o inconsistente no se publica',()=>{
   assert.throws(()=>validate(matches,{...status,complete:false}));
@@ -46,7 +46,7 @@ test('snapshot parcial o inconsistente no se publica',()=>{
 test('cambios incrementan SEQUENCE manteniendo UID; generación sin cambios estable',()=>{
   const initial=eventState(matches,{},'20261010T070000Z');
   assert.deepEqual(eventState(matches,initial,'20261010T080000Z'),initial);
-  const edited=structuredClone(matches); edited[0].venue='Piscina nueva';
+  const edited=structuredClone(matches); edited[0].venue=matches.find(m=>m.venue!==matches[0].venue).venue;
   const next=eventState(edited,initial,'20261010T080000Z');
   assert.equal(next[uid(edited[0])].sequence,1); assert.equal(next[uid(edited[0])].stamp,'20261010T080000Z');
   assert.deepEqual(next[uid(edited[1])],initial[uid(edited[1])]);

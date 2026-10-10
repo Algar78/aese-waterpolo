@@ -8,27 +8,34 @@ X-WR-TIMEZONE:Europe/Madrid
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 BEGIN:VEVENT
 UID:actawp-1339807-145574246@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261010T152000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Masculino: A.E. SANTA EULÀLIA — CN BADIA/CN MARTORELL
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339807/match/145574246/results
+ p.natacio.cat/ca/tournament/1339807/match/145574246/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339807/match/145574246/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339807-145574248@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261011T150000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Masculino: C.N. POBLE NOU — A.E. SANTA EULÀLIA
 LOCATION:183 - Poble Nou\, CN - Can Felipa
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339807/match/145574248/results
+ p.natacio.cat/ca/tournament/1339807/match/145574248/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=CEM%20C
+ an%20Felipa%2C%20Pallars%20277%2C%20Barcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339807/match/145574248/result
  s
 END:VEVENT
