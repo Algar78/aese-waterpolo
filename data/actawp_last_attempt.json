@@ -1,0 +1,27 @@
+{
+  "complete": false,
+  "categories_expected": [
+    "Absoluto Masculino",
+    "Alevín Mixto A",
+    "Alevín Mixto B",
+    "Cadete Masculino",
+    "Infantil Mixto A",
+    "Infantil Mixto B",
+    "Juvenil Femenino",
+    "1a Div Fem Absoluta B",
+    "Juvenil Masculino"
+  ],
+  "counts": {},
+  "total_matches_found": 0,
+  "errors": [
+    "Absoluto Masculino: HTTP 429: ActaWP limita temporalmente las consultas",
+    "Alevín Mixto A: pendiente por límite HTTP 429",
+    "Alevín Mixto B: pendiente por límite HTTP 429",
+    "Cadete Masculino: pendiente por límite HTTP 429",
+    "Infantil Mixto A: pendiente por límite HTTP 429",
+    "Infantil Mixto B: pendiente por límite HTTP 429",
+    "Juvenil Femenino: pendiente por límite HTTP 429",
+    "1a Div Fem Absoluta B: pendiente por límite HTTP 429",
+    "Juvenil Masculino: pendiente por límite HTTP 429"
+  ]
+}

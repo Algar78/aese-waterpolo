@@ -13,6 +13,7 @@ from actawp_sync import CALENDARS, calendar_url, parse_calendar_html
 OUT = Path("data/actawp_matches.json")
 DISCOVERY = Path("data/actawp_calendar_overrides.json")
 STATUS = Path("data/actawp_export_status.json")
+ATTEMPT_STATUS = Path("data/actawp_last_attempt.json")
 CACHE = {}
 
 
@@ -114,26 +115,33 @@ def main():
                 throttled = True
             print(f"ERROR {category}: {exc}", flush=True)
 
-    unique = {item["match_id"]: item for item in collected}
+    unique = {(item["tournament_id"], item["match_id"]): item for item in collected}
+    if len(unique) != len(collected):
+        errors.append("Identidad de partido duplicada; snapshot bloqueado")
     output = sorted(unique.values(), key=lambda item: item["start"])
+    if not output and not errors:
+        errors.append("Snapshot vacío bloqueado")
     complete = not errors and len(counts) == len(CALENDARS)
-    save_json(STATUS, {
+    status = {
         "complete": complete,
         "categories_expected": list(CALENDARS),
         "counts": counts,
         "total_matches_found": len(output),
         "errors": errors,
-    })
+    }
+    # Un fallo describe el intento, nunca invalida el último snapshot publicado.
+    save_json(ATTEMPT_STATUS, status)
     print(f"RESUMEN: {len(output)} partidos, {len(counts)}/{len(CALENDARS)} categorías consultadas", flush=True)
     if errors:
         print("NO PUBLICADO: exportación incompleta (se conserva el snapshot anterior)", flush=True)
         for error in errors:
             print(" - " + error, flush=True)
-        raise RuntimeError("Exportación incompleta; ver data/actawp_export_status.json")
+        raise RuntimeError("Exportación incompleta; ver data/actawp_last_attempt.json")
 
     if not output:
         raise RuntimeError("Snapshot vacío bloqueado")
     save_json(OUT, output)
+    save_json(STATUS, status)
     print(f"PUBLICADO: {len(output)} partidos AESE únicos de {len(CALENDARS)} categorías", flush=True)
 
 
