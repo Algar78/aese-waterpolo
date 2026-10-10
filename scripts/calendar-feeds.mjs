@@ -43,11 +43,20 @@ export function validate(matches, status) {
   if (matches.length !== status.total_matches_found || Object.keys(categories).some(name => !counts[name] || counts[name] !== status.counts[name] || !status.categories_expected.includes(name))) throw Error('Conteos del snapshot no coinciden');
   return counts;
 }
-export function feed(name, matches) {
+export function eventState(matches, previous = {}, now = '20261010T000000Z') {
+  return Object.fromEntries(matches.map(m => {
+    const id = uid(m);
+    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.round_name,m.url])).digest('hex');
+    const old = previous[id];
+    return [id, old?.hash === hash ? old : {hash,sequence:old ? old.sequence+1 : 0,stamp:now}];
+  }));
+}
+export function feed(name, matches, state = eventState(matches)) {
   const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AESE Waterpolo//Calendarios familias//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH',`X-WR-CALNAME:${escapeICS('AESE · '+name)}`,'X-WR-TIMEZONE:Europe/Madrid','REFRESH-INTERVAL;VALUE=DURATION:PT1H'];
   for (const m of matches.filter(m => m.category === name).sort((a,b) => a.match_id-b.match_id)) {
     // No se inventa una duración: el snapshot solo contiene la hora de inicio.
-    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,'DTSTAMP:20261010T000000Z',`DTSTART:${utc(m.start)}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`${m.round_name}\nHorario Europe/Madrid. Fuente: ActaWP\n${m.url}`)}`,`URL:${m.url}`,'END:VEVENT');
+    const revision = state[uid(m)];
+    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`${m.round_name}\nHorario Europe/Madrid. Fuente: ActaWP\n${m.url}`)}`,`URL:${m.url}`,'END:VEVENT');
   }
   lines.push('END:VCALENDAR');
   return lines.map(fold).join('\r\n')+'\r\n';
@@ -56,9 +65,13 @@ export function generate(root = new URL('../', import.meta.url)) {
   const raw = readFileSync(new URL('data/actawp_matches.json',root));
   const matches = JSON.parse(raw);
   const counts = validate(matches, JSON.parse(readFileSync(new URL('data/actawp_export_status.json',root))));
+  let previous = {};
+  try { previous = JSON.parse(readFileSync(new URL('calendars/event-state.json',root))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  const state = eventState(matches, previous, utc(new Date()));
   const manifest = {source:'data/actawp_matches.json',snapshot_sha256:createHash('sha256').update(raw).digest('hex'),total:matches.length,timeZone:'Europe/Madrid',categories:Object.entries(categories).map(([name,slug])=>({name,slug,count:counts[name],url:`${baseURL}calendars/${slug}.ics`}))};
   mkdirSync(new URL('calendars/',root),{recursive:true});
-  for (const [name,slug] of Object.entries(categories)) writeFileSync(new URL(`calendars/${slug}.ics`,root),feed(name,matches));
+  for (const [name,slug] of Object.entries(categories)) writeFileSync(new URL(`calendars/${slug}.ics`,root),feed(name,matches,state));
+  writeFileSync(new URL('calendars/event-state.json',root),JSON.stringify(state,null,2)+'\n');
   writeFileSync(new URL('calendars/index.json',root),JSON.stringify(manifest,null,2)+'\n');
   console.log(`Validados y generados: ${Object.keys(categories).length} feeds, ${matches.length} partidos`);
   return manifest;

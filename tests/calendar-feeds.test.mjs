@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {categories,validate,feed,uid,utc,escapeICS,fold} from '../scripts/calendar-feeds.mjs';
+import {categories,validate,feed,uid,utc,escapeICS,fold,eventState} from '../scripts/calendar-feeds.mjs';
 const matches = JSON.parse(readFileSync(new URL('../data/actawp_matches.json',import.meta.url)));
 const status = JSON.parse(readFileSync(new URL('../data/actawp_export_status.json',import.meta.url)));
 const unfold = text => text.replace(/\r\n /g,'');
@@ -42,6 +42,14 @@ test('snapshot parcial o inconsistente no se publica',()=>{
   assert.throws(()=>validate(matches,{...status,complete:false}));
   assert.throws(()=>validate(matches.slice(1),status));
   assert.throws(()=>validate([...matches,matches[0]],status));
+});
+test('cambios incrementan SEQUENCE manteniendo UID; generación sin cambios estable',()=>{
+  const initial=eventState(matches,{},'20261010T070000Z');
+  assert.deepEqual(eventState(matches,initial,'20261010T080000Z'),initial);
+  const edited=structuredClone(matches); edited[0].venue='Piscina nueva';
+  const next=eventState(edited,initial,'20261010T080000Z');
+  assert.equal(next[uid(edited[0])].sequence,1); assert.equal(next[uid(edited[0])].stamp,'20261010T080000Z');
+  assert.deepEqual(next[uid(edited[1])],initial[uid(edited[1])]);
 });
 test('regresión del primer snapshot: 80 partidos',()=>{
   // El control histórico se verifica cuando el snapshot conserva el hash inicial.
