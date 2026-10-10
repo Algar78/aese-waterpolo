@@ -27,6 +27,8 @@ def fetch_with_retry(category, tournament_id, calendar_id):
                 soup = BeautifulSoup(html, 'html.parser')
                 rows = soup.select('table.tabletype-public tbody tr')
                 print(f'DIAGNOSTICO {category}: filas={len(rows)} enlaces_partido={len(soup.select("a[href*=\"/match/\"]"))} titulos={[_t.get_text(" ", strip=True)[:90] for _t in soup.select("h1,h2")[:3]]}')
+                calendar_links = sorted(set(a.get('href', '') for a in soup.select('a[href*="/calendar/"]')))
+                print(f'  LINKS CALENDARIO ({len(calendar_links)}): {calendar_links[:70]}')
                 for row in rows[:5]:
                     print('  FILA:', row.get_text(' ', strip=True)[:260])
             if not matches and 'tabletype-public' not in html:
