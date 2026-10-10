@@ -41,6 +41,10 @@ def fetch_with_retry(category, tournament_id, calendar_id):
         except Exception as exc:
             last_error = exc
             print(f"Error en {category} (intento {attempt + 1}/3): {exc}")
+            # Un HTTP 429 indica limitación de solicitudes. No insistir de
+            # inmediato: protegemos el snapshot y esperamos la siguiente pasada.
+            if '429' in str(exc) or 'Too Many Requests' in str(exc):
+                raise RuntimeError(f'ActaWP ha limitado solicitudes en {category}; snapshot conservado') from exc
             if attempt < 2:
                 time.sleep(8 * (attempt + 1))
     raise RuntimeError(f"No se pudo consultar {category}: {last_error}") from last_error
