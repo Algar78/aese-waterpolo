@@ -6,8 +6,8 @@
  * reconciles events in the existing AESE Waterpolo-Partidos calendar.
  */
 
-const ACTAWP_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/Algar78/aese-waterpolo/main/data/actawp_matches.json';
+const ACTAWP_BUNDLE_URL =
+  'https://algar78.github.io/aese-waterpolo/calendars/general-calendar.json';
 
 const ACTAWP_CALENDAR_ID =
   '68af70845551fc729e20ff0ff1ca9f69bbbadade7031e6b90ace51fbcd279c7f@group.calendar.google.com';
@@ -26,15 +26,14 @@ function fetchActaWPJSON_(url) {
 }
 
 function loadActaWPSnapshot_() {
-  // Todos los archivos pertenecen al mismo commit, incluso si main avanza.
-  const commit = fetchActaWPJSON_('https://api.github.com/repos/Algar78/aese-waterpolo/commits/main');
-  if (!/^[a-f0-9]{40}$/.test(commit.sha || '')) throw new Error('Commit inválido');
-  const root = 'https://raw.githubusercontent.com/Algar78/aese-waterpolo/' + commit.sha + '/data/';
-  const matches = fetchActaWPJSON_(root + 'actawp_matches.json');
-  const status = fetchActaWPJSON_(root + 'actawp_export_status.json');
-  ACTAWP_VENUES = fetchActaWPJSON_(root + 'venues.json');
-  validateActaWPSnapshot_(matches, status);
-  return matches;
+  // One document contains matches, validation status and venues from the same generation.
+  const bundle = fetchActaWPJSON_(ACTAWP_BUNDLE_URL);
+  if (!bundle || bundle.schema_version !== 1 || !bundle.venues || !bundle.status) {
+    throw new Error('Paquete de calendario inválido; no se modifica el calendario');
+  }
+  ACTAWP_VENUES = bundle.venues;
+  validateActaWPSnapshot_(bundle.matches, bundle.status);
+  return bundle.matches;
 }
 
 function validateActaWPSnapshot_(matches, status) {

@@ -23,7 +23,7 @@ function harness() {
     CalendarApp:{getCalendarById:()=>calendar},PropertiesService:{getScriptProperties:()=>props},
     LockService:{getScriptLock:()=>({waitLock:()=>calls.push('lock'),releaseLock:()=>calls.push('unlock')})},
     Utilities:{formatDate:(date,zone,pattern)=>{const parts=new Intl.DateTimeFormat('sv-SE',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(date).replace(' ','T');return pattern==='HH:mm'?parts.slice(11,16):parts;}},
-    UrlFetchApp:{fetch:url=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify(url.endsWith('/commits/main')?{sha:'a'.repeat(40)}:url.endsWith('venues.json')?venues:url.endsWith('actawp_export_status.json')?status:matches)})}});
+    UrlFetchApp:{fetch:url=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify(url.endsWith('general-calendar.json')?{schema_version:1,matches,status,venues}:url.endsWith('venues.json')?venues:url.endsWith('actawp_export_status.json')?status:matches)})}});
   vm.runInContext(code,context);vm.runInContext('ACTAWP_VENUES = '+JSON.stringify(venues),context);
   return {context,properties,events,calls,event,calendar,failLookup:()=>lookupError=true,failCreate:()=>createError=true,failProperty:()=>propertyError=true,restore:()=>{lookupError=createError=propertyError=false}};
 }
@@ -92,6 +92,20 @@ test('cancelación y aplazamiento explícitos conservan evento e identidad',()=>
 test('fallo parcial de ejecución no marca éxito y libera el bloqueo',()=>{
   const h=harness();h.failCreate();assert.throws(()=>h.context.syncActaWPToCalendar(),/quota/);
   assert.equal(h.properties.has('ACTAWP_LAST_SYNC'),false);assert.equal(h.calls.at(-1),'unlock');
+});
+
+test('carga un único paquete de Pages y rechaza paquetes incompletos sin escribir',()=>{
+  const h=harness(), urls=[];
+  let bundle={schema_version:1,matches,status,venues};
+  h.context.UrlFetchApp.fetch=url=>{urls.push(url);return {getResponseCode:()=>200,getContentText:()=>JSON.stringify(bundle)}};
+  assert.equal(h.context.loadActaWPSnapshot_().length,matches.length);
+  assert.deepEqual(urls,['https://algar78.github.io/aese-waterpolo/calendars/general-calendar.json']);
+  for(const invalid of [{...bundle,schema_version:2},{...bundle,matches:matches.slice(1)},{...bundle,status:{...status,complete:false}},{...bundle,venues:{}}]) {
+    bundle=invalid;
+    assert.throws(()=>h.context.syncActaWPToCalendar());
+    assert.equal(h.events.length,0);
+    assert.equal(h.properties.has('ACTAWP_LAST_SYNC'),false);
+  }
 });
 test('Maps general conserva texto, eventos Clupik y duplicados; preview no escribe',()=>{
   const h=harness(),m=matches[0],a=h.event(m,'Texto legítimo'),b=h.event(m,'Clupik');
