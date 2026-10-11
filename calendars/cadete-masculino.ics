@@ -8,27 +8,35 @@ X-WR-TIMEZONE:Europe/Madrid
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 BEGIN:VEVENT
 UID:actawp-1339808-145574486@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261003T150000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Cadete Masculino: C.N. BANYOLES — A.E. SANTA EULÀLIA
 LOCATION:171 - Banyoles\, CN
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339808/match/145574486/results
+ p.natacio.cat/ca/tournament/1339808/match/145574486/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Banyoles%2C%20Passeig%20Antoni%20Gaud%C3%AD%203%2C%20Banyol
+ es
 URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339808-145574490@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261017T164000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Cadete Masculino: A.E. SANTA EULÀLIA — C.N. MATARÓ A
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339808/match/145574490/results
+ p.natacio.cat/ca/tournament/1339808/match/145574490/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145574490/result
  s
 END:VEVENT

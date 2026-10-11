@@ -8,261 +8,335 @@ X-WR-TIMEZONE:Europe/Madrid
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 BEGIN:VEVENT
 UID:actawp-1339809-145574547@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261018T083000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. PREMIÀ B — A.E. SANTA EULÀLIA B
 LOCATION:181 - Premia\, CN
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574547/results
+ p.natacio.cat/ca/tournament/1339809/match/145574547/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Premi%C3%A0%2C%20Francesc%20Mas%20Abril%2013%2C%20Premi%C3%
+ A0%20de%20Mar
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574547/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574554@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261010T140000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. BARCELONA B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574554/results
+ p.natacio.cat/ca/tournament/1339809/match/145574554/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574554/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574560@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261025T070000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. SABADELL B — A.E. SANTA EULÀLIA B
 LOCATION:264 - Sabadell\, CN - Can Llong - 33m
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574560/results
+ p.natacio.cat/ca/tournament/1339809/match/145574560/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Sabadell%20Can%20Llong%2C%20Budapest%201%2C%20Sabadell
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574560/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574567@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261108T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.E. MEDITERRANI B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574567/results
+ p.natacio.cat/ca/tournament/1339809/match/145574567/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574567/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574573@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261115T070000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. SANT ANDREU B — A.E. SANTA EULÀLIA B
 LOCATION:297 - Sant Andreu\, CN - Trinitat Vella
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574573/results
+ p.natacio.cat/ca/tournament/1339809/match/145574573/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=CEM%20T
+ rinitat%20Vella%2C%20Barcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574573/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574580@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261129T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. TERRASSA B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574580/results
+ p.natacio.cat/ca/tournament/1339809/match/145574580/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574580/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574586@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261213T070000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. MANRESA B — A.E. SANTA EULÀLIA B
 LOCATION:346 - Manresa\, CN - 50m
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574586/results
+ p.natacio.cat/ca/tournament/1339809/match/145574586/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Piscine
+ s%20Municipals%20Manel%20Estiarte%20Duocastella%2C%20Manresa
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574586/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574598@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270110T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. RUBÍ B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574598/results
+ p.natacio.cat/ca/tournament/1339809/match/145574598/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574598/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574600@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270117T100000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. ATL BARCELONETA B — A.E. SANTA EULÀLIA B
 LOCATION:166 - Atlètic Barceloneta\, CN - 33m coberta
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574600/results
+ p.natacio.cat/ca/tournament/1339809/match/145574600/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Atl%C3%A8tic-Barceloneta%2C%20Pla%C3%A7a%20del%20Mar%2C%20B
+ arcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574600/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574607@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270124T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. MATARÓ
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574607/results
+ p.natacio.cat/ca/tournament/1339809/match/145574607/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574607/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574613@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270207T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. PREMIÀ B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574613/results
+ p.natacio.cat/ca/tournament/1339809/match/145574613/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574613/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574620@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270214T104500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. BARCELONA B — A.E. SANTA EULÀLIA B
 LOCATION:160 - Barcelona\, CN - Nova Escollera - 50m
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574620/results
+ p.natacio.cat/ca/tournament/1339809/match/145574620/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Barcelona%2C%20Passeig%20Joan%20de%20Borb%C3%B3%2093%2C%20B
+ arcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574620/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574626@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270221T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. SABADELL B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574626/results
+ p.natacio.cat/ca/tournament/1339809/match/145574626/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574626/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574633@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270307T070000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.E. MEDITERRANI B — A.E. SANTA EULÀLIA B
 LOCATION:174 - Mediterrani CE\, Regent Mendieta
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574633/results
+ p.natacio.cat/ca/tournament/1339809/match/145574633/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Esportiu%20Mediterrani%2C%20Regent%20Mendieta%2014-20%2C%20Barcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574633/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574639@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270314T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. SANT ANDREU B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574639/results
+ p.natacio.cat/ca/tournament/1339809/match/145574639/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574639/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574646@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270404T093000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. TERRASSA B — A.E. SANTA EULÀLIA B
 LOCATION:163 - Terrassa C.N.
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574646/results
+ p.natacio.cat/ca/tournament/1339809/match/145574646/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Terrassa%2C%20Avinguda%20Abat%20Marcet%2C%20Terrassa
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574646/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574652@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270411T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. MANRESA B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574652/results
+ p.natacio.cat/ca/tournament/1339809/match/145574652/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574652/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574664@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270425T133000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. RUBÍ B — A.E. SANTA EULÀLIA B
 LOCATION:186 - Rubí\, CN - Can Rosés
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574664/results
+ p.natacio.cat/ca/tournament/1339809/match/145574664/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Rub%C3%AD%20Can%20Ros%C3%A9s%2C%20Rub%C3%AD
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574664/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574666@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270509T085000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: A.E. SANTA EULÀLIA B — C.N. ATL BARCELONETA B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574666/results
+ p.natacio.cat/ca/tournament/1339809/match/145574666/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574666/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339809-145574673@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270516T103000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Infantil Mixto B: C.N. MATARÓ — A.E. SANTA EULÀLIA B
 LOCATION:259 - Mataró\, CN - Joan Serra - 25m coberta
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339809/match/145574673/results
+ p.natacio.cat/ca/tournament/1339809/match/145574673/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Centre%
+ 20Nataci%C3%B3%20Matar%C3%B3%20Complex%20Joan%20Serra%2C%20Passeig%20del%2
+ 0Callao%2C%20Matar%C3%B3
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145574673/result
  s
 END:VEVENT

@@ -5,7 +5,9 @@ from __future__ import annotations
 import json
 import re
 import time
+import hashlib
 from pathlib import Path
+from datetime import datetime, timezone
 
 from actawp_fetch import fetch_html
 from actawp_sync import CALENDARS, calendar_url, parse_calendar_html
@@ -77,7 +79,9 @@ def fetch_category(category, tournament_id, default_id, overrides):
 
 def save_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary = path.with_suffix(path.suffix + '.tmp')
+    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline='\n')
+    temporary.replace(path)
 
 
 def load_overrides():
@@ -88,6 +92,7 @@ def load_overrides():
 
 
 def main():
+    CACHE.clear()
     overrides = load_overrides()
     collected = []
     counts = {}
@@ -122,7 +127,14 @@ def main():
     if not output and not errors:
         errors.append("Snapshot vacío bloqueado")
     complete = not errors and len(counts) == len(CALENDARS)
+    if OUT.exists() and complete:
+        previous = json.loads(OUT.read_text(encoding="utf-8"))
+        missing = {(m['tournament_id'], m['match_id']) for m in previous} - set(unique)
+        if missing:
+            errors.append(f"Partidos desaparecidos sin cancelación explícita: {sorted(missing)}; snapshot bloqueado")
+            complete = False
     status = {
+        "attempted_at": datetime.now(timezone.utc).isoformat(),
         "complete": complete,
         "categories_expected": list(CALENDARS),
         "counts": counts,
@@ -141,6 +153,8 @@ def main():
     if not output:
         raise RuntimeError("Snapshot vacío bloqueado")
     save_json(OUT, output)
+    status['snapshot_sha256'] = hashlib.sha256(OUT.read_bytes()).hexdigest()
+    save_json(ATTEMPT_STATUS, status)
     save_json(STATUS, status)
     print(f"PUBLICADO: {len(output)} partidos AESE únicos de {len(CALENDARS)} categorías", flush=True)
 

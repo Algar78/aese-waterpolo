@@ -8,241 +8,308 @@ X-WR-TIMEZONE:Europe/Madrid
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 BEGIN:VEVENT
 UID:actawp-1339806-145574389@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261003T151500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. ATL BARCELONETA B — A.E. SANTA EULÀL
  IA B
 LOCATION:166 - Atlètic Barceloneta\, CN - 33m coberta
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574389/results
+ p.natacio.cat/ca/tournament/1339806/match/145574389/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Atl%C3%A8tic-Barceloneta%2C%20Pla%C3%A7a%20del%20Mar%2C%20B
+ arcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574395@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261016T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.N. GRANOLLERS
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574395/results
+ p.natacio.cat/ca/tournament/1339806/match/145574395/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574395/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574400@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261024T142000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. MANRESA — A.E. SANTA EULÀLIA B
 LOCATION:346 - Manresa\, CN - 50m
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574400/results
+ p.natacio.cat/ca/tournament/1339806/match/145574400/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Piscine
+ s%20Municipals%20Manel%20Estiarte%20Duocastella%2C%20Manresa
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574407@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270219T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.N. BADIA
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574407/results
+ p.natacio.cat/ca/tournament/1339806/match/145574407/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574407/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574412@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261114T183000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: BARCELONA WATERPOLO CLUB — A.E. SANTA EUL
  ÀLIA B
 LOCATION:185 - Sant Feliu\, CN
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574412/results
+ p.natacio.cat/ca/tournament/1339806/match/145574412/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Complex
+ %20Municipal%20de%20Piscines%2C%20Verge%20de%20Montserrat%202%2C%20Sant%20
+ Feliu%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574412/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574418@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261127T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.N. MATARÓ
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574418/results
+ p.natacio.cat/ca/tournament/1339806/match/145574418/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574418/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574423@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261212T160000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.W. SANT ADRIÀ — A.E. SANTA EULÀLIA B
 LOCATION:298 - St Adria\, Wp C (Marina Besós)
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574423/results
+ p.natacio.cat/ca/tournament/1339806/match/145574423/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=CEM%20M
+ arina%20Bes%C3%B2s%2C%20Sant%20Adri%C3%A0%20de%20Bes%C3%B2s
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574423/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574429@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261219T143000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: CWP ANGLES/CN BANYOLES/GEIEG — A.E. SANTA 
  EULÀLIA B
 LOCATION:213 - Anglès\, CWP
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574429/results
+ p.natacio.cat/ca/tournament/1339806/match/145574429/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Piscine
+ s%20Municipals%2C%20Zona%20Esportiva%2C%20Angl%C3%A8s
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574429/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574430@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261211T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.N. VALLIRANA
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574430/results
+ p.natacio.cat/ca/tournament/1339806/match/145574430/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574430/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574435@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261218T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.N. ATL BARCELONE
  TA B
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574435/results
+ p.natacio.cat/ca/tournament/1339806/match/145574435/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574435/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574441@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270130T100000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. GRANOLLERS — A.E. SANTA EULÀLIA B
 LOCATION:100 - Granollers\, CN - P3 - 25m coberta
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574441/results
+ p.natacio.cat/ca/tournament/1339806/match/145574441/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Granollers%2C%20Llu%C3%ADs%20Companys%2010%2C%20Granollers
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574441/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574446@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270205T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.N. MANRESA
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574446/results
+ p.natacio.cat/ca/tournament/1339806/match/145574446/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574446/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574452@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261107T163000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. BADIA — A.E. SANTA EULÀLIA B
 LOCATION:195 - Badia\, CN - 25m
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574452/results
+ p.natacio.cat/ca/tournament/1339806/match/145574452/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Badia%2C%20Avinguda%20de%20la%20Plata%2C%20Badia%20del%20Va
+ ll%C3%A8s
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574452/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574457@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270226T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — BARCELONA WATERPOL
  O CLUB
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574457/results
+ p.natacio.cat/ca/tournament/1339806/match/145574457/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574457/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574463@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270312T191500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. MATARÓ — A.E. SANTA EULÀLIA B
 LOCATION:259 - Mataró\, CN - Joan Serra - 25m coberta
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574463/results
+ p.natacio.cat/ca/tournament/1339806/match/145574463/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Centre%
+ 20Nataci%C3%B3%20Matar%C3%B3%20Complex%20Joan%20Serra%2C%20Passeig%20del%2
+ 0Callao%2C%20Matar%C3%B3
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574463/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574468@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270213T140000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — C.W. SANT ADRIÀ
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574468/results
+ p.natacio.cat/ca/tournament/1339806/match/145574468/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574468/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574474@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270409T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: A.E. SANTA EULÀLIA B — CWP ANGLES/CN BANY
  OLES/GEIEG
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574474/results
+ p.natacio.cat/ca/tournament/1339806/match/145574474/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574474/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574475@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20270416T184500Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. VALLIRANA — A.E. SANTA EULÀLIA B
 LOCATION:188 - Vallirana\, C.N.
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339806/match/145574475/results
+ p.natacio.cat/ca/tournament/1339806/match/145574475/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=CEM%20V
+ allirana%2C%20Vallirana
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574475/result
  s
 END:VEVENT

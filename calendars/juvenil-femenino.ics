@@ -8,66 +8,84 @@ X-WR-TIMEZONE:Europe/Madrid
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 BEGIN:VEVENT
 UID:actawp-1339811-145573790@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261025T083000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Femenino: C.N. CATALUNYA — A.E. SANTA EULÀLIA
 LOCATION:165 - Catalunya\, CN - Can Toda
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339811/match/145573790/results
+ p.natacio.cat/ca/tournament/1339811/match/145573790/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Catalunya%20Can%20Toda%2C%20Ramir%20de%20Maeztu%2C%20Barcel
+ ona
 URL:https://actawp.natacio.cat/ca/tournament/1339811/match/145573790/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339811-145573793@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261011T101000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Femenino: A.E. SANTA EULÀLIA — C.N. ATL BARCELONETA
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339811/match/145573793/results
+ p.natacio.cat/ca/tournament/1339811/match/145573793/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339811/match/145573793/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339811-145573796@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261018T070000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Femenino: C.N. TERRASSA — A.E. SANTA EULÀLIA
 LOCATION:163 - Terrassa C.N.
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339811/match/145573796/results
+ p.natacio.cat/ca/tournament/1339811/match/145573796/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Club%20
+ Nataci%C3%B3%20Terrassa%2C%20Avinguda%20Abat%20Marcet%2C%20Terrassa
 URL:https://actawp.natacio.cat/ca/tournament/1339811/match/145573796/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339811-145573799@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124758Z
 DTSTART:20261108T101000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:1
+LAST-MODIFIED:20261010T124758Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Femenino: A.E. SANTA EULÀLIA — C.N. MOLINS DE REI
 LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339811/match/145573799/results
+ p.natacio.cat/ca/tournament/1339811/match/145573799/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=Poliesp
+ ortiu%20Municipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%2
+ 0L'Hospitalet%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339811/match/145573799/result
  s
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339811-145573802@aese-waterpolo
-DTSTAMP:20261010T071235Z
+DTSTAMP:20261010T124850Z
 DTSTART:20261115T070000Z
-SEQUENCE:0
-LAST-MODIFIED:20261010T071235Z
+SEQUENCE:2
+LAST-MODIFIED:20261010T124850Z
+STATUS:CONFIRMED
 SUMMARY:Juvenil Femenino: C.N. SANT ANDREU — A.E. SANTA EULÀLIA
 LOCATION:164 - St Andreu\, CN (25 M.)
 DESCRIPTION:Jornada 1\nHorario Europe/Madrid. Fuente: ActaWP\nhttps://actaw
- p.natacio.cat/ca/tournament/1339811/match/145573802/results
+ p.natacio.cat/ca/tournament/1339811/match/145573802/results\nEstado: confi
+ rmed\nGoogle Maps: https://www.google.com/maps/search/?api=1&query=CEM%20S
+ ant%20Andreu%20La%20Sagrera%2C%20Santa%20Coloma%2025%2C%20Barcelona
 URL:https://actawp.natacio.cat/ca/tournament/1339811/match/145573802/result
  s
 END:VEVENT
