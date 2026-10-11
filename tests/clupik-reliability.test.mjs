@@ -54,3 +54,19 @@ test('fallo de un correo conserva checkpoint y libera el bloqueo compartido',()=
   assert.throws(()=>h.context.procesarPartidosAESE(),/conserva ULTIMA_EJECUCION/);
   assert.deepEqual(writes,['lock','unlock']);
 });
+
+test('fechas reales MM/DD no desbordan a otro mes; ambiguas e imposibles bloquean escritura',()=>{
+  for(const [date,month,day] of [['10/17/2026',9,17],['11/15/2026',10,15],['17/10/2026',9,17]]) {
+    const h=setup();let captured;
+    h.calendar.createEvent=(title,start)=>{captured=start;throw Error('capturado')};
+    const blocks=['Federació Catalana de Natació LLIGA JUVENIL FEMENI','17:20','A.E. SANTA EULÀLIA','Jornada 1',date,'GEiEG','228 - Santa Eulàlia, AE','Ver'];
+    const message={getBody:()=>blocks.map(x=>`<td>${x}</td>`).join('')+'<a href="https://leverade.com/tournament/100/match/12/results">Ver</a>',getSubject:()=>''};
+    assert.throws(()=>h.context.procesarMensajeAESE_(message,h.calendar),/capturado/);
+    assert.equal(captured.getFullYear(),2026);assert.equal(captured.getMonth(),month);assert.equal(captured.getDate(),day);
+  }
+  for(const date of ['04/09/2027','02/30/2027']) {
+    const h=setup();const blocks=['Federació Catalana de Natació LLIGA JUVENIL FEMENI','17:20','A.E. SANTA EULÀLIA','Jornada 1',date,'GEiEG','228 - Santa Eulàlia, AE','Ver'];
+    const message={getBody:()=>blocks.map(x=>`<td>${x}</td>`).join('')+'<a href="https://leverade.com/tournament/100/match/12/results">Ver</a>',getSubject:()=>''};
+    assert.throws(()=>h.context.procesarMensajeAESE_(message,h.calendar),/ambigua|inválida/);assert.deepEqual(h.calls,[]);
+  }
+});
