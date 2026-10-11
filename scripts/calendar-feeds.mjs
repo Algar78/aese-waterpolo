@@ -76,10 +76,17 @@ export function generate(root = new URL('../', import.meta.url)) {
   try { previous = JSON.parse(readFileSync(new URL('calendars/event-state.json',root))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const state = eventState(matches, previous, utc(new Date()));
   const manifest = {source:'data/actawp_matches.json',snapshot_sha256:createHash('sha256').update(raw).digest('hex'),total:matches.length,timeZone:'Europe/Madrid',categories:Object.entries(categories).map(([name,slug])=>({name,slug,count:counts[name],url:`${baseURL}calendars/${slug}.ics`}))};
+  // One validated document keeps Apps Script independent of GitHub's shared-IP API quota.
+  const bundle = {schema_version:1, matches, status, venues:JSON.parse(readFileSync(new URL('data/venues.json',root)))};
+  for (const match of matches) {
+    const entry = bundle.venues[match.venue];
+    if (!entry?.query || !entry.source?.startsWith('https://')) throw Error('Sede del paquete sin verificar');
+  }
   mkdirSync(new URL('calendars/',root),{recursive:true});
   for (const [name,slug] of Object.entries(categories)) writeFileSync(new URL(`calendars/${slug}.ics`,root),feed(name,matches,state));
   writeFileSync(new URL('calendars/event-state.json',root),JSON.stringify(state,null,2)+'\n');
   writeFileSync(new URL('calendars/index.json',root),JSON.stringify(manifest,null,2)+'\n');
+  writeFileSync(new URL('calendars/general-calendar.json',root),JSON.stringify(bundle,null,2)+'\n');
   console.log(`Validados y generados: ${Object.keys(categories).length} feeds, ${matches.length} partidos`);
   return manifest;
 }

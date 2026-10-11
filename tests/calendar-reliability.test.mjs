@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync, mkdtempSync, cpSync, rmSync} from 'node:fs';
+import {readFileSync, writeFileSync, mkdtempSync, cpSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {pathToFileURL} from 'node:url';
 import {join} from 'node:path';
@@ -43,7 +43,17 @@ test('generación repetida no cambia revisiones ni contenido',()=>{
     const root=pathToFileURL(dir+'/'); generate(root);
     const before=readFileSync(join(dir,'calendars/event-state.json'),'utf8');
     const feeds=Object.values(categories).map(s=>readFileSync(join(dir,'calendars',s+'.ics'),'utf8'));
+    const bundlePath=join(dir,'calendars/general-calendar.json');
+    const bundleText=readFileSync(bundlePath,'utf8'),bundle=JSON.parse(bundleText);
+    assert.equal(bundle.schema_version,1);
+    assert.deepEqual(bundle.matches,matches);
+    assert.deepEqual(bundle.status,JSON.parse(readFileSync(join(dir,'data/actawp_export_status.json'))));
+    assert.deepEqual(bundle.venues,venues);
     generate(root); assert.equal(readFileSync(join(dir,'calendars/event-state.json'),'utf8'),before);
+    assert.equal(readFileSync(bundlePath,'utf8'),bundleText);
     Object.values(categories).forEach((s,i)=>assert.equal(readFileSync(join(dir,'calendars',s+'.ics'),'utf8'),feeds[i]));
+    writeFileSync(join(dir,'data/actawp_export_status.json'),JSON.stringify({...bundle.status,complete:false}));
+    assert.throws(()=>generate(root),/incompleto/);
+    assert.equal(readFileSync(bundlePath,'utf8'),bundleText);
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
