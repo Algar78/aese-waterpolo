@@ -514,11 +514,14 @@ function procesarMensajeAESE_(
 
     fechaTexto.split('/').map(Number);
 
-  // Clupik envía las fechas en formato DD/MM/YYYY.
-
-  const dia = partesFecha[0];
-
-  const mes = partesFecha[1];
+  // Correos reales usan MM/DD/YYYY; otros formatos pueden ser ambiguos.
+  // Inferir solo cuando uno de los componentes supera 12, nunca desbordar Date.
+  const first = partesFecha[0], second = partesFecha[1];
+  if (first <= 12 && second <= 12 && first !== second) {
+    throw new Error('Fecha Clupik ambigua; contrastar origen: ' + fechaTexto);
+  }
+  const dia = second > 12 ? second : first;
+  const mes = second > 12 ? first : second;
 
   const año = partesFecha[2];
 
@@ -539,6 +542,11 @@ function procesarMensajeAESE_(
     partesHora[1]
 
   );
+
+  if (inicio.getFullYear() !== año || inicio.getMonth() !== mes - 1 || inicio.getDate() !== dia ||
+      inicio.getHours() !== partesHora[0] || inicio.getMinutes() !== partesHora[1]) {
+    throw new Error('Fecha u hora Clupik inválida: ' + fechaTexto + ' ' + hora);
+  }
 
   // Duración provisional de 2 horas
 
