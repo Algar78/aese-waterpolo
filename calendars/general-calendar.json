@@ -38,18 +38,6 @@
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results"
     },
     {
-      "category": "1a Div Fem Absoluta B",
-      "tournament_id": 1339806,
-      "calendar_id": 3713773,
-      "match_id": 145574389,
-      "home_team": "C.N. ATL BARCELONETA B",
-      "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-10-03T17:15:00+02:00",
-      "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
-      "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/results"
-    },
-    {
       "category": "Absoluto Masculino",
       "tournament_id": 1339803,
       "calendar_id": 3714121,
@@ -218,18 +206,6 @@
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609003/results"
     },
     {
-      "category": "1a Div Fem Absoluta B",
-      "tournament_id": 1339806,
-      "calendar_id": 3713773,
-      "match_id": 145574400,
-      "home_team": "C.N. MANRESA",
-      "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-10-24T16:20:00+02:00",
-      "venue": "346 - Manresa, CN - 50m",
-      "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
-    },
-    {
       "category": "Infantil Mixto A",
       "tournament_id": 1339809,
       "calendar_id": 3714172,
@@ -260,7 +236,7 @@
       "match_id": 145574560,
       "home_team": "C.N. SABADELL B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-10-25T08:00:00+01:00",
+      "start": "2026-10-25T09:00:00+01:00",
       "venue": "264 - Sabadell, CN - Can Llong - 33m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574560/results"
@@ -272,7 +248,7 @@
       "match_id": 145573790,
       "home_team": "C.N. CATALUNYA",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-10-25T09:30:00+01:00",
+      "start": "2026-10-25T10:30:00+01:00",
       "venue": "165 - Catalunya, CN - Can Toda",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573790/results"
@@ -284,7 +260,7 @@
       "match_id": 145573609,
       "home_team": "C.N. GRANOLLERS",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-10-30T20:00:00+01:00",
+      "start": "2026-10-30T21:00:00+01:00",
       "venue": "100 - Granollers, CN - P3 - 25m coberta",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573609/results"
@@ -296,7 +272,7 @@
       "match_id": 145573552,
       "home_team": "C.N. CALDES",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-10-31T13:30:00+01:00",
+      "start": "2026-10-31T14:30:00+01:00",
       "venue": "177 - Caldes, C.N.",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573552/results"
@@ -308,7 +284,7 @@
       "match_id": 145609011,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. TERRASSA B",
-      "start": "2026-11-07T15:00:00+01:00",
+      "start": "2026-11-07T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609011/results"
@@ -320,7 +296,7 @@
       "match_id": 145574452,
       "home_team": "C.N. BADIA",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-11-07T17:30:00+01:00",
+      "start": "2026-11-07T18:30:00+01:00",
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574452/results"
@@ -332,7 +308,7 @@
       "match_id": 145574567,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.E. MEDITERRANI B",
-      "start": "2026-11-08T09:50:00+01:00",
+      "start": "2026-11-08T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574567/results"
@@ -344,7 +320,7 @@
       "match_id": 145573799,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.N. MOLINS DE REI",
-      "start": "2026-11-08T11:10:00+01:00",
+      "start": "2026-11-08T12:10:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573799/results"
@@ -356,7 +332,7 @@
       "match_id": 145573556,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.N. VALLIRANA",
-      "start": "2026-11-13T19:45:00+01:00",
+      "start": "2026-11-13T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573556/results"
@@ -368,7 +344,7 @@
       "match_id": 145609018,
       "home_team": "C.N. RUBÍ B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-11-14T15:45:00+01:00",
+      "start": "2026-11-14T16:45:00+01:00",
       "venue": "186 - Rubí, CN - Can Rosés",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609018/results"
@@ -380,7 +356,7 @@
       "match_id": 145573570,
       "home_team": "BARCELONA WATERPOLO CLUB",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-11-14T17:45:00+01:00",
+      "start": "2026-11-14T18:45:00+01:00",
       "venue": "185 - Sant Feliu, CN",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573570/results"
@@ -392,7 +368,7 @@
       "match_id": 145574412,
       "home_team": "BARCELONA WATERPOLO CLUB",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-11-14T19:30:00+01:00",
+      "start": "2026-11-14T20:30:00+01:00",
       "venue": "185 - Sant Feliu, CN",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574412/results"
@@ -404,7 +380,7 @@
       "match_id": 145574573,
       "home_team": "C.N. SANT ANDREU B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-11-15T08:00:00+01:00",
+      "start": "2026-11-15T09:00:00+01:00",
       "venue": "297 - Sant Andreu, CN - Trinitat Vella",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574573/results"
@@ -416,7 +392,7 @@
       "match_id": 145573802,
       "home_team": "C.N. SANT ANDREU",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-11-15T08:00:00+01:00",
+      "start": "2026-11-15T09:00:00+01:00",
       "venue": "164 - St Andreu, CN (25 M.)",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573802/results"
@@ -440,7 +416,7 @@
       "match_id": 145573576,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.E.F. CREU GROGA",
-      "start": "2026-11-20T19:45:00+01:00",
+      "start": "2026-11-20T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573576/results"
@@ -452,7 +428,7 @@
       "match_id": 145574418,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. MATARÓ",
-      "start": "2026-11-27T19:45:00+01:00",
+      "start": "2026-11-27T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574418/results"
@@ -464,7 +440,7 @@
       "match_id": 145609026,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. MATARÓ",
-      "start": "2026-11-28T15:00:00+01:00",
+      "start": "2026-11-28T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609026/results"
@@ -476,7 +452,7 @@
       "match_id": 145573582,
       "home_team": "C.N. BADIA",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-11-28T17:45:00+01:00",
+      "start": "2026-11-28T18:45:00+01:00",
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573582/results"
@@ -488,7 +464,7 @@
       "match_id": 145574580,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. TERRASSA B",
-      "start": "2026-11-29T09:50:00+01:00",
+      "start": "2026-11-29T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574580/results"
@@ -497,10 +473,22 @@
       "category": "1a Div Fem Absoluta B",
       "tournament_id": 1339806,
       "calendar_id": 3713773,
+      "match_id": 145574400,
+      "home_team": "C.N. MANRESA",
+      "away_team": "A.E. SANTA EULÀLIA B",
+      "start": "2026-11-29T12:00:00+01:00",
+      "venue": "346 - Manresa, CN - 50m",
+      "round_name": "Jornada 1",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
+    },
+    {
+      "category": "1a Div Fem Absoluta B",
+      "tournament_id": 1339806,
+      "calendar_id": 3713773,
       "match_id": 145574430,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. VALLIRANA",
-      "start": "2026-12-11T19:45:00+01:00",
+      "start": "2026-12-11T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574430/results"
@@ -512,7 +500,7 @@
       "match_id": 145609048,
       "home_team": "U.E. D'HORTA B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-12-12T10:30:00+01:00",
+      "start": "2026-12-12T11:30:00+01:00",
       "venue": "179 - D'Horta, UE - 33m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609048/results"
@@ -524,7 +512,7 @@
       "match_id": 145574423,
       "home_team": "C.W. SANT ADRIÀ",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-12-12T17:00:00+01:00",
+      "start": "2026-12-12T18:00:00+01:00",
       "venue": "298 - St Adria, Wp C (Marina Besós)",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574423/results"
@@ -536,7 +524,7 @@
       "match_id": 145574586,
       "home_team": "C.N. MANRESA B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-12-13T08:00:00+01:00",
+      "start": "2026-12-13T09:00:00+01:00",
       "venue": "346 - Manresa, CN - 50m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574586/results"
@@ -545,10 +533,22 @@
       "category": "1a Div Fem Absoluta B",
       "tournament_id": 1339806,
       "calendar_id": 3713773,
+      "match_id": 145574389,
+      "home_team": "C.N. ATL BARCELONETA B",
+      "away_team": "A.E. SANTA EULÀLIA B",
+      "start": "2026-12-16T20:45:00+01:00",
+      "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
+      "round_name": "Jornada 1",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/results"
+    },
+    {
+      "category": "1a Div Fem Absoluta B",
+      "tournament_id": 1339806,
+      "calendar_id": 3713773,
       "match_id": 145574435,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. ATL BARCELONETA B",
-      "start": "2026-12-18T19:45:00+01:00",
+      "start": "2026-12-18T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574435/results"
@@ -560,7 +560,7 @@
       "match_id": 145573592,
       "home_team": "C.N. MARTORELL",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-12-19T11:00:00+01:00",
+      "start": "2026-12-19T12:00:00+01:00",
       "venue": "175 - Martorell, CN",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573592/results"
@@ -572,7 +572,7 @@
       "match_id": 145574429,
       "home_team": "CWP ANGLES/CN BANYOLES/GEIEG",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-12-19T15:30:00+01:00",
+      "start": "2026-12-19T16:30:00+01:00",
       "venue": "213 - Anglès, CWP",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574429/results"
@@ -584,7 +584,7 @@
       "match_id": 145573597,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.N. CALDES",
-      "start": "2027-01-08T19:45:00+01:00",
+      "start": "2027-01-08T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573597/results"
@@ -596,7 +596,7 @@
       "match_id": 145609062,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. CATALUNYA B",
-      "start": "2027-01-10T08:30:00+01:00",
+      "start": "2027-01-10T09:30:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609062/results"
@@ -608,7 +608,7 @@
       "match_id": 145574598,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. RUBÍ B",
-      "start": "2027-01-10T09:50:00+01:00",
+      "start": "2027-01-10T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574598/results"
@@ -620,7 +620,7 @@
       "match_id": 145573601,
       "home_team": "C.N. VALLIRANA",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2027-01-15T20:00:00+01:00",
+      "start": "2027-01-15T21:00:00+01:00",
       "venue": "188 - Vallirana, C.N.",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573601/results"
@@ -632,7 +632,7 @@
       "match_id": 145609069,
       "home_team": "C.N. MANRESA B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-01-16T10:00:00+01:00",
+      "start": "2027-01-16T11:00:00+01:00",
       "venue": "346 - Manresa, CN - 50m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609069/results"
@@ -644,7 +644,7 @@
       "match_id": 145574600,
       "home_team": "C.N. ATL BARCELONETA B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-01-17T11:00:00+01:00",
+      "start": "2027-01-17T12:00:00+01:00",
       "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574600/results"
@@ -656,7 +656,7 @@
       "match_id": 145573606,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.N. OLOT",
-      "start": "2027-01-22T19:45:00+01:00",
+      "start": "2027-01-22T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573606/results"
@@ -668,7 +668,7 @@
       "match_id": 145574607,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. MATARÓ",
-      "start": "2027-01-24T09:50:00+01:00",
+      "start": "2027-01-24T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574607/results"
@@ -680,7 +680,7 @@
       "match_id": 145574441,
       "home_team": "C.N. GRANOLLERS",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-01-30T11:00:00+01:00",
+      "start": "2027-01-30T12:00:00+01:00",
       "venue": "100 - Granollers, CN - P3 - 25m coberta",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574441/results"
@@ -692,7 +692,7 @@
       "match_id": 145609071,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. BARCELONA B",
-      "start": "2027-01-30T15:00:00+01:00",
+      "start": "2027-01-30T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609071/results"
@@ -704,7 +704,7 @@
       "match_id": 145574446,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. MANRESA",
-      "start": "2027-02-05T19:45:00+01:00",
+      "start": "2027-02-05T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574446/results"
@@ -716,7 +716,7 @@
       "match_id": 145609079,
       "home_team": "C.N. ATL BARCELONETA B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-02-06T08:00:00+01:00",
+      "start": "2027-02-06T09:00:00+01:00",
       "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609079/results"
@@ -728,7 +728,7 @@
       "match_id": 145573621,
       "home_team": "C.E.F. CREU GROGA",
       "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2027-02-06T11:30:00+01:00",
+      "start": "2027-02-06T12:30:00+01:00",
       "venue": "291 - Calella, Crol Centre",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573621/results"
@@ -740,7 +740,7 @@
       "match_id": 145574613,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. PREMIÀ B",
-      "start": "2027-02-07T09:50:00+01:00",
+      "start": "2027-02-07T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574613/results"
@@ -752,7 +752,7 @@
       "match_id": 145573615,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "BARCELONA WATERPOLO CLUB",
-      "start": "2027-02-12T19:45:00+01:00",
+      "start": "2027-02-12T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573615/results"
@@ -764,7 +764,7 @@
       "match_id": 145574468,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.W. SANT ADRIÀ",
-      "start": "2027-02-13T15:00:00+01:00",
+      "start": "2027-02-13T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574468/results"
@@ -776,7 +776,7 @@
       "match_id": 145609087,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. POBLE NOU B",
-      "start": "2027-02-13T16:20:00+01:00",
+      "start": "2027-02-13T17:20:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609087/results"
@@ -788,7 +788,7 @@
       "match_id": 145574620,
       "home_team": "C.N. BARCELONA B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-02-14T11:45:00+01:00",
+      "start": "2027-02-14T12:45:00+01:00",
       "venue": "160 - Barcelona, CN - Nova Escollera - 50m",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574620/results"
@@ -800,7 +800,7 @@
       "match_id": 145574407,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. BADIA",
-      "start": "2027-02-19T19:45:00+01:00",
+      "start": "2027-02-19T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574407/results"
@@ -812,7 +812,7 @@
       "match_id": 145574626,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. SABADELL B",
-      "start": "2027-02-21T09:50:00+01:00",
+      "start": "2027-02-21T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574626/results"
@@ -824,7 +824,7 @@
       "match_id": 145574457,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "BARCELONA WATERPOLO CLUB",
-      "start": "2027-02-26T19:45:00+01:00",
+      "start": "2027-02-26T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574457/results"
@@ -836,7 +836,7 @@
       "match_id": 145573627,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.N. BADIA",
-      "start": "2027-03-05T19:45:00+01:00",
+      "start": "2027-03-05T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573627/results"
@@ -848,7 +848,7 @@
       "match_id": 145574633,
       "home_team": "C.E. MEDITERRANI B",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-03-07T08:00:00+01:00",
+      "start": "2027-03-07T09:00:00+01:00",
       "venue": "174 - Mediterrani CE, Regent Mendieta",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574633/results"
@@ -860,7 +860,7 @@
       "match_id": 145574463,
       "home_team": "C.N. MATARÓ",
       "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2027-03-12T20:15:00+01:00",
+      "start": "2027-03-12T21:15:00+01:00",
       "venue": "259 - Mataró, CN - Joan Serra - 25m coberta",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574463/results"
@@ -872,7 +872,7 @@
       "match_id": 145574639,
       "home_team": "A.E. SANTA EULÀLIA B",
       "away_team": "C.N. SANT ANDREU B",
-      "start": "2027-03-14T09:50:00+01:00",
+      "start": "2027-03-14T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574639/results"
@@ -988,16 +988,34 @@
     },
     "total_matches_found": 80,
     "errors": [],
-    "snapshot_sha256": "30f58b5440f39cd96705594fccb4df1a3ced986ff7d0f090a8e6e6667b5052df",
+    "snapshot_sha256": "cac4c91b07e7dcbbc200412754044fc8df7fda245eee5b6f77977e06e494463c",
     "reviewed_corrections": [
       {
         "identity": "1339803:145573561",
         "source": "Aviso oficial FCN/Clupik recibido el 2026-10-15 08:39 UTC: Modificado un partido de Jornada 4",
         "previous_start": "2026-10-24T13:30:00+02:00",
         "start": "2026-11-15T13:30:00+01:00",
-        "direct_actawp_verification": "blocked_http_429"
+        "direct_actawp_verification": "verified_browser_2026-10-15"
+      },
+      {
+        "identity": "1339806:145574389",
+        "previous_start": "2026-10-03T17:15:00+02:00",
+        "start": "2026-12-16T20:45:00+01:00",
+        "source": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/results"
+      },
+      {
+        "identity": "1339806:145574400",
+        "previous_start": "2026-10-24T16:20:00+02:00",
+        "start": "2026-11-29T12:00:00+01:00",
+        "source": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
       }
-    ]
+    ],
+    "official_times_audit": {
+      "date": "2026-10-15",
+      "matches": 80,
+      "source": "docs/official-times-2026-10-15.csv",
+      "method": "Visible Madrid wall clock agrees with UTC data-sort on nine official ActaWP/Clupik calendar tables"
+    }
   },
   "venues": {
     "228 - Santa Eulàlia, AE": {

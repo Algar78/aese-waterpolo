@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from html import unescape
 import re
 import unicodedata
@@ -81,24 +81,21 @@ def _extract_round(soup: BeautifulSoup) -> str | None:
 
 def _extract_local_datetime(data_sort: str, display_text: str) -> datetime:
     displayed = _clean(display_text)
-    explicit = re.search(
-        r"(\d{1,2})/(\d{1,2})/(\d{2,4}).*?(\d{1,2}:\d{2})\s+GMT([+-]\d{1,2})",
-        displayed,
-    )
-    if explicit:
-        day, month, year = map(int, explicit.group(1, 2, 3))
-        if year < 100:
-            year += 2000
-        hour, minute = map(int, explicit.group(4).split(":"))
-        offset_hours = int(explicit.group(5))
-        fixed_zone = timezone(timedelta(hours=offset_hours))
-        return datetime(year, month, day, hour, minute, tzinfo=fixed_zone).astimezone(MADRID)
-
+    # ActaWP renders a stale GMT+2 label in winter. Its sortable timestamp is
+    # UTC; verify it against the visible Madrid wall clock, ignoring the label.
     match = re.search(r"(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})", data_sort)
     if not match:
         raise ValueError(f"No se pudo interpretar la fecha: {data_sort!r}")
     year, month, day, hour, minute, second = map(int, match.groups())
-    return datetime(year, month, day, hour, minute, second, tzinfo=timezone.utc).astimezone(MADRID)
+    local = datetime(year, month, day, hour, minute, second, tzinfo=timezone.utc).astimezone(MADRID)
+    visible = re.search(r"(\d{1,2})/(\d{1,2})/(\d{2,4}).*?(\d{1,2}):(\d{2})", displayed)
+    if visible:
+        day, month, year, hour, minute = map(int, visible.groups())
+        if year < 100:
+            year += 2000
+        if (year, month, day, hour, minute) != (local.year, local.month, local.day, local.hour, local.minute):
+            raise ValueError("Fecha UTC y hora visible Europe/Madrid contradictorias")
+    return local
 
 
 def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_id: int) -> list[Match]:
