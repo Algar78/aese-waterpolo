@@ -1,5 +1,5 @@
 {
-  "attempted_at": "2026-10-15T13:22:43.278202+00:00",
+  "attempted_at": "2026-10-15T16:40:53.659844+00:00",
   "complete": false,
   "categories_expected": [
     "Absoluto Masculino",
@@ -24,5 +24,26 @@
     "Juvenil Femenino: pendiente por límite HTTP 429",
     "1a Div Fem Absoluta B: pendiente por límite HTTP 429",
     "Juvenil Masculino: pendiente por límite HTTP 429"
+  ],
+  "reviewed_corrections": [
+    {
+      "identity": "1339803:145573561",
+      "source": "Aviso oficial FCN/Clupik recibido el 2026-10-15 08:39 UTC: Modificado un partido de Jornada 4",
+      "previous_start": "2026-10-24T13:30:00+02:00",
+      "start": "2026-11-15T13:30:00+01:00",
+      "direct_actawp_verification": "verified_browser_2026-10-15"
+    },
+    {
+      "identity": "1339806:145574389",
+      "previous_start": "2026-10-03T17:15:00+02:00",
+      "start": "2026-12-16T20:45:00+01:00",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/results"
+    },
+    {
+      "identity": "1339806:145574400",
+      "previous_start": "2026-10-24T16:20:00+02:00",
+      "start": "2026-11-29T12:00:00+01:00",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
+    }
   ]
 }
