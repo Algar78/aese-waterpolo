@@ -64,9 +64,12 @@ function actaWPMapsURL_(venue) {
 }
 
 function ownsActaWPEvent_(event, match) {
-  const lines = (event.getDescription() || '').split(/\r?\n/);
-  return lines.includes(ACTAWP_MARKER + actaWPIdentity_(match)) ||
-    (lines.includes(ACTAWP_MARKER + match.match_id) && lines.includes('ActaWP: ' + match.url));
+  // Calendar descriptions may fold the following field onto the marker line.
+  // Match a complete numeric identity, never a prefix (12 must not match 123).
+  const description = (event.getDescription() || '').replace(/<[^>]*>/g, '\n').replace(/&nbsp;/gi, ' ');
+  const marker = id => new RegExp('(?:^|\\r?\\n)' + ACTAWP_MARKER + id + '(?=\\s|$)').test(description);
+  return marker(actaWPIdentity_(match)) ||
+    (marker(match.match_id) && description.replace(/\s+/g, ' ').includes('ActaWP: ' + match.url));
 }
 
 function syncActaWPToCalendar() {
@@ -136,9 +139,15 @@ function reconcileActaWPMatch_(calendar, match) {
   if (!event) {
     // No adoptar ni duplicar un evento Clupik por mera similitud.
     const candidates = calendar.getEvents(new Date(start.getTime()-86400000), new Date(start.getTime()+86400000));
-    if (candidates.some(e => e.getStartTime().getTime() === start.getTime() &&
+    if (candidates.some(e => {
+      const description = (e.getDescription() || '').replace(/<[^>]*>/g, '\n');
+      const other = description.match(/(?:^|\r?\n)ACTAWP_MATCH_ID:(\d+:\d+)(?=\s|$)/);
+      // Different categories can play the same opponent at the same time.
+      if (other && other[1] !== id) return false;
+      return e.getStartTime().getTime() === start.getTime() &&
         e.getTitle().toUpperCase().includes(match.home_team.toUpperCase()) &&
-        e.getTitle().toUpperCase().includes(match.away_team.toUpperCase()))) {
+        e.getTitle().toUpperCase().includes(match.away_team.toUpperCase());
+    })) {
       throw new Error('Posible duplicado Clupik; vincular manualmente tras revisión: ' + id);
     }
     event = calendar.createEvent(title, start, end, {

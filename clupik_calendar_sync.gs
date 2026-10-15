@@ -80,7 +80,7 @@ function procesarPartidosAESESinBloqueo_() {
 
     desde,
 
-    Session.getScriptTimeZone(),
+    'Europe/Madrid',
 
     'yyyy/MM/dd'
 
@@ -529,24 +529,7 @@ function procesarMensajeAESE_(
 
     hora.split(':').map(Number);
 
-  const inicio = new Date(
-
-    año,
-
-    mes - 1,
-
-    dia,
-
-    partesHora[0],
-
-    partesHora[1]
-
-  );
-
-  if (inicio.getFullYear() !== año || inicio.getMonth() !== mes - 1 || inicio.getDate() !== dia ||
-      inicio.getHours() !== partesHora[0] || inicio.getMinutes() !== partesHora[1]) {
-    throw new Error('Fecha u hora Clupik inválida: ' + fechaTexto + ' ' + hora);
-  }
+  const inicio = clupikMadridDate_(año, mes, dia, partesHora[0], partesHora[1]);
 
   // Duración provisional de 2 horas
 
@@ -1525,4 +1508,20 @@ function limpiarHTML_(texto) {
     .replace(/&quot;/g, '"')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// Resolve the wall clock in Madrid independently of the Apps Script project zone.
+// Reject invalid dates and DST gaps/folds rather than silently choosing an instant.
+function clupikMadridDate_(year, month, day, hour, minute) {
+  const fields = [year, month, day, hour, minute];
+  if (!fields.every(Number.isInteger) || year < 2000 || year > 2100) {
+    throw new Error('Fecha u hora Clupik inválida');
+  }
+  const pad = value => String(value).padStart(2, '0');
+  const expected = year + '-' + pad(month) + '-' + pad(day) + 'T' + pad(hour) + ':' + pad(minute);
+  const wall = Date.UTC(year, month - 1, day, hour, minute);
+  const candidates = [60, 120].map(offset => new Date(wall - offset * 60000)).filter(date =>
+    Utilities.formatDate(date, 'Europe/Madrid', "yyyy-MM-dd'T'HH:mm") === expected);
+  if (candidates.length !== 1) throw new Error('Fecha u hora Clupik inválida o ambigua en Europe/Madrid: ' + expected);
+  return candidates[0];
 }

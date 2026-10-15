@@ -114,3 +114,29 @@ test('Maps general conserva texto, eventos Clupik y duplicados; preview no escri
   assert.ok(a.getDescription().startsWith('Texto legítimo'));assert.ok(b.getDescription().startsWith('Clupik'));
   assert.equal(h.context.updateGeneralCalendarMaps().changes.length,0);
 });
+
+test('descripción con campos plegados recupera identidad tras mover Olot sin duplicar',()=>{
+  const h=harness(),m=matches.find(m=>m.match_id===145573561);
+  const old={...m,start:'2026-10-24T13:30:00+02:00'};
+  const e=h.event(old,'ACTAWP_MATCH_ID:1339803:145573561 Categoría: Absoluto Masculino Jornada:\nJornada 1');
+  assert.equal(h.context.reconcileActaWPMatch_(h.calendar,m),'updated');
+  assert.equal(h.events.length,1);
+  assert.equal(e.getStartTime().toISOString(),'2026-11-15T12:30:00.000Z');
+  assert.equal(h.context.reconcileActaWPMatch_(h.calendar,m),'unchanged');
+});
+
+test('marcador en descripción HTML se recupera sin aceptar prefijos',()=>{
+  const h=harness(),m=matches.find(m=>m.match_id===145573561);
+  assert.equal(h.context.ownsActaWPEvent_(h.event(m,'<p>ACTAWP_MATCH_ID:1339803:145573561<br>Categoría: Absoluto</p>'),m),true);
+  assert.equal(h.context.ownsActaWPEvent_(h.event(m,'<p>ACTAWP_MATCH_ID:1339803:1455735619</p>'),m),false);
+});
+
+test('sincronización completa repetida conserva 80 eventos y no crea duplicados',()=>{
+  const h=harness();h.context.syncActaWPToCalendar();
+  assert.equal(h.events.length,matches.length);
+  const creates=h.calls.filter(c=>c==='create').length;
+  h.context.syncActaWPToCalendar();
+  assert.equal(h.events.length,matches.length);
+  assert.equal(h.calls.filter(c=>c==='create').length,creates);
+  assert.ok(h.properties.has('ACTAWP_LAST_SYNC'));
+});
