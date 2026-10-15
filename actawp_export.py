@@ -94,6 +94,8 @@ def load_overrides():
 def main():
     CACHE.clear()
     overrides = load_overrides()
+    # Reviewed federation notices must not be rolled back by a stale source page.
+    corrections = json.loads(STATUS.read_text(encoding="utf-8")).get("reviewed_corrections", []) if STATUS.exists() else []
     collected = []
     counts = {}
     errors = []
@@ -124,6 +126,11 @@ def main():
     if len(unique) != len(collected):
         errors.append("Identidad de partido duplicada; snapshot bloqueado")
     output = sorted(unique.values(), key=lambda item: item["start"])
+    for correction in corrections:
+        for match in output:
+            identity = f"{match['tournament_id']}:{match['match_id']}"
+            if identity == correction['identity'] and match['start'] == correction['previous_start']:
+                errors.append(f"{identity}: origen conserva fecha anterior al aviso oficial revisado; snapshot bloqueado")
     if not output and not errors:
         errors.append("Snapshot vacío bloqueado")
     complete = not errors and len(counts) == len(CALENDARS)
@@ -140,6 +147,7 @@ def main():
         "counts": counts,
         "total_matches_found": len(output),
         "errors": errors,
+        "reviewed_corrections": corrections,
     }
     # Un fallo describe el intento, nunca invalida el último snapshot publicado.
     save_json(ATTEMPT_STATUS, status)
