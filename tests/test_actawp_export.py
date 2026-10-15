@@ -82,6 +82,23 @@ class ExportSafetyTests(unittest.TestCase):
             with self.assertRaises(RuntimeError): exporter.main()
         self.assert_preserved()
 
+    def test_official_notice_cannot_be_rolled_back_by_stale_source(self):
+        target = next(m for m in self.matches if m['match_id'] == 145573561)
+        self.status['reviewed_corrections'] = [{
+            'identity': '1339803:145573561',
+            'previous_start': '2026-10-24T13:30:00+02:00',
+            'start': target['start'],
+        }]
+        exporter.save_json(exporter.STATUS, self.status)
+        self.before = (exporter.OUT.read_bytes(), exporter.STATUS.read_bytes())
+        def stale(category, *args):
+            rows, group = self.fetched(category, *args)
+            return [SimpleNamespace(to_dict=lambda m=m: dict(m, start='2026-10-24T13:30:00+02:00') if m['match_id'] == 145573561 else m)
+                    for m in self.matches if m['category'] == category], group
+        with patch.object(exporter, 'fetch_category', side_effect=stale):
+            with self.assertRaises(RuntimeError): exporter.main()
+        self.assert_preserved()
+
     def test_fresh_cache_each_export(self):
         exporter.CACHE[(1,2)] = 'stale'
         with patch.object(exporter, 'fetch_category', side_effect=self.fetched): exporter.main()

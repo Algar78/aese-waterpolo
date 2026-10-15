@@ -204,18 +204,6 @@
     "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574547/results"
   },
   {
-    "category": "Absoluto Masculino",
-    "tournament_id": 1339803,
-    "calendar_id": 3714121,
-    "match_id": 145573561,
-    "home_team": "C.N. OLOT",
-    "away_team": "A.E. SANTA EULÀLIA",
-    "start": "2026-10-24T13:30:00+02:00",
-    "venue": "173 - Olot, CN",
-    "round_name": "Jornada 1",
-    "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573561/results"
-  },
-  {
     "category": "Alevín Mixto B",
     "tournament_id": 1339810,
     "calendar_id": 3714193,
@@ -430,6 +418,18 @@
     "venue": "164 - St Andreu, CN (25 M.)",
     "round_name": "Jornada 1",
     "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573802/results"
+  },
+  {
+    "category": "Absoluto Masculino",
+    "tournament_id": 1339803,
+    "calendar_id": 3714121,
+    "match_id": 145573561,
+    "home_team": "C.N. OLOT",
+    "away_team": "A.E. SANTA EULÀLIA",
+    "start": "2026-11-15T13:30:00+01:00",
+    "venue": "173 - Olot, CN",
+    "round_name": "Jornada 4",
+    "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573561/results"
   },
   {
     "category": "Absoluto Masculino",

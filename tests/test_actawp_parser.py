@@ -27,6 +27,15 @@ class ParserSafetyTests(unittest.TestCase):
         for label in ['Ajornat','Cancelado','Cancel·lat','Aplazado']:
             with self.subTest(label=label), self.assertRaisesRegex(ValueError,'revisar'):
                 self.parse(html(extra=label))
+    def test_round_is_taken_from_each_table(self):
+        rows = self.parse('<h2>Jornada 1</h2>' + html() + '<h2>Jornada 4</h2>' + html().replace('/123/', '/124/'))
+        self.assertEqual([m.round_name for m in rows], ['Jornada 1', 'Jornada 4'])
+    def test_utc_sort_is_converted_once_in_winter_and_summer(self):
+        from actawp_sync import _extract_local_datetime
+        for raw, expected in [('2026-11-15 12:30:00','2026-11-15T13:30:00+01:00'),
+                              ('2026-10-24 11:30:00','2026-10-24T13:30:00+02:00')]:
+            self.assertEqual(_extract_local_datetime(raw, '').isoformat(), expected)
+
     def test_429_direct_does_not_try_proxies(self):
         with patch.object(fetcher,'_fetch_direct',side_effect=RuntimeError('HTTP 429')), \
              patch.object(fetcher,'_fetch_corsfix') as cors, patch.object(fetcher,'_fetch_translate') as translate:

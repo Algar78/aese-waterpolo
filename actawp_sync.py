@@ -69,7 +69,7 @@ def _is_aese(value: str) -> bool:
 
 
 def _extract_round(soup: BeautifulSoup) -> str | None:
-    heading = soup.find("h2", class_=lambda c: c and "bottom-bordered" in c)
+    heading = soup if soup.name == "h2" else soup.find("h2", class_=lambda c: c and "bottom-bordered" in c)
     if not heading:
         heading = soup.find("h2")
     if not heading:
@@ -160,7 +160,7 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
             away_team=teams[1],
             start=start.isoformat(),
             venue=venue,
-            round_name=round_name or '',
+            round_name=_extract_round(row.find_parent("table").find_previous("h2") or soup) or round_name or '',
             url=url,
         ))
 
