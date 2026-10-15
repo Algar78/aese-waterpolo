@@ -35,8 +35,24 @@ El parser usa el valor UTC ordenable y comprueba su concordancia con la fecha/ho
 
 18 pruebas Python y 38 JavaScript aprobadas. Las pruebas de publicación y ficheros temporales requirieron ejecutarse fuera del aislamiento de Windows; la primera ejecución restringida falló por permisos y no se contabiliza como aprobada. Se verifica invierno, cambio estacional, contradicción visible/UTC, preservación de snapshot, sincronización repetida sin duplicados y publicación concurrente sin force.
 
-## Comprobación operativa en curso
+## Publicación y comprobación operativa
 
 Activadores consultados en el proyecto existente: exactamente uno, syncActaWPToCalendar, Principal, cada 15 minutos, aviso diario de errores. Clupik no tiene activador. Se consultó el diálogo de configuración sin modificarlo.
 
-La publicación efectiva, restauración de URL y nuevas ejecuciones se registrarán después de observar sus resultados. Este documento no certifica todavía esos pasos.
+Publicación independiente en main: d19119a60708cae97ed777d00311775078886b09. No se fusionó la PR. Pages build 38746385918 y validación PR 38746398391 finalizaron correctamente. Se descargaron el paquete y los nueve feeds desde sus URLs públicas y se compararon byte por byte con los archivos validados: diez coincidencias exactas. Hash del snapshot: cac4c91b07e7dcbbc200412754044fc8df7fda245eee5b6f77977e06e494463c.
+
+El navegador comparó además los 80 instantes del paquete público con los data-sort observados en las nueve tablas: cero discrepancias y 80 identidades únicas.
+
+Después de esas verificaciones se sustituyó en el proyecto existente la URL raw fijada al commit 02e7a263 por https://algar78.github.io/aese-waterpolo/calendars/general-calendar.json. Se comprobó Guardado en Drive. No se creó una aplicación web ni una implementación versionada.
+
+Primera ejecución manual con Pages, 15:53:21–15:55:07 Europe/Madrid: total=80, created=0, updated=53, unchanged=27. Lectura posterior de Google Calendar: 80 eventos, 80 identidades únicas, mismos IDs que antes de terminar la ejecución, todas las duraciones de 90 minutos; cero discrepancias con el paquete publicado y cero títulos con hora distinta de la local Madrid. Olot conserva ID 0kigtd6h48172psimklp4m5ens y 15/11/2026 13:30–15:00.
+
+El historial muestra un error anterior a esta ejecución, 15:50:39: Lock timeout, another process was holding the lock for too long. Había otra ejecución iniciada a las 15:50:00 que terminó correctamente. El bloqueo evitó escrituras simultáneas; no se eliminaron activadores ni se desactivó la protección.
+
+Segunda ejecución manual ActaWP, 15:55:24–15:56:02: total=80, created=0, updated=0, unchanged=80, completada correctamente.
+
+Clupik ejecutado 15:56:44–15:56:45 con checkpoint existente desde 15:42:20: dos hilos encontrados, cero partidos nuevos procesados, cero errores. ULTIMA_EJECUCION avanzó a 15:56:44. No se reinicializó historial ni se afirma haber reprocesado los 14 avisos de la sesión anterior.
+
+Lectura final de Calendar tras ambas pasadas y Clupik: 80 eventos, 80 identidades únicas, sin paginación pendiente, mismos IDs/horas/títulos que al terminar la primera pasada; cero discrepancias con los 80 horarios publicados. Ninguna creación ni borrado.
+
+No queda bloqueo para estos pasos. La auditoría se limita a los 80 eventos actualmente exportados; no constituye una suscripción a futuras verificaciones. El exportador programado sigue cada seis horas y conserva el último snapshot ante errores; Apps Script vuelve a incorporar sus publicaciones mediante Pages cada 15 minutos. Clupik permanece sin activador, según lo solicitado. La PR #8 sigue abierta, en borrador y sin fusionar.

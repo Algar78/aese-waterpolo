@@ -1,5 +1,7 @@
 # Revisión de calendarios — 15/10/2026
 
+Estado posterior: publicación corregida verificada, fuente Pages restaurada y 80 horarios auditados. Se corrigieron otros 53 horarios y se repitió la sincronización sin duplicados. Véase [la continuación y sus evidencias](calendar-audit-continuation-2026-10-15.md). Las referencias siguientes al commit fijo y a verificaciones pendientes describen el estado histórico anterior.
+
 ## Partido Olot–AESE
 
 Identidad: 1339803:145573561, Absoluto Masculino, Jornada 4.
