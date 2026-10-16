@@ -130,7 +130,9 @@ function runAESECalendarSync() {
   let actawpFailure=null;
   try {
     syncActaWPToCalendar();
-    props.setProperty('AESE_ACTAWP_LAST_SUCCESS',new Date().toISOString());
+    // A batch completing is not equivalent to reconciling the full season.
+    const pending=props.getProperty('ACTAWP_BATCH_CURSOR_V1');
+    if (!pending) props.setProperty('AESE_ACTAWP_LAST_SUCCESS',new Date().toISOString());
     props.setProperty('AESE_ACTAWP_LAST_ERROR','');
   } catch(error) {
     actawpFailure=error;
