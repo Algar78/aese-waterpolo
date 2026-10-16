@@ -14,30 +14,6 @@
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573547/results"
     },
     {
-      "category": "Cadete Masculino",
-      "tournament_id": 1339808,
-      "calendar_id": 3714157,
-      "match_id": 145574486,
-      "home_team": "C.N. BANYOLES",
-      "away_team": "A.E. SANTA EULÀLIA",
-      "start": "2026-10-03T17:00:00+02:00",
-      "venue": "171 - Banyoles, CN",
-      "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results"
-    },
-    {
-      "category": "Alevín Mixto B",
-      "tournament_id": 1339810,
-      "calendar_id": 3714193,
-      "match_id": 145608988,
-      "home_team": "C.E. MEDITERRANI B",
-      "away_team": "A.E. SANTA EULÀLIA B",
-      "start": "2026-10-03T17:15:00+02:00",
-      "venue": "174 - Mediterrani CE, Regent Mendieta",
-      "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results"
-    },
-    {
       "category": "Absoluto Masculino",
       "tournament_id": 1339803,
       "calendar_id": 3714121,
@@ -192,6 +168,18 @@
       "venue": "181 - Premia, CN",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574547/results"
+    },
+    {
+      "category": "Cadete Masculino",
+      "tournament_id": 1339808,
+      "calendar_id": 3714157,
+      "match_id": 145574486,
+      "home_team": "C.N. BANYOLES",
+      "away_team": "A.E. SANTA EULÀLIA",
+      "start": "2026-10-24T13:00:00+02:00",
+      "venue": "171 - Banyoles, CN",
+      "round_name": "Jornada 1",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results"
     },
     {
       "category": "Alevín Mixto B",
@@ -420,6 +408,18 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573576/results"
+    },
+    {
+      "category": "Alevín Mixto B",
+      "tournament_id": 1339810,
+      "calendar_id": 3714193,
+      "match_id": 145608988,
+      "home_team": "C.E. MEDITERRANI B",
+      "away_team": "A.E. SANTA EULÀLIA B",
+      "start": "2026-11-22T09:00:00+01:00",
+      "venue": "174 - Mediterrani CE, Regent Mendieta",
+      "round_name": "Jornada 1",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results"
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -988,7 +988,7 @@
     },
     "total_matches_found": 80,
     "errors": [],
-    "snapshot_sha256": "cac4c91b07e7dcbbc200412754044fc8df7fda245eee5b6f77977e06e494463c",
+    "snapshot_sha256": "d23b826dd0ec7fdafe7dab538a9fdeda39a848336818a9da606c11a0e391788e",
     "reviewed_corrections": [
       {
         "identity": "1339803:145573561",
@@ -1008,6 +1008,20 @@
         "previous_start": "2026-10-24T16:20:00+02:00",
         "start": "2026-11-29T12:00:00+01:00",
         "source": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
+      },
+      {
+        "identity": "1339808:145574486",
+        "previous_start": "2026-10-03T17:00:00+02:00",
+        "start": "2026-10-24T13:00:00+02:00",
+        "source": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results",
+        "direct_actawp_verification": "verified_browser_2026-10-16"
+      },
+      {
+        "identity": "1339810:145608988",
+        "previous_start": "2026-10-03T17:15:00+02:00",
+        "start": "2026-11-22T09:00:00+01:00",
+        "source": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results",
+        "direct_actawp_verification": "verified_browser_2026-10-16"
       }
     ],
     "official_times_audit": {
@@ -1015,6 +1029,14 @@
       "matches": 80,
       "source": "docs/official-times-2026-10-15.csv",
       "method": "Visible Madrid wall clock agrees with UTC data-sort on nine official ActaWP/Clupik calendar tables"
+    },
+    "incident_review": {
+      "date": "2026-10-16",
+      "identities": [
+        "1339808:145574486",
+        "1339810:145608988"
+      ],
+      "method": "FCN notices and both official match pages; other 78 matches unchanged"
     }
   },
   "venues": {

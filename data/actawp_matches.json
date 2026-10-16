@@ -12,30 +12,6 @@
     "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573547/results"
   },
   {
-    "category": "Cadete Masculino",
-    "tournament_id": 1339808,
-    "calendar_id": 3714157,
-    "match_id": 145574486,
-    "home_team": "C.N. BANYOLES",
-    "away_team": "A.E. SANTA EULÀLIA",
-    "start": "2026-10-03T17:00:00+02:00",
-    "venue": "171 - Banyoles, CN",
-    "round_name": "Jornada 1",
-    "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results"
-  },
-  {
-    "category": "Alevín Mixto B",
-    "tournament_id": 1339810,
-    "calendar_id": 3714193,
-    "match_id": 145608988,
-    "home_team": "C.E. MEDITERRANI B",
-    "away_team": "A.E. SANTA EULÀLIA B",
-    "start": "2026-10-03T17:15:00+02:00",
-    "venue": "174 - Mediterrani CE, Regent Mendieta",
-    "round_name": "Jornada 1",
-    "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results"
-  },
-  {
     "category": "Absoluto Masculino",
     "tournament_id": 1339803,
     "calendar_id": 3714121,
@@ -190,6 +166,18 @@
     "venue": "181 - Premia, CN",
     "round_name": "Jornada 1",
     "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574547/results"
+  },
+  {
+    "category": "Cadete Masculino",
+    "tournament_id": 1339808,
+    "calendar_id": 3714157,
+    "match_id": 145574486,
+    "home_team": "C.N. BANYOLES",
+    "away_team": "A.E. SANTA EULÀLIA",
+    "start": "2026-10-24T13:00:00+02:00",
+    "venue": "171 - Banyoles, CN",
+    "round_name": "Jornada 1",
+    "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results"
   },
   {
     "category": "Alevín Mixto B",
@@ -418,6 +406,18 @@
     "venue": "228 - Santa Eulàlia, AE",
     "round_name": "Jornada 1",
     "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573576/results"
+  },
+  {
+    "category": "Alevín Mixto B",
+    "tournament_id": 1339810,
+    "calendar_id": 3714193,
+    "match_id": 145608988,
+    "home_team": "C.E. MEDITERRANI B",
+    "away_team": "A.E. SANTA EULÀLIA B",
+    "start": "2026-11-22T09:00:00+01:00",
+    "venue": "174 - Mediterrani CE, Regent Mendieta",
+    "round_name": "Jornada 1",
+    "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results"
   },
   {
     "category": "1a Div Fem Absoluta B",

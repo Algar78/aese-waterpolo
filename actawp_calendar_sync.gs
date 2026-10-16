@@ -77,7 +77,8 @@ function syncActaWPToCalendar() {
   lock.waitLock(30000);
   try {
     ACTAWP_EVENT_CACHE = {};
-    const matches = loadActaWPSnapshot_();
+    const matches = loadActaWPSnapshot_().map(m =>
+      typeof applyClupikNotice_ === 'function' ? applyClupikNotice_(m) : m);
 
     const calendar = CalendarApp.getCalendarById(ACTAWP_CALENDAR_ID);
     if (!calendar) {
@@ -264,3 +265,4 @@ function mapsDescription_(description, venue) {
   const clean = description.replace(/\n?\[AESE_MAPS\][\s\S]*?\[\/AESE_MAPS\]/g,'');
   return clean + '\n[AESE_MAPS]\nGoogle Maps: ' + actaWPMapsURL_(venue) + '\n[/AESE_MAPS]';
 }
+
