@@ -115,19 +115,36 @@ function aeseAlert_(key,detail) {
 function runAESECalendarSync() {
   const props=PropertiesService.getScriptProperties();
   props.setProperty('AESE_LAST_ATTEMPT',new Date().toISOString());
-  const failures=[];
-  for (const task of [procesarPartidosAESE,syncActaWPToCalendar]) {
-    try { task(); } catch(error) { failures.push(task.name+': '+error.message); }
+  // Clupik is the primary notification path. A stale ActaWP export must
+  // not make an otherwise healthy email-to-Calendar sync appear failed.
+  let clupikFailure=null;
+  try {
+    procesarPartidosAESE();
+    props.setProperty('AESE_CLUPIK_LAST_SUCCESS',new Date().toISOString());
+    props.setProperty('AESE_CLUPIK_LAST_ERROR','');
+  } catch(error) {
+    clupikFailure=error;
+    props.setProperty('AESE_CLUPIK_LAST_ERROR',error.message);
+    aeseAlert_('clupik','No se procesaron los avisos Clupik: '+error.message);
   }
-  if(failures.length) {
-    const detail=failures.join('\n');
-    props.setProperty('AESE_LAST_ERROR',detail);
-    aeseAlert_('ejecucion',detail);
-    throw Error(detail);
+  let actawpFailure=null;
+  try {
+    syncActaWPToCalendar();
+    props.setProperty('AESE_ACTAWP_LAST_SUCCESS',new Date().toISOString());
+    props.setProperty('AESE_ACTAWP_LAST_ERROR','');
+  } catch(error) {
+    actawpFailure=error;
+    props.setProperty('AESE_ACTAWP_LAST_ERROR',error.message);
+    aeseAlert_('actawp','No se pudo conciliar ActaWP: '+error.message);
   }
+  if(clupikFailure) {
+    props.setProperty('AESE_LAST_ERROR','Clupik: '+clupikFailure.message);
+    throw Error('Clupik: '+clupikFailure.message);
+  }
+  // Keep legacy heartbeat for monitoring of the primary Calendar pathway.
   props.setProperty('AESE_LAST_SUCCESS',new Date().toISOString());
-  props.setProperty('AESE_LAST_ERROR','');
-  console.log('AESE ciclo completo OK');
+  props.setProperty('AESE_LAST_ERROR',actawpFailure?'ActaWP: '+actawpFailure.message:'');
+  console.log('AESE Clupik OK; ActaWP '+(actawpFailure?'degraded':'OK'));
 }
 
 function installAESEAutomation() {
@@ -141,9 +158,9 @@ function installAESEAutomation() {
 }
 
 function checkAESECalendarHealth() {
-  const props=PropertiesService.getScriptProperties(), last=Date.parse(props.getProperty('AESE_LAST_SUCCESS')||'');
+  const props=PropertiesService.getScriptProperties(), last=Date.parse(props.getProperty('AESE_CLUPIK_LAST_SUCCESS')||props.getProperty('AESE_LAST_SUCCESS')||'');
   if(!Number.isFinite(last)||Date.now()-last>45*60000) {
-    aeseAlert_('retraso','Sin ciclo completo correcto en 45 minutos. Se intenta recuperación.');
+    aeseAlert_('retraso','Sin procesamiento Clupik correcto en 45 minutos. Se intenta recuperación.');
     runAESECalendarSync();
   }
   const attempt=fetchActaWPJSON_('https://algar78.github.io/aese-waterpolo/data/actawp_last_attempt.json');
