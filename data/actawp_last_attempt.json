@@ -1,5 +1,5 @@
 {
-  "attempted_at": "2026-10-16T04:39:02.481715+00:00",
+  "attempted_at": "2026-10-16T10:40:06.139057+00:00",
   "complete": false,
   "categories_expected": [
     "Absoluto Masculino",
@@ -44,6 +44,20 @@
       "previous_start": "2026-10-24T16:20:00+02:00",
       "start": "2026-11-29T12:00:00+01:00",
       "source": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
+    },
+    {
+      "identity": "1339808:145574486",
+      "previous_start": "2026-10-03T17:00:00+02:00",
+      "start": "2026-10-24T13:00:00+02:00",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results",
+      "direct_actawp_verification": "verified_browser_2026-10-16"
+    },
+    {
+      "identity": "1339810:145608988",
+      "previous_start": "2026-10-03T17:15:00+02:00",
+      "start": "2026-11-22T09:00:00+01:00",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results",
+      "direct_actawp_verification": "verified_browser_2026-10-16"
     }
   ]
 }
