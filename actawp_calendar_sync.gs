@@ -75,40 +75,45 @@ function ownsActaWPEvent_(event, match) {
 }
 
 function syncActaWPToCalendar() {
+  // A full 80-event reconciliation can exceed Apps Script's six-minute cap.
+  // Process a bounded, deterministic slice per trigger and resume on next run.
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  if (!lock.tryLock(1000)) {
+    console.log('ActaWP: another sync is running; skip this attempt');
+    return;
+  }
+  const props = PropertiesService.getScriptProperties();
+  const cursorKey = 'ACTAWP_BATCH_CURSOR_V1';
+  const batchSize = 8;
   try {
     ACTAWP_EVENT_CACHE = {};
     const matches = loadActaWPSnapshot_().map(m =>
       typeof applyClupikNotice_ === 'function' ? applyClupikNotice_(m) : m);
-
     const calendar = CalendarApp.getCalendarById(ACTAWP_CALENDAR_ID);
-    if (!calendar) {
-      throw new Error('No se encontró el calendario AESE Waterpolo-Partidos.');
-    }
-
-    let created = 0;
-    let updated = 0;
-    let unchanged = 0;
-
-    matches.forEach(match => {
-      const result = reconcileActaWPMatch_(calendar, match);
+    if (!calendar) throw new Error('No se encontró el calendario AESE Waterpolo-Partidos.');
+    // The snapshot is stable-sorted, so changes in feed order do not
+    // arbitrarily skip identities. A new snapshot begins another pass.
+    matches.sort((a,b) => actaWPIdentity_(a).localeCompare(actaWPIdentity_(b)));
+    const snapshotKey = String(ACTAWP_SNAPSHOT_TIME || '') + ':' + matches.length;
+    const saved = JSON.parse(props.getProperty(cursorKey) || '{}');
+    const offset = saved.snapshot === snapshotKey && Number.isInteger(saved.offset) &&
+      saved.offset >= 0 && saved.offset < matches.length ? saved.offset : 0;
+    const stop = Math.min(offset + batchSize, matches.length);
+    let created = 0, updated = 0, unchanged = 0;
+    for (let i = offset; i < stop; i++) {
+      const result = reconcileActaWPMatch_(calendar, matches[i]);
       if (result === 'created') created++;
       else if (result === 'updated') updated++;
       else unchanged++;
-    });
-
-    PropertiesService.getScriptProperties().setProperty(
-      ACTAWP_SYNC_PROPERTY,
-      new Date().toISOString()
-    );
-
-    console.log(
-      'ActaWP sync OK — total=' + matches.length +
-      ' created=' + created +
-      ' updated=' + updated +
-      ' unchanged=' + unchanged
-    );
+      // Advance only after the individual event has been safely reconciled.
+      props.setProperty(cursorKey, JSON.stringify({snapshot:snapshotKey,offset:i+1}));
+    }
+    if (stop === matches.length) {
+      props.deleteProperty(cursorKey);
+      props.setProperty(ACTAWP_SYNC_PROPERTY, new Date().toISOString());
+    }
+    console.log('ActaWP batch '+offset+'..'+stop+'/'+matches.length+
+      ' created='+created+' updated='+updated+' unchanged='+unchanged);
   } finally {
     ACTAWP_EVENT_CACHE = null;
     lock.releaseLock();
