@@ -18,6 +18,7 @@ const ACTAWP_MARKER = 'ACTAWP_MATCH_ID:';
 const DEFAULT_DURATION_MINUTES = 90;
 let ACTAWP_VENUES = {};
 let ACTAWP_EVENT_CACHE = null;
+let ACTAWP_SNAPSHOT_TIME = null;
 
 function fetchActaWPJSON_(url) {
   const response = UrlFetchApp.fetch(url, {muteHttpExceptions:true, headers:{'Cache-Control':'no-cache'}});
@@ -33,6 +34,7 @@ function loadActaWPSnapshot_() {
   }
   ACTAWP_VENUES = bundle.venues;
   validateActaWPSnapshot_(bundle.matches, bundle.status);
+  ACTAWP_SNAPSHOT_TIME = bundle.status.attempted_at || null;
   return bundle.matches;
 }
 

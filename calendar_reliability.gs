@@ -47,8 +47,9 @@ function parseClupikNotice_(message) {
   const venue=blocks.slice(di+2).find(b=>/^\d+\s*-\s*\S/.test(b));
   if (!competition || !home || !away || !venue || !/SANTA EUL|\bAESE\b/i.test(home+' '+away)) throw Error('Equipos, competición o piscina Clupik inválidos');
   const [a,b,year]=blocks[di].split('/').map(Number);
-  if (a<=12 && b<=12 && a!==b) throw Error('Fecha Clupik ambigua; contrastar origen');
-  const day=b>12?b:a, month=b>12?a:b;
+  const knownTemplate=/id=["']calendar["']/.test(html) && /id=["']clock["']/.test(html);
+  if (!knownTemplate && a<=12 && b<=12 && a!==b) throw Error('Fecha Clupik ambigua; contrastar origen');
+  const day=knownTemplate?b:b>12?b:a, month=knownTemplate?a:b>12?a:b;
   const [hour,minute]=blocks[ti].split(':').map(Number);
   const start=clupikMadridDate_(year,month,day,hour,minute);
   let category=obtenerCategoriaCorta_(competition).replace(/MIXTE/i,'MIXTO');
@@ -68,7 +69,19 @@ function applyClupikNotice_(match) {
   const saved=PropertiesService.getScriptProperties().getProperty(AESE_NOTICE_PREFIX+actaWPIdentity_(match));
   if (!saved) return match;
   const notice=JSON.parse(saved);
-  // Retain until reviewed: a stale snapshot must never roll back a newer email.
+  // A successful snapshot must first agree with the notice. Later successful
+  // snapshots can then advance it; replaying the same email cannot pin it forever.
+  const snapshotTime=Date.parse(ACTAWP_SNAPSHOT_TIME || '');
+  const agrees=['start','venue','home_team','away_team'].every(k=>match[k]===notice[k]) &&
+    (match.status||'confirmed')===notice.status;
+  if(Number.isFinite(snapshotTime) && snapshotTime>Date.parse(notice.received_at)) {
+    if(agrees && !notice.acknowledged_snapshot) {
+      notice.acknowledged_snapshot=ACTAWP_SNAPSHOT_TIME;
+      PropertiesService.getScriptProperties().setProperty(AESE_NOTICE_PREFIX+actaWPIdentity_(match),JSON.stringify(notice));
+    }
+    if(notice.acknowledged_snapshot && snapshotTime>=Date.parse(notice.acknowledged_snapshot)) return match;
+    if(!agrees) aeseAlert_('discordancia_'+actaWPIdentity_(match),'La fuente posterior no confirma el aviso FCN. Se conserva el aviso y se requiere revisión: '+actaWPIdentity_(match));
+  }
   return Object.assign({},match,notice,{category:match.category});
 }
 
@@ -78,6 +91,7 @@ function reconcileClupikNotice_(message,calendar) {
   const saved=props.getProperty(key), old=saved?JSON.parse(saved):null;
   if (old && Date.parse(old.received_at)>Date.parse(notice.received_at)) return 'older';
   const source=(AESE_SNAPSHOT_CACHE || loadActaWPSnapshot_()).find(m=>actaWPIdentity_(m)===id);
+  if(old && old.received_at===notice.received_at) return reconcileActaWPMatch_(calendar,applyClupikNotice_(source || old));
   const match=Object.assign({},source||{},notice,{category:source?source.category:notice.category});
   // Persist before Calendar: if Calendar fails, the next ActaWP run repairs it.
   // Unknown venues fail safely before persisting or creating an event.
@@ -136,10 +150,28 @@ function checkAESECalendarHealth() {
   const attempted=Date.parse(attempt.attempted_at||'');
   if(!attempt.complete || !Number.isFinite(attempted) || Date.now()-attempted>8*3600000)
     aeseAlert_('fuente','Exportación ActaWP incompleta o sin intento en 8 horas: '+JSON.stringify(attempt.errors||[]));
+  const bundle=fetchActaWPJSON_(ACTAWP_BUNDLE_URL);
+  const published=Date.parse((bundle.status || {}).attempted_at || '');
+  if(attempt.complete && Date.now()-attempted>30*60000 && (!Number.isFinite(published) || published<attempted))
+    aeseAlert_('publicacion','La exportación correcta no ha llegado al paquete de Calendar en 30 minutos. Revisar generación de feeds y Pages.');
   const handlers=ScriptApp.getProjectTriggers().map(t=>t.getHandlerFunction());
   if(!handlers.includes('runAESECalendarSync')) {
     ScriptApp.newTrigger('runAESECalendarSync').timeBased().everyMinutes(15).create();
     aeseAlert_('activador','Se ha restaurado el activador de actualización ausente.');
   }
   console.log('AESE vigilancia completada');
+}
+
+// A one-shot, real time-trigger verification. It cleans up its own test trigger.
+function scheduleAESEAutomaticVerification() {
+  if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='verifyAESEAutomaticSync'))
+    ScriptApp.newTrigger('verifyAESEAutomaticSync').timeBased().after(60000).create();
+  console.log('AESE verificación automática programada');
+}
+function verifyAESEAutomaticSync() {
+  try { runAESECalendarSync(); }
+  finally {
+    ScriptApp.getProjectTriggers().filter(t=>t.getHandlerFunction()==='verifyAESEAutomaticSync')
+      .forEach(t=>ScriptApp.deleteTrigger(t));
+  }
 }

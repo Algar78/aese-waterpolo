@@ -55,13 +55,35 @@ test('cancelación y aplazamiento explícitos no eliminan ni duplican',()=>{
   h.c.procesarMensajeAESE_(h.msg(0,'Partido aplazado','2026-10-18T10:00:00Z'),h.calendar);
   assert.match(h.events[0].getTitle(),/APLAZADO/);assert.equal(h.events.length,1);
 });
+test('la fuente debe confirmar un aviso antes de poder avanzar sin otro correo',()=>{
+  const h=harness();h.c.procesarMensajeAESE_(h.msg(),h.calendar);
+  const original=snapshot.find(m=>m.match_id===145574486);
+  const notice=JSON.parse(h.properties.get('AESE_NOTICE_1339808:145574486'));
+  const stale={...original,start:'2026-10-03T17:00:00+02:00'};
+  vm.runInContext("ACTAWP_SNAPSHOT_TIME='2026-10-17T10:00:00Z'",h.c);
+  assert.equal(h.c.applyClupikNotice_(stale).start,notice.start);
+  h.c.applyClupikNotice_({...original,...notice});
+  vm.runInContext("ACTAWP_SNAPSHOT_TIME='2026-10-18T10:00:00Z'",h.c);
+  assert.equal(h.c.applyClupikNotice_({...original,start:'2026-10-25T14:00:00+01:00'}).start,'2026-10-25T14:00:00+01:00');
+});
 test('duplicados exactos bloquean escrituras y conservan evidencia',()=>{
   const h=harness();h.c.procesarMensajeAESE_(h.msg(),h.calendar);h.events.push(h.events[0]);
   assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(),h.calendar),/duplicada/);
 });
+test('partido nuevo ausente del snapshot se crea una vez y se reprograma por identidad',()=>{
+  const h=harness(),html=fixtures[0].replaceAll('145574486','199999999');
+  const first=h.msg(0,'Nuevo partido','2026-10-16T10:00:00Z',html);
+  assert.equal(h.c.procesarMensajeAESE_(first,h.calendar),'created');
+  h.c.procesarMensajeAESE_(first,h.calendar);
+  h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-17T10:00:00Z',html.replace('13:00','15:00')),h.calendar);
+  assert.equal(h.events.length,1);assert.equal(h.events[0].getStartTime().toISOString(),'2026-10-24T13:00:00.000Z');
+});
 test('identidad estricta y fecha ambigua/imposible no crean eventos',()=>{
   const h=harness();
-  for(const date of ['04/09/2027','02/30/2027'])assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(0,'Partido',undefined,fixtures[0].replace('10/24/2026',date)),h.calendar),/ambigua|inválida/);
+  const ambiguous=fixtures[0].replace('id="calendar"','id="unknown"').replace('10/24/2026','04/09/2027');
+  assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(0,'Partido',undefined,ambiguous),h.calendar),/ambigua/);
+  assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(0,'Partido',undefined,fixtures[0].replace('10/24/2026','02/30/2027')),h.calendar),/inválida/);
+  assert.equal(h.c.parseClupikNotice_(h.msg(0,'Partido',undefined,fixtures[0].replace('10/24/2026','04/09/2027'))).start,'2027-04-09T13:00:00+02:00');
   assert.throws(()=>h.c.clupikIdentity_('<a href="https://evil.test/tournament/1/match/2/results">x</a>'),/Identidad/);
   assert.equal(h.events.length,0);
 });
@@ -86,4 +108,11 @@ test('alertas se agrupan durante seis horas; recuperación del trigger ausente',
   h.c.ScriptApp={getProjectTriggers:()=>[],newTrigger:()=>({timeBased(){return this},everyMinutes(){return this},create(){installed=true}})};
   h.c.checkAESECalendarHealth();assert.equal(installed,true);
   h.properties.set('AESE_LAST_SUCCESS','2020-01-01');h.c.runAESECalendarSync=()=>recovered=true;h.c.checkAESECalendarHealth();assert.equal(recovered,true);
+});
+test('exportación correcta con paquete retrasado alerta sobre publicación',()=>{
+  const h=harness();h.properties.set('AESE_LAST_SUCCESS',new Date().toISOString());
+  const recent=new Date(Date.now()-3600000).toISOString();
+  h.c.fetchActaWPJSON_=url=>url.endsWith('actawp_last_attempt.json')?{complete:true,attempted_at:recent}:{status:{attempted_at:'2020-01-01T00:00:00Z'}};
+  h.c.ScriptApp={getProjectTriggers:()=>[{getHandlerFunction:()=> 'runAESECalendarSync'}]};
+  h.c.checkAESECalendarHealth();assert.equal(h.mail.length,1);assert.match(h.mail[0][1],/publicacion/);
 });
