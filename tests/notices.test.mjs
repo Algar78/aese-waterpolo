@@ -94,11 +94,13 @@ test('horario Madrid independiente del proceso: invierno, verano y cambios estac
 });
 test('fallos conservan checkpoint; ciclo continúa ActaWP y alerta sin marcar éxito',()=>{
   const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
+  h.properties.set('AESE_CLUPIK_DONE_old','2020-01-01T00:00:00Z');
   h.c.GmailApp={search:()=>[{getMessages:()=>[h.msg(0,'Partido',new Date(Date.now()-1000).toISOString(),'<b>roto</b>')]}]};
   let synced=false;h.c.syncActaWPToCalendar=()=>{synced=true;return {status:'complete'}};
   assert.throws(()=>h.c.runAESECalendarSync(),/Clupik incompleto/);
   assert.equal(synced,true);assert.equal(h.mail.length,1);
   assert.equal(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');assert.equal(h.properties.has('AESE_LAST_SUCCESS'),false);
+  assert.equal(h.properties.has('AESE_CLUPIK_DONE_old'),false);
 });
 test('alertas se agrupan durante seis horas; recuperación del trigger ausente',()=>{
   const h=harness();h.c.aeseAlert_('test','fallo');h.c.aeseAlert_('test','fallo');assert.equal(h.mail.length,1);

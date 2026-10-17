@@ -20,6 +20,9 @@ function procesarPartidosAESESinBloqueo_() {
   const now=new Date();
   const deadline=AESE_RUN_DEADLINE || Date.now()+180000;
   const done=props.getProperties();
+  // Bound storage even when one poison message keeps the window checkpoint
+  // from advancing. Values are processing times, not old message dates.
+  Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_DONE_') && Date.parse(done[k])<now.getTime()-49*3600000).forEach(k=>{props.deleteProperty(k);delete done[k];});
   // Replay overlapping delivery windows, including messages indexed late by Gmail.
   const checkpoint=Date.parse(props.getProperty('ULTIMA_EJECUCION')||'');
   const from=Number.isFinite(checkpoint)?checkpoint-48*3600000:now.getTime()-7*86400000;
@@ -52,7 +55,7 @@ function procesarPartidosAESESinBloqueo_() {
     if(processed>=12 || Date.now()>deadline-30000) return {status:'pending'};
     try {
       procesarMensajeAESE_(message,calendar);
-      props.setProperty(doneKey,message.getDate().toISOString());
+      props.setProperty(doneKey,new Date().toISOString());
       processed++;
     } catch(error) { ACTAWP_EVENT_CACHE={}; scan.errors++; Logger.log('Clupik '+message.getId()+': '+error.message); }
   }
@@ -62,8 +65,6 @@ function procesarPartidosAESESinBloqueo_() {
   Logger.log('Clupik procesados='+processed+' omitidos='+skipped);
   if(scan.errors) throw Error('Clupik incompleto: se conserva ULTIMA_EJECUCION para reintentar; errores='+scan.errors);
   props.setProperty('ULTIMA_EJECUCION',new Date(scan.until).toISOString());
-  // Keep only markers still needed by the replay window. Failed windows retain theirs.
-  Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_DONE_') && Date.parse(done[k])<now.getTime()-49*3600000).forEach(k=>props.deleteProperty(k));
   Logger.log('Clupik OK mensajes='+messages.length);
   return {status:'complete'};
 }
