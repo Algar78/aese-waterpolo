@@ -154,3 +154,19 @@ test('error de correo de alerta no impide conciliación secundaria',()=>{
   assert.throws(()=>h.c.runAESECalendarSync(),/primary down/);
   assert.equal(secondary,true);
 });
+
+test('avisos con igual fecha se ordenan por ID sin perder una modificación',()=>{
+  const h=harness(),first=h.msg(),second=h.msg(0,'Modificado un partido',undefined,fixtures[0].replace('13:00','14:00'));
+  first.getId=()=> 'a';second.getId=()=> 'b';
+  h.c.procesarMensajeAESE_(first,h.calendar);
+  h.c.procesarMensajeAESE_(second,h.calendar);
+  assert.equal(h.events[0].getStartTime().toISOString(),'2026-10-24T12:00:00.000Z');
+  assert.equal(h.c.procesarMensajeAESE_(first,h.calendar),'older');
+});
+
+test('replay de aviso ya confirmado no revierte un avance posterior de ActaWP',()=>{
+  const h=harness(),m=h.msg();h.c.procesarMensajeAESE_(m,h.calendar);
+  const key='AESE_NOTICE_1339808:145574486',notice=JSON.parse(h.properties.get(key));
+  notice.acknowledged_snapshot='2026-10-17T12:00:00Z';h.properties.set(key,JSON.stringify(notice));
+  assert.equal(h.c.procesarMensajeAESE_(m,h.calendar),'acknowledged');
+});
