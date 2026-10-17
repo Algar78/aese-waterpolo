@@ -21,7 +21,22 @@ let ACTAWP_EVENT_CACHE = null;
 let ACTAWP_SNAPSHOT_TIME = null;
 
 function fetchActaWPJSON_(url) {
+  const props=PropertiesService.getScriptProperties(), key='AESE_HTTP_WAIT_'+encodeURIComponent(url);
+  if(Number(props.getProperty(key)||0)>Date.now()) throw Error('HTTP 429 cooldown: '+url);
   const response = UrlFetchApp.fetch(url, {muteHttpExceptions:true, headers:{'Cache-Control':'no-cache'}});
+  if(response.getResponseCode()===429) {
+    const headers=response.getAllHeaders(), names=Object.keys(headers);
+    const header=name=>headers[names.find(k=>k.toLowerCase()===name)] || '';
+    const retry=String(header('retry-after')), seconds=Number(retry);
+    const serverDate=Date.parse(header('date'));
+    let delay=retry.trim() && Number.isFinite(seconds) && seconds>=0 ? seconds*1000 :
+      Date.parse(retry)-(Number.isFinite(serverDate)?serverDate:Date.now());
+    if(!Number.isFinite(delay)||delay<0) delay=60000;
+    props.setProperty(key,String(Date.now()+Math.max(1000,delay)+Math.floor(Math.random()*1000)));
+    // Yield to the next scheduled run instead of consuming the six-minute cap.
+    throw Error('HTTP 429 deferred respecting Retry-After: '+retry);
+  }
+  props.deleteProperty(key);
   if (response.getResponseCode() !== 200) throw new Error('ActaWP HTTP ' + response.getResponseCode());
   return JSON.parse(response.getContentText());
 }
@@ -75,40 +90,58 @@ function ownsActaWPEvent_(event, match) {
 }
 
 function syncActaWPToCalendar() {
+  // A full 80-event reconciliation can exceed Apps Script's six-minute cap.
+  // Process a bounded, deterministic slice per trigger and resume on next run.
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  if (!lock.tryLock(1000)) {
+    console.log('ActaWP: another sync is running; skip this attempt');
+    return;
+  }
+  const props = PropertiesService.getScriptProperties();
+  const cursorKey = 'ACTAWP_BATCH_CURSOR_V1';
+  const batchSize = 8;
+  const deadline = (typeof AESE_RUN_DEADLINE !== 'undefined' && AESE_RUN_DEADLINE) || Date.now()+240000;
   try {
     ACTAWP_EVENT_CACHE = {};
     const matches = loadActaWPSnapshot_().map(m =>
       typeof applyClupikNotice_ === 'function' ? applyClupikNotice_(m) : m);
-
     const calendar = CalendarApp.getCalendarById(ACTAWP_CALENDAR_ID);
-    if (!calendar) {
-      throw new Error('No se encontró el calendario AESE Waterpolo-Partidos.');
-    }
-
-    let created = 0;
-    let updated = 0;
-    let unchanged = 0;
-
-    matches.forEach(match => {
-      const result = reconcileActaWPMatch_(calendar, match);
+    if (!calendar) throw new Error('No se encontró el calendario AESE Waterpolo-Partidos.');
+    // The snapshot is stable-sorted, so changes in feed order do not
+    // arbitrarily skip identities. A new snapshot begins another pass.
+    matches.sort((a,b) => actaWPIdentity_(a).localeCompare(actaWPIdentity_(b)));
+    const snapshotKey = matches.map(actaWPIdentity_).join(',');
+    let saved={};
+    try { saved=JSON.parse(props.getProperty(cursorKey) || '{}'); } catch (_) { console.log('Reset invalid ActaWP cursor'); }
+    const offset = saved.snapshot === snapshotKey && Number.isInteger(saved.offset) &&
+      saved.offset >= 0 && saved.offset < matches.length ? saved.offset : 0;
+    const stop = Math.min(offset + batchSize, matches.length);
+    let created = 0, updated = 0, unchanged = 0, completed=offset;
+    let failures = offset ? Number(saved.failures || 0) : 0;
+    for (let i = offset; i < stop; i++) {
+      if(Date.now()>deadline-30000) break;
+      let result;
+      try { result = reconcileActaWPMatch_(calendar, matches[i]); }
+      catch(error) {
+        ACTAWP_EVENT_CACHE={}; // A failed write may have committed remotely.
+        failures++;
+        console.log('ActaWP failed '+actaWPIdentity_(matches[i])+': '+error.message);
+      }
       if (result === 'created') created++;
       else if (result === 'updated') updated++;
       else unchanged++;
-    });
-
-    PropertiesService.getScriptProperties().setProperty(
-      ACTAWP_SYNC_PROPERTY,
-      new Date().toISOString()
-    );
-
-    console.log(
-      'ActaWP sync OK — total=' + matches.length +
-      ' created=' + created +
-      ' updated=' + updated +
-      ' unchanged=' + unchanged
-    );
+      // Advance only after the individual event has been safely reconciled.
+      completed=i+1;
+      props.setProperty(cursorKey, JSON.stringify({snapshot:snapshotKey,offset:completed,failures}));
+    }
+    if (completed === matches.length) {
+      props.deleteProperty(cursorKey);
+      if (!failures) props.setProperty(ACTAWP_SYNC_PROPERTY, new Date().toISOString());
+      else throw Error('ActaWP pass incomplete: '+failures+' event failures; retry next pass');
+    }
+    console.log('ActaWP batch '+offset+'..'+stop+'/'+matches.length+
+      ' created='+created+' updated='+updated+' unchanged='+unchanged);
+    return {status:completed===matches.length?'complete':'pending',completed,total:matches.length};
   } finally {
     ACTAWP_EVENT_CACHE = null;
     lock.releaseLock();
@@ -156,6 +189,11 @@ function reconcileActaWPMatch_(calendar, match) {
     event = calendar.createEvent(title, start, end, {
       description: description,
       location: match.venue || '',
+    });
+    // Keep recovery reads coherent even if saving the reference fails and
+    // another notice for this identity arrives in the same execution.
+    Object.keys(ACTAWP_EVENT_CACHE || {}).forEach(key=>{
+      if(!ACTAWP_EVENT_CACHE[key].some(e=>e.getId()===event.getId())) ACTAWP_EVENT_CACHE[key].push(event);
     });
     properties.setProperty(propertyKey, event.getId());
     return 'created';

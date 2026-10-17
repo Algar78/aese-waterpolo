@@ -18,10 +18,10 @@ function harness() {
   const calendar={getName:()=> 'AESE',getEventById:id=>{if(lookupError)throw Error('quota');return events.find(e=>e.getId()===id)||null},
     getEvents:(from,to)=>events.filter(e=>e.getStartTime()>=from&&e.getStartTime()<to),
     createEvent:(title,start,end,options)=>{if(createError)throw Error('quota');calls.push('create');const e=event({...matches[0],start:start.toISOString(),venue:options.location},options.description);e.value.title=title;e.value.end=end;return e;}};
-  const props={getProperty:k=>properties.get(k)||null,setProperty:(k,v)=>{if(propertyError)throw Error('property quota');properties.set(k,v)}};
+  const props={deleteProperty:k=>properties.delete(k),getProperty:k=>properties.get(k)||null,setProperty:(k,v)=>{if(propertyError)throw Error('property quota');properties.set(k,v)}};
   const context=vm.createContext({console:{log:()=>{}},Date,Set,Map,Number,JSON,Math,encodeURIComponent,
     CalendarApp:{getCalendarById:()=>calendar},PropertiesService:{getScriptProperties:()=>props},
-    LockService:{getScriptLock:()=>({waitLock:()=>calls.push('lock'),releaseLock:()=>calls.push('unlock')})},
+    LockService:{getScriptLock:()=>({tryLock:()=>{calls.push('lock');return true},waitLock:()=>calls.push('lock'),releaseLock:()=>calls.push('unlock')})},
     Utilities:{formatDate:(date,zone,pattern)=>{const parts=new Intl.DateTimeFormat('sv-SE',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(date).replace(' ','T');return pattern==='HH:mm'?parts.slice(11,16):parts;}},
     UrlFetchApp:{fetch:url=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify(url.endsWith('general-calendar.json')?{schema_version:1,matches,status,venues}:url.endsWith('venues.json')?venues:url.endsWith('actawp_export_status.json')?status:matches)})}});
   vm.runInContext(code,context);vm.runInContext('ACTAWP_VENUES = '+JSON.stringify(venues),context);
@@ -74,6 +74,12 @@ test('fallo después de crear y antes de guardar referencia se recupera sin dupl
   assert.throws(()=>h.context.reconcileActaWPMatch_(h.calendar,m),/quota/);assert.equal(h.events.length,1);
   h.restore();h.context.reconcileActaWPMatch_(h.calendar,m);assert.equal(h.events.length,1);
 });
+
+test('fallo guardando referencia con caché activa no duplica dentro de la misma ejecución',()=>{
+  const h=harness(),m=matches[0];vm.runInContext('ACTAWP_EVENT_CACHE={}',h.context);h.failProperty();
+  assert.throws(()=>h.context.reconcileActaWPMatch_(h.calendar,m),/quota/);
+  h.restore();h.context.reconcileActaWPMatch_(h.calendar,m);assert.equal(h.events.length,1);
+});
 test('snapshot parcial/duplicado/fecha inválida se rechaza antes de cualquier escritura',()=>{
   const h=harness();
   for(const [rows,s] of [[matches.slice(1),status],[[...matches,matches[0]],status],[matches,{...status,complete:false}]]) {
@@ -90,7 +96,7 @@ test('cancelación y aplazamiento explícitos conservan evento e identidad',()=>
   }
 });
 test('fallo parcial de ejecución no marca éxito y libera el bloqueo',()=>{
-  const h=harness();h.failCreate();assert.throws(()=>h.context.syncActaWPToCalendar(),/quota/);
+  const h=harness();h.failCreate();for(let cycle=0;cycle<9;cycle++) h.context.syncActaWPToCalendar();assert.throws(()=>h.context.syncActaWPToCalendar(),/incomplete/);
   assert.equal(h.properties.has('ACTAWP_LAST_SYNC'),false);assert.equal(h.calls.at(-1),'unlock');
 });
 
@@ -132,11 +138,40 @@ test('marcador en descripción HTML se recupera sin aceptar prefijos',()=>{
 });
 
 test('sincronización completa repetida conserva 80 eventos y no crea duplicados',()=>{
-  const h=harness();h.context.syncActaWPToCalendar();
+  const h=harness();for(let cycle=0;cycle<10;cycle++) h.context.syncActaWPToCalendar();
   assert.equal(h.events.length,matches.length);
   const creates=h.calls.filter(c=>c==='create').length;
   h.context.syncActaWPToCalendar();
   assert.equal(h.events.length,matches.length);
   assert.equal(h.calls.filter(c=>c==='create').length,creates);
   assert.ok(h.properties.has('ACTAWP_LAST_SYNC'));
+});
+
+test('publicaciones nuevas con mismas identidades no reinician el cursor',()=>{
+  const h=harness();
+  for(let i=0;i<10;i++) {
+    h.context.UrlFetchApp.fetch=()=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify({schema_version:1,matches,status:{...status,attempted_at:new Date(Date.now()+i*60000).toISOString()},venues})});
+    h.context.syncActaWPToCalendar();
+    assert.equal(h.events.length,(i+1)*8);
+  }
+  assert.ok(h.properties.has('ACTAWP_LAST_SYNC'));
+});
+
+test('cursor inválido se recupera; presupuesto agotado no inicia escrituras',()=>{
+  const h=harness();h.properties.set('ACTAWP_BATCH_CURSOR_V1','broken');
+  h.context.AESE_RUN_DEADLINE=Date.now()-1;
+  assert.equal(h.context.syncActaWPToCalendar().status,'pending');
+  assert.equal(h.events.length,0);
+  h.context.AESE_RUN_DEADLINE=null;
+  assert.equal(h.context.syncActaWPToCalendar().completed,8);
+});
+
+test('429 persiste Retry-After y no repite solicitudes durante cooldown',()=>{
+  const h=harness();let calls=0;
+  h.context.UrlFetchApp.fetch=()=>{calls++;return {getResponseCode:()=>429,getAllHeaders:()=>({'Retry-After':'600'})}};
+  assert.throws(()=>h.context.fetchActaWPJSON_('https://test.example/feed'),/429/);
+  const wait=Number(h.properties.get('AESE_HTTP_WAIT_'+encodeURIComponent('https://test.example/feed')));
+  assert.ok(wait>=Date.now()+599000);
+  assert.throws(()=>h.context.fetchActaWPJSON_('https://test.example/feed'),/cooldown/);
+  assert.equal(calls,1);
 });

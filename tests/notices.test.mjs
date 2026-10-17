@@ -8,7 +8,7 @@ const snapshot=JSON.parse(read('data/actawp_matches.json'));
 const venues=JSON.parse(read('data/venues.json'));
 function harness(){
   const properties=new Map(),events=[],mail=[],logs=[];
-  const props={getProperty:k=>properties.get(k)||null,setProperty:(k,v)=>properties.set(k,v)};
+  const props={deleteProperty:k=>properties.delete(k),getProperty:k=>properties.get(k)||null,getProperties:()=>Object.fromEntries(properties),deleteProperty:k=>properties.delete(k),setProperty:(k,v)=>properties.set(k,v)};
   const calendar={getEvents:()=>events,getEventById:id=>events.find(e=>e.getId()===id),createEvent:(title,start,end,opts)=>{
     const v={title,start,end,description:opts.description,location:opts.location};
     const e={getId:()=>String(events.indexOf(e)),getTitle:()=>v.title,getStartTime:()=>v.start,getEndTime:()=>v.end,getDescription:()=>v.description,getLocation:()=>v.location,
@@ -22,9 +22,9 @@ function harness(){
   };
   const c=vm.createContext({Date,console:{log:x=>logs.push(x)},Logger:{log:x=>logs.push(x)},Utilities:{formatDate},
     PropertiesService:{getScriptProperties:()=>props},CalendarApp:{getCalendarById:()=>calendar},
-    MailApp:{sendEmail:(...x)=>mail.push(x)},LockService:{getScriptLock:()=>({waitLock(){},releaseLock(){}})},
+    MailApp:{sendEmail:(...x)=>mail.push(x)},LockService:{getScriptLock:()=>({tryLock(){return true},waitLock(){},releaseLock(){}})},
     UrlFetchApp:{fetch:()=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify({schema_version:1,matches:snapshot,status:JSON.parse(read('data/actawp_export_status.json')),venues})})}});
-  for(const file of ['actawp_calendar_sync.gs','clupik_calendar_sync.gs','calendar_reliability.gs'])vm.runInContext(read(file),c);
+  for(const file of ['calendar_offline_bundle.gs','actawp_calendar_sync.gs','clupik_calendar_sync.gs','calendar_reliability.gs'])vm.runInContext(read(file),c);
   vm.runInContext('ACTAWP_VENUES = '+JSON.stringify(venues),c);
   const msg=(i=0,subject='Modificado un partido de Jornada 1',at='2026-10-16T06:33:09Z',html=fixtures[i])=>({getBody:()=>html,getSubject:()=>subject,getDate:()=>new Date(at),getId:()=>at,getFrom:()=> 'FCN <no-reply@clupik.com>'});
   return {c,events,properties,calendar,msg,mail,logs};
@@ -94,11 +94,13 @@ test('horario Madrid independiente del proceso: invierno, verano y cambios estac
 });
 test('fallos conservan checkpoint; ciclo continúa ActaWP y alerta sin marcar éxito',()=>{
   const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
+  h.properties.set('AESE_CLUPIK_DONE_old','2020-01-01T00:00:00Z');
   h.c.GmailApp={search:()=>[{getMessages:()=>[h.msg(0,'Partido',new Date(Date.now()-1000).toISOString(),'<b>roto</b>')]}]};
-  let synced=false;h.c.syncActaWPToCalendar=()=>{synced=true};
+  let synced=false;h.c.syncActaWPToCalendar=()=>{synced=true;return {status:'complete'}};
   assert.throws(()=>h.c.runAESECalendarSync(),/Clupik incompleto/);
   assert.equal(synced,true);assert.equal(h.mail.length,1);
   assert.equal(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');assert.equal(h.properties.has('AESE_LAST_SUCCESS'),false);
+  assert.equal(h.properties.has('AESE_CLUPIK_DONE_old'),false);
 });
 test('alertas se agrupan durante seis horas; recuperación del trigger ausente',()=>{
   const h=harness();h.c.aeseAlert_('test','fallo');h.c.aeseAlert_('test','fallo');assert.equal(h.mail.length,1);
@@ -110,9 +112,63 @@ test('alertas se agrupan durante seis horas; recuperación del trigger ausente',
   h.properties.set('AESE_LAST_SUCCESS','2020-01-01');h.c.runAESECalendarSync=()=>recovered=true;h.c.checkAESECalendarHealth();assert.equal(recovered,true);
 });
 test('exportación correcta con paquete retrasado alerta sobre publicación',()=>{
-  const h=harness();h.properties.set('AESE_LAST_SUCCESS',new Date().toISOString());
+  const h=harness();h.properties.set('ACTAWP_LAST_SYNC',new Date().toISOString());h.properties.set('AESE_LAST_SUCCESS',new Date().toISOString());
   const recent=new Date(Date.now()-3600000).toISOString();
   h.c.fetchActaWPJSON_=url=>url.endsWith('actawp_last_attempt.json')?{complete:true,attempted_at:recent}:{status:{attempted_at:'2020-01-01T00:00:00Z'}};
   h.c.ScriptApp={getProjectTriggers:()=>[{getHandlerFunction:()=> 'runAESECalendarSync'}]};
   h.c.checkAESECalendarHealth();assert.equal(h.mail.length,1);assert.match(h.mail[0][1],/publicacion/);
+});
+
+test('Clupik funciona sin ninguna petición remota y repite sin duplicar',()=>{
+  const h=harness();
+  const message=h.msg(0,'Modificado un partido',new Date(Date.now()-10000).toISOString());
+  h.c.GmailApp={search:()=>[{getMessages:()=>[message]}]};
+  h.c.UrlFetchApp.fetch=()=>{throw Error('remote down')};
+  assert.equal(h.c.procesarPartidosAESE().status,'complete');
+  assert.equal(h.c.procesarPartidosAESE().status,'complete');
+  assert.equal(h.events.length,1);
+});
+
+test('bloqueo ocupado no actualiza el latido de éxito',()=>{
+  const h=harness();
+  h.c.LockService.getScriptLock=()=>({tryLock:()=>false});
+  assert.throws(()=>h.c.runAESECalendarSync(),/locked/);
+  assert.equal(h.properties.has('AESE_CLUPIK_LAST_SUCCESS'),false);
+  assert.equal(h.properties.has('AESE_ACTAWP_LAST_SUCCESS'),false);
+});
+
+test('lote de correo limitado reanuda y no adelanta checkpoint',()=>{
+  const h=harness();
+  const messages=Array.from({length:25},(_,i)=>h.msg(0,'Partido',new Date(Date.now()-100000+i*1000).toISOString()));
+  h.c.GmailApp={search:()=>[{getMessages:()=>messages}]};
+  assert.equal(h.c.procesarPartidosAESE().status,'pending');
+  assert.equal(h.properties.has('ULTIMA_EJECUCION'),false);
+  assert.equal(h.c.procesarPartidosAESE().status,'pending');
+  assert.equal(h.c.procesarPartidosAESE().status,'complete');
+  assert.equal(h.events.length,1);
+});
+
+test('error de correo de alerta no impide conciliación secundaria',()=>{
+  const h=harness();let secondary=false;
+  h.c.MailApp.sendEmail=()=>{throw Error('mail quota')};
+  h.c.procesarPartidosAESE=()=>{throw Error('primary down')};
+  h.c.syncActaWPToCalendar=()=>{secondary=true;return {status:'complete'}};
+  assert.throws(()=>h.c.runAESECalendarSync(),/primary down/);
+  assert.equal(secondary,true);
+});
+
+test('avisos con igual fecha se ordenan por ID sin perder una modificación',()=>{
+  const h=harness(),first=h.msg(),second=h.msg(0,'Modificado un partido',undefined,fixtures[0].replace('13:00','14:00'));
+  first.getId=()=> 'a';second.getId=()=> 'b';
+  h.c.procesarMensajeAESE_(first,h.calendar);
+  h.c.procesarMensajeAESE_(second,h.calendar);
+  assert.equal(h.events[0].getStartTime().toISOString(),'2026-10-24T12:00:00.000Z');
+  assert.equal(h.c.procesarMensajeAESE_(first,h.calendar),'older');
+});
+
+test('replay de aviso ya confirmado no revierte un avance posterior de ActaWP',()=>{
+  const h=harness(),m=h.msg();h.c.procesarMensajeAESE_(m,h.calendar);
+  const key='AESE_NOTICE_1339808:145574486',notice=JSON.parse(h.properties.get(key));
+  notice.acknowledged_snapshot='2026-10-17T12:00:00Z';h.properties.set(key,JSON.stringify(notice));
+  assert.equal(h.c.procesarMensajeAESE_(m,h.calendar),'acknowledged');
 });

@@ -4,6 +4,7 @@
 const AESE_ALERT_EMAIL = 'algarri1978@gmail.com';
 const AESE_NOTICE_PREFIX = 'AESE_NOTICE_';
 let AESE_SNAPSHOT_CACHE = null;
+let AESE_RUN_DEADLINE = null;
 
 function decodeClupikHTML_(text) {
   return String(text).replace(/&amp;/gi,'&').replace(/&nbsp;/gi,' ')
@@ -62,7 +63,7 @@ function parseClupikNotice_(message) {
     round_name:blocks.slice(ti+2,di).find(b=>/Jornada/i.test(b))||'',
     start:Utilities.formatDate(start,'Europe/Madrid',"yyyy-MM-dd'T'HH:mm:ssXXX"),
     status:cancelled?'cancelled':tentative?'tentative':'confirmed',
-    received_at:message.getDate().toISOString()});
+    received_at:message.getDate().toISOString(), message_id:message.getId()});
 }
 
 function applyClupikNotice_(match) {
@@ -89,9 +90,13 @@ function reconcileClupikNotice_(message,calendar) {
   const notice=parseClupikNotice_(message), id=actaWPIdentity_(notice);
   const props=PropertiesService.getScriptProperties(), key=AESE_NOTICE_PREFIX+id;
   const saved=props.getProperty(key), old=saved?JSON.parse(saved):null;
-  if (old && Date.parse(old.received_at)>Date.parse(notice.received_at)) return 'older';
+  if (old && (Date.parse(old.received_at)>Date.parse(notice.received_at) ||
+    (old.received_at===notice.received_at && old.message_id && old.message_id>notice.message_id))) return 'older';
   const source=(AESE_SNAPSHOT_CACHE || loadActaWPSnapshot_()).find(m=>actaWPIdentity_(m)===id);
-  if(old && old.received_at===notice.received_at) return reconcileActaWPMatch_(calendar,applyClupikNotice_(source || old));
+  if(old && old.received_at===notice.received_at && (!old.message_id || old.message_id===notice.message_id)) {
+    if(old.acknowledged_snapshot) return 'acknowledged';
+    return reconcileActaWPMatch_(calendar,applyClupikNotice_(source || old));
+  }
   const match=Object.assign({},source||{},notice,{category:source?source.category:notice.category});
   // Persist before Calendar: if Calendar fails, the next ActaWP run repairs it.
   // Unknown venues fail safely before persisting or creating an event.
@@ -106,28 +111,51 @@ function aeseAlert_(key,detail) {
   const props=PropertiesService.getScriptProperties(), now=Date.now();
   const previous=Number(props.getProperty('AESE_ALERT_'+key)||0);
   if(now-previous<6*3600000) return;
-  MailApp.sendEmail(AESE_ALERT_EMAIL,'AESE: incidencia de sincronización — '+key,
+  try { MailApp.sendEmail(AESE_ALERT_EMAIL,'AESE: incidencia de sincronización — '+key,
     detail+'\nSe conservan las identidades y se reintentará automáticamente.\n'+
     'https://script.google.com/home/projects/1gyRPkwFnWnzlyufrKxLL7BpFFHZjLXlNY9lDL_zVzTD_Wpwd5PIIi10A/executions');
   props.setProperty('AESE_ALERT_'+key,String(now));
+  } catch(error) { console.log('Alert delivery failed: '+error.message); }
 }
 
 function runAESECalendarSync() {
   const props=PropertiesService.getScriptProperties();
+  AESE_RUN_DEADLINE=Date.now()+240000;
   props.setProperty('AESE_LAST_ATTEMPT',new Date().toISOString());
-  const failures=[];
-  for (const task of [procesarPartidosAESE,syncActaWPToCalendar]) {
-    try { task(); } catch(error) { failures.push(task.name+': '+error.message); }
+  // Clupik is the primary notification path. A stale ActaWP export must
+  // not make an otherwise healthy email-to-Calendar sync appear failed.
+  let clupikFailure=null;
+  try {
+    const result=procesarPartidosAESE();
+    if(!result || result.status!=='complete') throw Error('Clupik '+(result?result.status:'unknown'));
+    props.setProperty('AESE_CLUPIK_LAST_SUCCESS',new Date().toISOString());
+    props.setProperty('AESE_CLUPIK_LAST_ERROR','');
+  } catch(error) {
+    clupikFailure=error;
+    props.setProperty('AESE_CLUPIK_LAST_ERROR',error.message);
+    aeseAlert_('clupik','No se procesaron los avisos Clupik: '+error.message);
   }
-  if(failures.length) {
-    const detail=failures.join('\n');
-    props.setProperty('AESE_LAST_ERROR',detail);
-    aeseAlert_('ejecucion',detail);
-    throw Error(detail);
+  let actawpFailure=null;
+  try {
+    const result=syncActaWPToCalendar();
+    if(!result || result.status==='locked') throw Error('ActaWP locked');
+    // A batch completing is not equivalent to reconciling the full season.
+    const pending=props.getProperty('ACTAWP_BATCH_CURSOR_V1');
+    if (!pending) props.setProperty('AESE_ACTAWP_LAST_SUCCESS',new Date().toISOString());
+    props.setProperty('AESE_ACTAWP_LAST_ERROR','');
+  } catch(error) {
+    actawpFailure=error;
+    props.setProperty('AESE_ACTAWP_LAST_ERROR',error.message);
+    aeseAlert_('actawp','No se pudo conciliar ActaWP: '+error.message);
   }
+  if(clupikFailure) {
+    props.setProperty('AESE_LAST_ERROR','Clupik: '+clupikFailure.message);
+    throw Error('Clupik: '+clupikFailure.message);
+  }
+  // Keep legacy heartbeat for monitoring of the primary Calendar pathway.
   props.setProperty('AESE_LAST_SUCCESS',new Date().toISOString());
-  props.setProperty('AESE_LAST_ERROR','');
-  console.log('AESE ciclo completo OK');
+  props.setProperty('AESE_LAST_ERROR',actawpFailure?'ActaWP: '+actawpFailure.message:'');
+  console.log('AESE Clupik OK; ActaWP '+(actawpFailure?'degraded':'OK'));
 }
 
 function installAESEAutomation() {
@@ -141,11 +169,14 @@ function installAESEAutomation() {
 }
 
 function checkAESECalendarHealth() {
-  const props=PropertiesService.getScriptProperties(), last=Date.parse(props.getProperty('AESE_LAST_SUCCESS')||'');
+  const props=PropertiesService.getScriptProperties(), last=Date.parse(props.getProperty('AESE_CLUPIK_LAST_SUCCESS')||props.getProperty('AESE_LAST_SUCCESS')||'');
   if(!Number.isFinite(last)||Date.now()-last>45*60000) {
-    aeseAlert_('retraso','Sin ciclo completo correcto en 45 minutos. Se intenta recuperación.');
+    aeseAlert_('retraso','Sin procesamiento Clupik correcto en 45 minutos. Se intenta recuperación.');
     runAESECalendarSync();
   }
+  const lastFull=Date.parse(props.getProperty(ACTAWP_SYNC_PROPERTY)||'');
+  if(!Number.isFinite(lastFull)||Date.now()-lastFull>6*3600000) aeseAlert_('conciliacion','Sin conciliación completa ActaWP en seis horas.');
+  try {
   const attempt=fetchActaWPJSON_('https://algar78.github.io/aese-waterpolo/data/actawp_last_attempt.json');
   const attempted=Date.parse(attempt.attempted_at||'');
   if(!attempt.complete || !Number.isFinite(attempted) || Date.now()-attempted>8*3600000)
@@ -154,6 +185,7 @@ function checkAESECalendarHealth() {
   const published=Date.parse((bundle.status || {}).attempted_at || '');
   if(attempt.complete && Date.now()-attempted>30*60000 && (!Number.isFinite(published) || published<attempted))
     aeseAlert_('publicacion','La exportación correcta no ha llegado al paquete de Calendar en 30 minutos. Revisar generación de feeds y Pages.');
+  } catch(error) { aeseAlert_('fuente','No se pudo vigilar la fuente: '+error.message); }
   const handlers=ScriptApp.getProjectTriggers().map(t=>t.getHandlerFunction());
   if(!handlers.includes('runAESECalendarSync')) {
     ScriptApp.newTrigger('runAESECalendarSync').timeBased().everyMinutes(15).create();
