@@ -40,7 +40,27 @@ El registro local se regenera con `node scripts/prepare-calendar-release.cjs` a 
 - Después de recargar el editor de Google se compararon íntegramente los cinco archivos guardados con los locales: coincidencia exacta en todos.
 - Activador habitual de las 09:53:33 CEST: completado en 14,710 segundos. Primera verificación temporizada de las 09:53:49 CEST: completada en 22,955 segundos. Estos registros pertenecen al código nuevo; no se usaron ejecuciones históricas como prueba de esta versión.
 
-La evidencia final de vuelta completa, ciclos posteriores a la limpieza y prueba de Clupik con fallo de fuente se añade al terminar la observación.
+## Evidencia final observada
+
+Auditoría real a las **10:06:49 CEST** del 17 de octubre:
+
+| Comprobación | Resultado |
+| --- | --- |
+| Eventos en 2020–2035 | **80** |
+| Identidades originales encontradas | **80 de 80** |
+| Originales ausentes | **0** |
+| Duplicados ActaWP o Clupik | **0** |
+| Eventos adicionales | **0** |
+| Última vuelta completa | **10:02:10 CEST** |
+| Cursor de la vuelta siguiente | **40 de 80**, sin fallos |
+| Último éxito Clupik | **10:06:28 CEST** |
+| Activadores restantes | `runAESECalendarSync`, `checkAESECalendarHealth` |
+
+Se registraron doce intentos de verificación temporizados. No se presentan todos como correctos: las verificaciones de las 10:01–10:04 detectaron el cuarto duplicado y fallaron de forma explícita. Tras retirarlo a las **10:04:15**, las auditorías automáticas de las **10:05:04** y **10:06:07** encontraron los 80 originales sin duplicados Clupik/ActaWP. Se programó además una ejecución automática independiente de una sola vez; la auditoría final posterior conservó los 80 eventos. Todos los activadores temporales ya se habían retirado en la lectura final.
+
+Los horarios de control conservaron el mismo ID de evento: Banyoles, **24/10/2026 13:00 CEST**; Olot, **15/11/2026 13:30 CET**; Mediterrani, **22/11/2026 09:00 CET**. Los cambios de fecha/hora y los reintentos sin duplicación se verificaron además mediante regresiones. No se alteraron artificialmente horarios de producción para simular avisos futuros.
+
+El código final de ejecución de correo pasó nuevamente las regresiones y [GitHub Actions](https://github.com/Algar78/aese-waterpolo/actions/runs/39016105147), antes de la fusión. El fichero de cooldown del exportador aislado y los hashes de snapshot/validación prueban que el 429 real no modificó los datos publicados.
 
 ## Límites operativos
 
