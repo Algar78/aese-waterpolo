@@ -21,7 +21,22 @@ let ACTAWP_EVENT_CACHE = null;
 let ACTAWP_SNAPSHOT_TIME = null;
 
 function fetchActaWPJSON_(url) {
+  const props=PropertiesService.getScriptProperties(), key='AESE_HTTP_WAIT_'+encodeURIComponent(url);
+  if(Number(props.getProperty(key)||0)>Date.now()) throw Error('HTTP 429 cooldown: '+url);
   const response = UrlFetchApp.fetch(url, {muteHttpExceptions:true, headers:{'Cache-Control':'no-cache'}});
+  if(response.getResponseCode()===429) {
+    const headers=response.getAllHeaders(), names=Object.keys(headers);
+    const header=name=>headers[names.find(k=>k.toLowerCase()===name)] || '';
+    const retry=String(header('retry-after')), seconds=Number(retry);
+    const serverDate=Date.parse(header('date'));
+    let delay=retry.trim() && Number.isFinite(seconds) && seconds>=0 ? seconds*1000 :
+      Date.parse(retry)-(Number.isFinite(serverDate)?serverDate:Date.now());
+    if(!Number.isFinite(delay)||delay<0) delay=60000;
+    props.setProperty(key,String(Date.now()+Math.max(1000,delay)+Math.floor(Math.random()*1000)));
+    // Yield to the next scheduled run instead of consuming the six-minute cap.
+    throw Error('HTTP 429 deferred respecting Retry-After: '+retry);
+  }
+  props.deleteProperty(key);
   if (response.getResponseCode() !== 200) throw new Error('ActaWP HTTP ' + response.getResponseCode());
   return JSON.parse(response.getContentText());
 }
@@ -85,6 +100,7 @@ function syncActaWPToCalendar() {
   const props = PropertiesService.getScriptProperties();
   const cursorKey = 'ACTAWP_BATCH_CURSOR_V1';
   const batchSize = 8;
+  const deadline = (typeof AESE_RUN_DEADLINE !== 'undefined' && AESE_RUN_DEADLINE) || Date.now()+240000;
   try {
     ACTAWP_EVENT_CACHE = {};
     const matches = loadActaWPSnapshot_().map(m =>
@@ -94,26 +110,37 @@ function syncActaWPToCalendar() {
     // The snapshot is stable-sorted, so changes in feed order do not
     // arbitrarily skip identities. A new snapshot begins another pass.
     matches.sort((a,b) => actaWPIdentity_(a).localeCompare(actaWPIdentity_(b)));
-    const snapshotKey = String(ACTAWP_SNAPSHOT_TIME || '') + ':' + matches.length;
-    const saved = JSON.parse(props.getProperty(cursorKey) || '{}');
+    const snapshotKey = matches.map(actaWPIdentity_).join(',');
+    let saved={};
+    try { saved=JSON.parse(props.getProperty(cursorKey) || '{}'); } catch (_) { console.log('Reset invalid ActaWP cursor'); }
     const offset = saved.snapshot === snapshotKey && Number.isInteger(saved.offset) &&
       saved.offset >= 0 && saved.offset < matches.length ? saved.offset : 0;
     const stop = Math.min(offset + batchSize, matches.length);
-    let created = 0, updated = 0, unchanged = 0;
+    let created = 0, updated = 0, unchanged = 0, completed=offset;
+    let failures = offset ? Number(saved.failures || 0) : 0;
     for (let i = offset; i < stop; i++) {
-      const result = reconcileActaWPMatch_(calendar, matches[i]);
+      if(Date.now()>deadline-30000) break;
+      let result;
+      try { result = reconcileActaWPMatch_(calendar, matches[i]); }
+      catch(error) {
+        failures++;
+        console.log('ActaWP failed '+actaWPIdentity_(matches[i])+': '+error.message);
+      }
       if (result === 'created') created++;
       else if (result === 'updated') updated++;
       else unchanged++;
       // Advance only after the individual event has been safely reconciled.
-      props.setProperty(cursorKey, JSON.stringify({snapshot:snapshotKey,offset:i+1}));
+      completed=i+1;
+      props.setProperty(cursorKey, JSON.stringify({snapshot:snapshotKey,offset:completed,failures}));
     }
-    if (stop === matches.length) {
+    if (completed === matches.length) {
       props.deleteProperty(cursorKey);
-      props.setProperty(ACTAWP_SYNC_PROPERTY, new Date().toISOString());
+      if (!failures) props.setProperty(ACTAWP_SYNC_PROPERTY, new Date().toISOString());
+      else throw Error('ActaWP pass incomplete: '+failures+' event failures; retry next pass');
     }
     console.log('ActaWP batch '+offset+'..'+stop+'/'+matches.length+
       ' created='+created+' updated='+updated+' unchanged='+unchanged);
+    return {status:completed===matches.length?'complete':'pending',completed,total:matches.length};
   } finally {
     ACTAWP_EVENT_CACHE = null;
     lock.releaseLock();
