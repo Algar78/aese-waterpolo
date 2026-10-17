@@ -54,7 +54,7 @@ function procesarPartidosAESESinBloqueo_() {
       procesarMensajeAESE_(message,calendar);
       props.setProperty(doneKey,message.getDate().toISOString());
       processed++;
-    } catch(error) { scan.errors++; Logger.log('Clupik '+message.getId()+': '+error.message); }
+    } catch(error) { ACTAWP_EVENT_CACHE={}; scan.errors++; Logger.log('Clupik '+message.getId()+': '+error.message); }
   }
     if(threads.length<100) break;
   }

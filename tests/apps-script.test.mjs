@@ -74,6 +74,12 @@ test('fallo después de crear y antes de guardar referencia se recupera sin dupl
   assert.throws(()=>h.context.reconcileActaWPMatch_(h.calendar,m),/quota/);assert.equal(h.events.length,1);
   h.restore();h.context.reconcileActaWPMatch_(h.calendar,m);assert.equal(h.events.length,1);
 });
+
+test('fallo guardando referencia con caché activa no duplica dentro de la misma ejecución',()=>{
+  const h=harness(),m=matches[0];vm.runInContext('ACTAWP_EVENT_CACHE={}',h.context);h.failProperty();
+  assert.throws(()=>h.context.reconcileActaWPMatch_(h.calendar,m),/quota/);
+  h.restore();h.context.reconcileActaWPMatch_(h.calendar,m);assert.equal(h.events.length,1);
+});
 test('snapshot parcial/duplicado/fecha inválida se rechaza antes de cualquier escritura',()=>{
   const h=harness();
   for(const [rows,s] of [[matches.slice(1),status],[[...matches,matches[0]],status],[matches,{...status,complete:false}]]) {

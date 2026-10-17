@@ -123,6 +123,7 @@ function syncActaWPToCalendar() {
       let result;
       try { result = reconcileActaWPMatch_(calendar, matches[i]); }
       catch(error) {
+        ACTAWP_EVENT_CACHE={}; // A failed write may have committed remotely.
         failures++;
         console.log('ActaWP failed '+actaWPIdentity_(matches[i])+': '+error.message);
       }
@@ -188,6 +189,11 @@ function reconcileActaWPMatch_(calendar, match) {
     event = calendar.createEvent(title, start, end, {
       description: description,
       location: match.venue || '',
+    });
+    // Keep recovery reads coherent even if saving the reference fails and
+    // another notice for this identity arrives in the same execution.
+    Object.keys(ACTAWP_EVENT_CACHE || {}).forEach(key=>{
+      if(!ACTAWP_EVENT_CACHE[key].some(e=>e.getId()===event.getId())) ACTAWP_EVENT_CACHE[key].push(event);
     });
     properties.setProperty(propertyKey, event.getId());
     return 'created';

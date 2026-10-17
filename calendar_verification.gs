@@ -3,7 +3,7 @@ const AESE_RELEASE = 'pr9-reliability-2026-10-17-v1';
 // Read-only evidence against the original identities, independent of Pages.
 function auditAESECalendar() {
   const calendar=CalendarApp.getCalendarById(ACTAWP_CALENDAR_ID);
-  const events=calendar.getEvents(new Date('2026-08-01T00:00:00Z'),new Date('2028-08-01T00:00:00Z'));
+  const events=calendar.getEvents(new Date('2020-01-01T00:00:00Z'),new Date('2036-01-01T00:00:00Z'));
   const missing=[],duplicates=[],matched=[];
   for(const match of AESE_OFFLINE_BUNDLE.matches) {
     // Old-format markers need a canonical source URL to verify ownership.
@@ -89,7 +89,7 @@ function repairAESELegacyDuplicates_(apply) {
       ['304s6an7o8f8qrlmcgq2nhmhkg@google.com','1339811:145573790','2028-01-10T09:30:00.000Z'],
       ['haphdupatq26r496s57h9l9lic@google.com','1339803:145573552','2028-07-10T12:30:00.000Z']
     ];
-    const events=calendar.getEvents(new Date('2026-08-01T00:00:00Z'),new Date('2028-08-01T00:00:00Z'));
+    const events=calendar.getEvents(new Date('2020-01-01T00:00:00Z'),new Date('2036-01-01T00:00:00Z'));
     const plan=[];
     for(const [eventId,identity,expectedStart] of targets) {
       const duplicate=events.find(e=>e.getId()===eventId);
