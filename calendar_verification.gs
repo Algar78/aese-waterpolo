@@ -32,7 +32,7 @@ function auditAESECalendar() {
 function readAESEReleaseEvidence() {
   const props=PropertiesService.getScriptProperties();
   console.log(JSON.stringify({release:AESE_RELEASE,count:props.getProperty('AESE_VERIFY_COUNT'),
-    cycles:Array.from({length:10},(_,i)=>props.getProperty('AESE_VERIFY_'+i)),
+    cycles:Array.from({length:12},(_,i)=>props.getProperty('AESE_VERIFY_'+i)),
     clupikSuccess:props.getProperty('AESE_CLUPIK_LAST_SUCCESS'),fullSync:props.getProperty(ACTAWP_SYNC_PROPERTY),
     cursor:props.getProperty('ACTAWP_BATCH_CURSOR_V1'),
     triggers:ScriptApp.getProjectTriggers().map(t=>t.getHandlerFunction())}));
@@ -44,7 +44,7 @@ function startAESEReleaseVerification() {
   props.setProperty('AESE_VERIFY_COUNT','0');
   if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='verifyAESEReleaseCycle'))
     ScriptApp.newTrigger('verifyAESEReleaseCycle').timeBased().everyMinutes(1).create();
-  console.log('Ten automatic verification cycles scheduled, one complete reconciliation pass');
+  console.log('Twelve automatic verification cycles scheduled, one complete reconciliation pass');
 }
 
 function verifyAESEReleaseCycle() {
@@ -61,7 +61,7 @@ function verifyAESEReleaseCycle() {
     if(result.missing.length||result.duplicates.length||result.legacyDuplicates.length) throw Error('Original event audit failed');
   } finally {
     props.setProperty('AESE_VERIFY_COUNT',String(count+1));
-    if(count>=9) ScriptApp.getProjectTriggers().filter(t=>t.getHandlerFunction()==='verifyAESEReleaseCycle').forEach(t=>ScriptApp.deleteTrigger(t));
+    if(count>=11) ScriptApp.getProjectTriggers().filter(t=>t.getHandlerFunction()==='verifyAESEReleaseCycle').forEach(t=>ScriptApp.deleteTrigger(t));
     probeLock.releaseLock();
   }
 }
@@ -87,7 +87,8 @@ function repairAESELegacyDuplicates_(apply) {
     const targets=[
       ['621guj4p2e4c3e2b0bq1elmf84@google.com','1339806:145574474','2027-09-04T18:45:00.000Z'],
       ['304s6an7o8f8qrlmcgq2nhmhkg@google.com','1339811:145573790','2028-01-10T09:30:00.000Z'],
-      ['haphdupatq26r496s57h9l9lic@google.com','1339803:145573552','2028-07-10T12:30:00.000Z']
+      ['haphdupatq26r496s57h9l9lic@google.com','1339803:145573552','2028-07-10T12:30:00.000Z'],
+      ['4hd19fus4qcs40947k0240p8n8@google.com','1339806:145574389','2026-03-10T16:15:00.000Z']
     ];
     const events=calendar.getEvents(new Date('2020-01-01T00:00:00Z'),new Date('2036-01-01T00:00:00Z'));
     const plan=[];

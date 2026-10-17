@@ -31,11 +31,13 @@ El registro local se regenera con `node scripts/prepare-calendar-release.cjs` a 
 
 ## Pruebas y observaciones reales
 
-- Pruebas locales: suite JavaScript, parser/exportador Python y regresiones de backoff. También GitHub Actions ejecuta ambas suites en el PR.
+- Pruebas: 55 JavaScript y 24 Python (79 en total), además de generación de los nueve feeds. [GitHub Actions](https://github.com/Algar78/aese-waterpolo/actions/runs/39015795265) ejecutó ambas suites correctamente sobre el código corregido.
 - Consulta directa real a ActaWP: HTTP 200, tabla pública presente, sin desafío de navegador.
 - Exportación real en carpeta aislada: una fila incompleta de Absoluto Masculino (`145573548`) bloqueó esa categoría; Alevín Mixto B respondió 429. Se observaron tres esperas crecientes antes de agotar el reintento y detener las categorías restantes. Se preservó el snapshot válido. No se publicó una exportación parcial ni se eludió el límite mediante proxy.
-- Auditoría inicial en Google Calendar: 80 identidades ActaWP originales presentes y únicas, pero 83 eventos en total. Los tres adicionales eran duplicados Clupik antiguos, con fechas erróneas en 2027/2028. La auditoría se amplió para detectar ambos tipos de marcadores en 2020–2035.
-- Reparación limitada a los tres IDs exactos: previsualización, comprobación de un original único, fecha e identidad del candidato, copia de los tres eventos antes de borrar el primero y retirada reversible. No hay eliminación automática general de duplicados. La reparación se puede repetir sin volver a borrar nada.
+- Auditoría inicial en Google Calendar dentro de 2026–2028: 80 identidades ActaWP originales presentes y únicas, pero 83 eventos. Tres eran duplicados Clupik antiguos con fechas erróneas en 2027/2028. Al ampliar la auditoría a 2020–2035 se encontró otro duplicado anterior al inicio de temporada, fechado el 10 de marzo de 2026. Se revisaron ambos tipos de marcadores para evitar el falso resultado de contar solo ActaWP.
+- Reparación limitada a cuatro IDs exactos: previsualización, comprobación de un original único, fecha e identidad del candidato, copia previa y retirada reversible. No hay eliminación automática general de duplicados. La reparación se puede repetir sin volver a borrar nada.
+- Prueba de Clupik en Apps Script a las 10:00:33 CEST con Gmail/Calendar reales y la lectura remota forzada a fallar: completada, cero llamadas remotas y cinco mensajes correctos omitidos por idempotencia. No había mensajes nuevos para aplicar en esa prueba; las modificaciones de hora bajo fallo remoto están cubiertas por regresiones con los correos reales guardados como fixtures.
+- Después de recargar el editor de Google se compararon íntegramente los cinco archivos guardados con los locales: coincidencia exacta en todos.
 - Activador habitual de las 09:53:33 CEST: completado en 14,710 segundos. Primera verificación temporizada de las 09:53:49 CEST: completada en 22,955 segundos. Estos registros pertenecen al código nuevo; no se usaron ejecuciones históricas como prueba de esta versión.
 
 La evidencia final de vuelta completa, ciclos posteriores a la limpieza y prueba de Clupik con fallo de fuente se añade al terminar la observación.
