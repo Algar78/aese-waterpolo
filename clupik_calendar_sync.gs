@@ -20,20 +20,24 @@ function procesarPartidosAESESinBloqueo_() {
   const now=new Date();
   const deadline=AESE_RUN_DEADLINE || Date.now()+180000;
   const done=props.getProperties();
-  // Bound storage even when one poison message keeps the window checkpoint
-  // from advancing. Values are processing times, not old message dates.
-  Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_DONE_') && Date.parse(done[k])<now.getTime()-49*3600000).forEach(k=>{props.deleteProperty(k);delete done[k];});
-  Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_BAD_') && Number(done[k])<now.getTime()-10*86400000).forEach(k=>{props.deleteProperty(k);delete done[k];});
   // Replay overlapping delivery windows, including messages indexed late by Gmail.
   const checkpoint=Date.parse(props.getProperty('ULTIMA_EJECUCION')||'');
   const from=Number.isFinite(checkpoint)?checkpoint-48*3600000:now.getTime()-7*86400000;
+  // Bound storage even when a held notice keeps the window checkpoint from
+  // advancing. Values are processing times, which are never earlier than the
+  // message date, so a mark older than the window start belongs to a message the
+  // window no longer reaches. While the window is held open the marks must stay,
+  // or every run would process the same notices again.
+  const doneLimit=Math.min(now.getTime()-49*3600000,from-3600000);
+  Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_DONE_') && Date.parse(done[k])<doneLimit).forEach(k=>{props.deleteProperty(k);delete done[k];});
+  Object.keys(done).filter(k=>(k.startsWith('AESE_CLUPIK_BAD_') || k.startsWith('AESE_ALERT_aviso_')) && Number(done[k])<now.getTime()-10*86400000).forEach(k=>{props.deleteProperty(k);delete done[k];});
   let scan={};
   try { scan=JSON.parse(props.getProperty('AESE_CLUPIK_SCAN_V1')||'{}'); } catch(_) {}
   if(!Number.isFinite(scan.from)||!Number.isFinite(scan.until)||!Number.isInteger(scan.offset)||scan.offset<0)
     scan={from,until:now.getTime(),offset:0,errors:0};
   const query='from:'+CLUPIK_REMITENTE+' after:'+Math.floor(scan.from/1000)+' before:'+(Math.floor(scan.until/1000)+1);
   const messages=[], seen=new Set();
-  let processed=0, skipped=0, setAside=0;
+  let processed=0, skipped=0, setAside=0, held=0;
   const unreadable=[];
   for(let offset=scan.offset;;offset+=100) {
     scan.offset=offset;
@@ -61,21 +65,32 @@ function procesarPartidosAESESinBloqueo_() {
       processed++;
     } catch(error) {
       ACTAWP_EVENT_CACHE={};
-      if(error.unreadable && aeseSetAsideUnreadable_(props,message,error,now.getTime())) { setAside++; continue; }
+      if(error.unreadable) {
+        // A notice that cannot be interpreted is not a failure of the run (it
+        // would repeat the same error every 15 minutes): it is held, reported
+        // once and, after the grace period, set aside.
+        const state=aeseTriageUnreadable_(props,message,error,now.getTime());
+        if(state==='aside') setAside++;
+        else { held++; unreadable.push({id:message.getId(),subject:message.getSubject(),received:message.getDate().toISOString(),reason:error.message}); }
+        Logger.log('Clupik '+message.getId()+' sin interpretar ('+state+'): '+error.message);
+        continue;
+      }
       scan.errors++;
-      if(error.unreadable) unreadable.push('«'+message.getSubject()+'» ('+message.getDate().toISOString().slice(0,10)+')');
       Logger.log('Clupik '+message.getId()+': '+error.message);
     }
   }
     if(threads.length<100) break;
   }
   props.deleteProperty('AESE_CLUPIK_SCAN_V1');
-  Logger.log('Clupik procesados='+processed+' omitidos='+skipped+(setAside?' apartados='+setAside:''));
+  Logger.log('Clupik procesados='+processed+' omitidos='+skipped+(held?' retenidos='+held:'')+(setAside?' apartados='+setAside:''));
+  aeseAlertUnreadable_(props,unreadable,now.getTime());
   if(scan.errors) throw Error('Clupik incompleto: se conserva ULTIMA_EJECUCION para reintentar; errores='+scan.errors+
-    (unreadable.length?'; avisos ilegibles (se apartarán a las 72 h si siguen igual): '+unreadable.join(', '):''));
-  props.setProperty('ULTIMA_EJECUCION',new Date(scan.until).toISOString());
-  Logger.log('Clupik OK mensajes='+messages.length);
-  return {status:'complete'};
+    (held?'; avisos sin interpretar retenidos='+held:''));
+  // While a notice is held the window stays open so it is read again each run;
+  // the run itself has worked, so it is reported as complete.
+  if(!held) props.setProperty('ULTIMA_EJECUCION',new Date(scan.until).toISOString());
+  Logger.log('Clupik OK mensajes='+messages.length+(held?' (ventana abierta por '+held+' aviso(s) retenido(s))':''));
+  return {status:'complete',held};
 }
 function procesarMensajeAESE_(message,calendar) { return reconcileClupikNotice_(message,calendar); }
 function obtenerCategoriaCorta_(competicion) {
