@@ -112,17 +112,23 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
             continue
         match_id = int(match_id_match.group(1))
 
-        teams = [_clean(node.get("title") or node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo span.ellipsis")]
-        if len(teams) < 2:
-            teams = [_clean(node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo a")]
-        if len(teams) < 2:
-            raise ValueError(f"Fila de partido {match_id} sin dos equipos; snapshot bloqueado")
+        # Preserve DOM order and any known team. Only team-profile links are a
+        # fallback: the results link in this same cell merely says "Veure".
+        teams = []
+        for node in row.select('.colstyle-equipo span.ellipsis, .colstyle-equipo a[href*="/team/"]'):
+            if node.name == 'a' and node.select_one('span.ellipsis'):
+                continue
+            team = _clean(node.get("title") or node.get_text(" ", strip=True))
+            if team:
+                teams.append(team)
 
         # ActaWP calendar pages contain the complete competition calendar.
         # Only keep matches involving A.E. Santa Eulàlia.
         aese_teams = [team for team in teams if _is_aese(team)]
         if not aese_teams:
             continue
+        if len(teams) != 2:
+            raise ValueError(f"Fila de partido AESE {match_id} sin dos equipos; snapshot bloqueado")
         expected_suffix = TEAM_SUFFIX.get(category)
         if expected_suffix and not any(_normalized(team).rstrip().endswith(' ' + expected_suffix) for team in aese_teams):
             continue

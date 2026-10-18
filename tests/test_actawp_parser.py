@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 import actawp_fetch as fetcher
 from actawp_sync import parse_calendar_html
@@ -14,6 +15,47 @@ def html(date='2026-10-10 10:15:00', extra=''):
 
 class ParserSafetyTests(unittest.TestCase):
     def parse(self, value): return parse_calendar_html(value,'Absoluto Masculino',1,2)
+    def incomplete(self):
+        return (Path(__file__).parent / 'fixtures/granollers-incomplete.html').read_text(encoding='utf-8')
+
+    def test_incomplete_third_party_with_null_date_is_ignored(self):
+        self.assertEqual(self.parse(self.incomplete()), [])
+        self.assertEqual([m.match_id for m in self.parse(self.incomplete() + html())], [123])
+
+    def test_incomplete_aese_blocks_even_with_results_links(self):
+        value = self.incomplete().replace('C.N. GRANOLLERS', 'A.E. SANTA EULÀLIA')
+        for suffix in ['', '<a href="/match/145573548/results">Veure</a>']:
+            with self.subTest(suffix=suffix), self.assertRaisesRegex(ValueError, 'AESE 145573548 sin dos equipos'):
+                self.parse(value.replace('</td>', suffix + '</td>', 1))
+
+    def test_valid_aese_is_extracted(self):
+        match, = self.parse(html())
+        self.assertEqual((match.match_id, match.home_team, match.away_team, match.start),
+                         (123, 'A.E. SANTA EULÀLIA', 'C.N. RIVAL', '2026-10-10T12:15:00+02:00'))
+
+    def test_real_aese_placeholder_rows_block(self):
+        for match_id in (145573588, 145573633):
+            value = (Path(__file__).parent / f'fixtures/aese-{match_id}-incomplete.html').read_text(encoding='utf-8')
+            for prefix in ('', html()):
+                with self.subTest(match_id=match_id, preceding_valid=bool(prefix)):
+                    with self.assertRaisesRegex(ValueError, f'AESE {match_id} sin dos equipos'):
+                        self.parse(prefix + value)
+
+    def test_team_profile_fallback_preserves_known_team_and_order(self):
+        for home, away in [
+            ('<a href="/ca/team/1">A.E. SANTA EULÀLIA</a>', '<span class="ellipsis">C.N. RIVAL</span>'),
+            ('<span class="ellipsis">A.E. SANTA EULÀLIA</span>', '<a href="/ca/team/2">C.N. RIVAL</a>'),
+            ('<a href="/ca/team/1"><span class="ellipsis">A.E. SANTA EULÀLIA</span></a>', '<a href="/ca/team/2">C.N. RIVAL</a>'),
+        ]:
+            value = html().replace('<span class="ellipsis" title="A.E. SANTA EULÀLIA">AESE</span>', home)
+            value = value.replace('<span class="ellipsis" title="C.N. RIVAL">Rival</span>', away)
+            match, = self.parse(value)
+            self.assertEqual((match.home_team, match.away_team), ('A.E. SANTA EULÀLIA', 'C.N. RIVAL'))
+
+    def test_empty_name_does_not_count_as_opponent(self):
+        with self.assertRaisesRegex(ValueError, 'sin dos equipos'):
+            self.parse(html().replace('<span class="ellipsis" title="C.N. RIVAL">Rival</span>', '<span class="ellipsis"> </span>'))
+
     def test_exact_duplicate_rows_are_collapsed(self):
         self.assertEqual(len(self.parse(html()+html())),1)
     def test_conflicting_duplicate_rows_are_blocked(self):

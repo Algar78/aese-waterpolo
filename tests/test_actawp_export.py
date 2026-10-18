@@ -51,6 +51,21 @@ class ExportSafetyTests(unittest.TestCase):
                 exporter.main()
         self.assert_preserved()
 
+    def test_real_incomplete_aese_rows_preserve_publication(self):
+        for match_id in (145573588, 145573633):
+            value = (Path(__file__).parent / f'fixtures/aese-{match_id}-incomplete.html').read_text(encoding='utf-8')
+            def incomplete(category, tournament, default, overrides):
+                if category == 'Absoluto Masculino':
+                    return exporter.parse_calendar_html(value, category, tournament, default), default
+                return self.fetched(category, tournament, default, overrides)
+            with self.subTest(match_id=match_id):
+                with patch.object(exporter, 'fetch_category', side_effect=incomplete):
+                    with self.assertRaisesRegex(RuntimeError, 'incompleta'):
+                        exporter.main()
+                self.assert_preserved()
+                attempt = json.loads(exporter.ATTEMPT_STATUS.read_text(encoding='utf-8'))
+                self.assertTrue(any(str(match_id) in error for error in attempt['errors']))
+
     def test_success_after_429_restores_both_publication_and_attempt(self):
         with patch.object(exporter, 'fetch_category', side_effect=RuntimeError('HTTP 429')):
             with self.assertRaises(RuntimeError):
