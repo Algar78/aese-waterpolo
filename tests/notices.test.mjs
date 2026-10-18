@@ -95,7 +95,8 @@ test('horario Madrid independiente del proceso: invierno, verano y cambios estac
 test('fallos conservan checkpoint; ciclo continúa ActaWP y alerta sin marcar éxito',()=>{
   const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
   h.properties.set('AESE_CLUPIK_DONE_old','2020-01-01T00:00:00Z');
-  h.c.GmailApp={search:()=>[{getMessages:()=>[h.msg(0,'Partido',new Date(Date.now()-1000).toISOString(),'<b>roto</b>')]}]};
+  h.c.GmailApp={search:()=>[{getMessages:()=>[h.msg(0,'Partido',new Date(Date.now()-1000).toISOString())]}]};
+  h.calendar.createEvent=()=>{throw new Error('Calendar no disponible')};   // fallo transitorio, no un aviso ilegible
   let synced=false;h.c.syncActaWPToCalendar=()=>{synced=true;return {status:'complete'}};
   assert.throws(()=>h.c.runAESECalendarSync(),/Clupik incompleto/);
   assert.equal(synced,true);assert.equal(h.mail.length,1);
@@ -355,33 +356,58 @@ test('auditoría por correo usa la dirección de alertas existente y nada más',
   assert.equal(h.mail.length,1);assert.equal(h.mail[0][0],vm.runInContext('AESE_ALERT_EMAIL',h.c));
   assert.match(h.mail[0][2],/Correos de Clupik encontrados: 0/);
 });
-test('aviso ilegible: se identifica, bloquea 72 h y después se aparta con un solo correo sin frenar los demás',()=>{
+test('aviso ilegible: un solo correo que lo nombra, no cuenta como fallo del ciclo, se retiene 72 h y después se aparta sin frenar los demás',()=>{
   const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
   const recent=()=>new Date(Date.now()-1000).toISOString();
   const roto=h.msg(0,'Partido aplazado por obras',recent(),'<b>roto</b>');
   const bueno=h.msg(1,'Modificado un partido',new Date(Date.now()-500).toISOString());
   h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[roto,bueno]}]:[]};
   h.c.syncActaWPToCalendar=()=>({status:'complete'});
-  // Primera vez: como hasta ahora (error, checkpoint intacto), pero el error dice cuál es el aviso.
-  assert.throws(()=>h.c.runAESECalendarSync(),/avisos ilegibles.*Partido aplazado por obras/);
+  // Primera vez: el ciclo termina bien (no hay error cada 15 minutos), la ventana sigue abierta y llega UN correo que dice cuál es el aviso.
+  h.c.runAESECalendarSync();
   assert.equal(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');
   assert.ok(h.properties.has('AESE_CLUPIK_BAD_'+roto.getId()));
+  assert.ok(h.properties.get('AESE_CLUPIK_LAST_SUCCESS'));assert.equal(h.properties.get('AESE_LAST_ERROR'),'');
   assert.equal(h.events.length,1);                                         // el aviso legible sí se procesó
-  // Pasadas 71 h: sigue igual.
+  assert.equal(h.mail.length,1);
+  assert.match(h.mail[0][1],/no se ha podido interpretar/);assert.match(h.mail[0][2],/Partido aplazado por obras/);
+  assert.match(h.mail[0][2],/72 horas/);assert.match(h.mail[0][2],/No habrá más correos/);
+  // Cada 15 minutos durante las 72 h: ni errores ni más correos ni eventos duplicados ni nuevo trabajo con el aviso legible.
   h.properties.set('AESE_CLUPIK_BAD_'+roto.getId(),String(Date.now()-71*3600000));
-  assert.throws(()=>h.c.runAESECalendarSync(),/Clupik incompleto/);
-  // Pasadas 73 h: se aparta, el ciclo termina bien y el checkpoint avanza.
+  for(let i=0;i<3;i++)h.c.runAESECalendarSync();
+  assert.equal(h.mail.length,1);assert.equal(h.events.length,1);
+  assert.equal(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');
+  // Pasadas 73 h: se aparta sin otro correo, y el checkpoint avanza.
   h.properties.set('AESE_CLUPIK_BAD_'+roto.getId(),String(Date.now()-73*3600000));
-  const mailsBefore=h.mail.length;
   h.c.runAESECalendarSync();
   assert.notEqual(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');
   assert.ok(h.properties.get('AESE_CLUPIK_DONE_'+roto.getId()));
-  const apartado=h.mail.slice(mailsBefore).filter(m=>/apartado/.test(m[1]));
-  assert.equal(apartado.length,1);
-  assert.match(apartado[0][2],/Partido aplazado por obras/);assert.doesNotMatch(apartado[0][2],/se reintentará/);
-  // Y no vuelve a avisar ni a bloquear.
   h.c.runAESECalendarSync();
-  assert.equal(h.mail.slice(mailsBefore).filter(m=>/apartado/.test(m[1])).length,1);
+  assert.equal(h.mail.length,1);
+});
+test('avisos ilegibles: varios a la vez dan un solo correo y, si el envío falla, se reintenta sin duplicar',()=>{
+  const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
+  const rotos=[0,1,2].map(i=>h.msg(0,'Partido roto '+i,new Date(Date.now()-1000-i).toISOString(),'<b>roto '+i+'</b>'));
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>rotos}]:[]};
+  h.c.syncActaWPToCalendar=()=>({status:'complete'});
+  const send=h.c.MailApp.sendEmail;let fail=true;
+  h.c.MailApp.sendEmail=(...x)=>{if(fail)throw Error('mail quota');return send(...x)};
+  h.c.runAESECalendarSync();assert.equal(h.mail.length,0);                  // no se pudo enviar: no cuenta como avisado
+  fail=false;h.c.runAESECalendarSync();
+  assert.equal(h.mail.length,1);assert.match(h.mail[0][1],/3 avisos/);
+  for(let i=0;i<3;i++)assert.match(h.mail[0][2],new RegExp('Partido roto '+i));
+  h.c.runAESECalendarSync();assert.equal(h.mail.length,1);
+});
+test('con un aviso retenido no se reprocesan los demás en cada ciclo: sus marcas se conservan mientras la ventana siga abierta',()=>{
+  const h=harness();h.properties.set('ULTIMA_EJECUCION',new Date(Date.now()-60*3600000).toISOString());   // ventana abierta desde hace 60 h (+48 h de solape)
+  const viejo=h.msg(1,'Modificado un partido',new Date(Date.now()-100*3600000).toISOString());
+  const roto=h.msg(0,'Partido roto',new Date(Date.now()-1000).toISOString(),'<b>roto</b>');
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[viejo,roto]}]:[]};
+  h.c.syncActaWPToCalendar=()=>({status:'complete'});
+  h.properties.set('AESE_CLUPIK_DONE_'+viejo.getId(),new Date(Date.now()-100*3600000).toISOString());
+  h.c.runAESECalendarSync();
+  assert.ok(h.properties.has('AESE_CLUPIK_DONE_'+viejo.getId()));          // el límite de 49 h lo habría borrado
+  assert.equal(h.events.length,0);                                         // y no se ha vuelto a procesar
 });
 test('aviso ilegible apartado es distinto de un fallo transitorio: un error de Calendar nunca se aparta',()=>{
   const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
@@ -393,4 +419,145 @@ test('aviso ilegible apartado es distinto de un fallo transitorio: un error de C
   assert.throws(()=>h.c.runAESECalendarSync(),/Clupik incompleto/);
   assert.equal(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');
   assert.equal(h.properties.has('AESE_CLUPIK_DONE_'+m.getId()),false);
+});
+test('diagnóstico de avisos ilegibles: agrupa por tipo y mes, enseña la estructura sin enlaces ni correos y no escribe nada',()=>{
+  const h=harness();
+  const sinFecha='<div>Hola Pedro</div><div>LLIGA CATALANA</div><div>SANTA EULALIA</div><div>Jornada 4</div><div>escribe a socio@example.com</div>'+
+    '<div>https://clupik.com/x?token=SECRETO</div><a href="https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results">ver</a>';
+  const a=h.msg(0,'Nuevo partido en Jornada 4','2026-01-10T10:00:00Z',sinFecha), b=h.msg(0,'Nuevo partido en Jornada 5','2026-10-12T10:00:00Z',sinFecha);
+  const bueno=h.msg(0,'Modificado un partido','2026-10-13T10:00:00Z');
+  const info=h.msg(0,'Nuevo resultado en jornada 2','2026-10-14T10:00:00Z','<p>x</p>');
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[a,bueno,b,info]}]:[]};
+  const before={props:JSON.stringify(h.properties),events:h.events.length,mail:h.mail.length};
+  const r=h.c.aeseClupikUnreadable_();
+  assert.equal(r.handled,3);                                   // el asunto «resultado» no se procesa y no se cuenta
+  assert.equal(r.groups.length,1);
+  assert.equal(r.groups[0].count,2);
+  assert.equal(JSON.stringify(r.groups[0].months),JSON.stringify({'2026-01':1,'2026-10':1}));
+  assert.equal(r.groups[0].sample.identity,'1339808:145574486');
+  assert.equal(r.groups[0].sample.hasTime,false);assert.equal(r.groups[0].sample.hasDate,false);
+  assert.match(r.text,/LLIGA CATALANA/);assert.match(r.text,/hora: NO · fecha: NO/);
+  assert.doesNotMatch(r.text,/socio@example\.com|SECRETO|https?:/);   // sin direcciones ni enlaces
+  assert.equal(JSON.stringify(h.properties),before.props);assert.equal(h.events.length,before.events);assert.equal(h.mail.length,before.mail);
+  assert.equal(h.c.aeseClupikUnreadable_({budgetMs:-1}).partial,true);
+});
+test('diagnóstico del formato de fechas: separa fechas seguras de ambiguas y las compara con el paquete oficial',()=>{
+  const h=harness();
+  const conFecha=(fecha)=>fixtures[0].replace(/\d{2}\/\d{2}\/\d{4}/,fecha);
+  const fecha0=(fixtures[0].match(/\d{2}\/\d{2}\/\d{4}/)||[])[0];
+  assert.ok(fecha0,'el fixture debe traer una fecha dd/dd/aaaa');
+  const [a0,b0]=fecha0.split('/').map(Number);
+  const mails=[
+    h.msg(0,'Modificado un partido','2026-04-01T10:00:00Z',conFecha('25/04/2026')),
+    h.msg(0,'Modificado un partido','2026-10-02T10:00:00Z',conFecha('04/25/2026')),
+    h.msg(0,'Modificado un partido','2026-10-03T10:00:00Z',conFecha('05/11/2026')),
+    h.msg(0,'Nuevo resultado en jornada 2','2026-10-04T10:00:00Z',conFecha('06/07/2026')),  // asunto ignorado
+    h.msg(0,'Nuevo partido en jornada 3','2026-10-05T10:00:00Z','<div>sin fecha</div>')
+  ];
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>mails}]:[]};
+  const before={props:JSON.stringify(h.properties),events:h.events.length,mail:h.mail.length};
+  const r=h.c.aeseClupikDateFormats_();
+  assert.equal(r.withDate,3);assert.equal(r.withoutDate,1);
+  assert.equal(JSON.stringify(r.months['2026-04']),JSON.stringify({'DD/MM seguro':1}));
+  assert.equal(JSON.stringify(r.months['2026-10']),JSON.stringify({'MM/DD seguro':1,'ambiguo':1}));
+  assert.equal(JSON.stringify(r.tournaments['1339808']),JSON.stringify({'DD/MM seguro':1,'MM/DD seguro':1,'ambiguo':1}));
+  assert.match(r.text,/1339808: DD\/MM 1 · MM\/DD 1 · ambiguos 1 · MEZCLA/);
+  assert.match(r.text,/DD\/MM seguro: del 2026-04-01 al 2026-04-01/);
+  assert.match(r.text,/MM\/DD seguro: del 2026-10-02 al 2026-10-02/);
+  assert.equal(JSON.stringify(h.properties),before.props);assert.equal(h.events.length,before.events);assert.equal(h.mail.length,before.mail);
+  assert.equal(h.c.aeseClupikDateFormats_({budgetMs:-1}).partial,true);
+});
+test('diagnóstico de qué distingue los formatos de fecha: muestra el contexto sin enlaces ni correos y no escribe nada',()=>{
+  const h=harness();
+  const conFecha=(fecha)=>fixtures[0].replace(/\d{2}\/\d{2}\/\d{4}/,fecha).replace('<body','<body data-x="http://x.example/secreto"');
+  const a=h.msg(0,'Modificado un partido','2026-04-01T10:00:00Z',conFecha('25/04/2026')), b=h.msg(0,'Modificado un partido','2026-10-02T10:00:00Z',conFecha('04/25/2026'));
+  const amb=h.msg(0,'Modificado un partido','2026-10-03T10:00:00Z',conFecha('05/11/2026'));
+  [a,b,amb].forEach(m=>{m.getRawContent=()=> 'Message-ID: <abc123@mail.clupik.example>\r\nX-Mailer: Demo 1.0\r\nTo: privado@example.com\r\nContent-Language: es\r\n\r\ncuerpo';});
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[a,b,amb]}]:[]};
+  const before={props:JSON.stringify(h.properties),events:h.events.length,mail:h.mail.length};
+  const r=h.c.aeseClupikDateDetail_();
+  assert.equal(r.samples.length,2);                                         // el ambiguo no es muestra
+  assert.equal(JSON.stringify(r.samples.map(s=>s.kind).sort()),JSON.stringify(['DD/MM seguro','MM/DD seguro']));
+  assert.match(r.text,/Message-ID: <…@mail\.clupik\.example>/);assert.match(r.text,/Content-Language: es/);
+  assert.doesNotMatch(r.text,/privado@example\.com|secreto|https?:/);
+  assert.equal(JSON.stringify(h.properties),before.props);assert.equal(h.events.length,before.events);assert.equal(h.mail.length,before.mail);
+  assert.equal(h.c.aeseClupikDateDetail_({budgetMs:-1}).partial,true);
+});
+
+// ---- Fechas día/mes y mes/día, y partidos nuevos sin fecha (auditoría del 18/10/2026) ----
+const conFecha=(fecha)=>fixtures[0].replace('10/24/2026',fecha);
+const link=fixtures[0].match(/<a [^>]*>[\s\S]*?<\/a>/)[0];
+const sinFecha=(extra='')=>'<div>LLIGA CATALANA CADET MASCULI 26/27</div><div>Hola, has sido inscrito en un partido de Jornada 5</div><div>C.N. BANYOLES</div><div>&nbsp; Jornada 5 &nbsp;</div><div>:</div><div>A.E. SANTA EULÀLIA</div>'+extra+link;
+test('fecha con un solo formato posible: se lee sin adivinar, sea día/mes o mes/día',()=>{
+  const h=harness(),at='2026-10-16T08:00:00Z';
+  const mmdd=h.c.parseClupikNotice_(h.msg(0,'Modificado un partido',at,conFecha('10/24/2026')));
+  const ddmm=h.c.parseClupikNotice_(h.msg(0,'Modificado un partido',at,conFecha('24/10/2026')));
+  assert.equal(mmdd.start,'2026-10-24T13:00:00+02:00');assert.equal(ddmm.start,'2026-10-24T13:00:00+02:00');
+  assert.equal(ddmm.date_resolution,'formato');
+  assert.equal(h.c.parseClupikNotice_(h.msg(0,'Modificado un partido',at,conFecha('10/10/2026'))).date_resolution,'igual');
+  assert.throws(()=>h.c.parseClupikNotice_(h.msg(0,'Modificado un partido',at,conFecha('31/04/2026'))),/inválida/);   // 31 de abril no existe en ningún formato
+});
+test('fecha ambigua: la decide el dato oficial o un partido nuevo imposible de estar ya jugado; si no, no se publica',()=>{
+  const h=harness(),at='2026-10-16T08:00:00Z';
+  // Ventana: 11/05/2026 es el 11 de mayo (pasado) o el 5 de noviembre (próximo): solo la segunda es posible.
+  const ventana=h.c.parseClupikNotice_(h.msg(0,'Modificado un partido',at,conFecha('11/05/2026')));
+  assert.equal(ventana.start,'2026-11-05T13:00:00+01:00');assert.equal(ventana.date_resolution,'ventana');
+  // 03/04/2027: 3 de abril o 4 de marzo, las dos posibles. Sin dato oficial, no se adivina.
+  const ambiguo=h.msg(0,'Modificado un partido',at,conFecha('03/04/2027'));
+  assert.throws(()=>h.c.parseClupikNotice_(ambiguo),/ambigua: «03\/04\/2027» puede ser 3\/4\/2027 o 4\/3\/2027/);
+  // Con el partido ya conocido el 6 de marzo, la lectura 4 de marzo (a 2 días) frente a 3 de abril (a 28) es clara.
+  const conRef=h.c.parseClupikNotice_(ambiguo,{reference:()=> '2027-03-06T10:00:00+01:00'});
+  assert.equal(conRef.start,'2027-03-04T13:00:00+01:00');assert.equal(conRef.date_resolution,'referencia');
+  // Una referencia que no distingue (las dos lecturas a distancias parecidas) tampoco decide.
+  assert.throws(()=>h.c.parseClupikNotice_(ambiguo,{reference:()=> '2027-03-20T10:00:00+01:00'}),/ambigua/);
+  // Una referencia muy lejana tampoco: un cambio de más de 120 días no se da por válido.
+  assert.throws(()=>h.c.parseClupikNotice_(ambiguo,{reference:()=> '2026-09-01T10:00:00+02:00'}),/ambigua/);
+  // La plantilla desconocida no usa la ventana, solo el dato oficial.
+  const desconocida=h.msg(0,'Modificado un partido',at,conFecha('11/05/2026').replace('id="calendar"','id="unknown"'));
+  assert.throws(()=>h.c.parseClupikNotice_(desconocida),/ambigua/);
+  assert.equal(h.c.parseClupikNotice_(desconocida,{reference:()=> '2026-11-01T10:00:00+01:00'}).start,'2026-11-05T13:00:00+01:00');
+});
+test('un aviso ambiguo se resuelve con el evento que ya está en el calendario y no lo mueve de mes',()=>{
+  const h=harness();
+  h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-16T08:00:00Z',conFecha('03/22/2027')),h.calendar);   // 22 de marzo
+  assert.equal(h.events.length,1);assert.equal(h.events[0].getStartTime().toISOString(),'2027-03-22T12:00:00.000Z');
+  // 04/02/2027: 2 de abril (11 días después) o 4 de febrero (46 días antes): el evento decide.
+  const result=h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-17T08:00:00Z',conFecha('04/02/2027')),h.calendar);
+  assert.equal(h.events.length,1);
+  assert.equal(h.events[0].getStartTime().toISOString(),'2027-04-02T11:00:00.000Z');                                   // 13:00 CEST
+  // Si el evento no distingue, el aviso se queda sin publicar y el evento intacto.
+  assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-18T08:00:00Z',conFecha('03/05/2027')),h.calendar),/ambigua/);   // 5 de marzo (28 días) o 3 de mayo (31 días)
+  assert.equal(h.events[0].getStartTime().toISOString(),'2027-04-02T11:00:00.000Z');
+});
+test('partido nuevo sin fecha: no es un error, no crea evento, no bloquea ni avisa; modificado sin fecha sigue siéndolo',()=>{
+  const h=harness();
+  const nuevo=h.c.parseClupikNotice_(h.msg(0,'Nuevo partido en Jornada 5','2026-10-16T08:00:00Z',sinFecha()));
+  assert.equal(nuevo.undated,true);assert.equal(nuevo.home_team,'C.N. BANYOLES');assert.equal(nuevo.away_team,'A.E. SANTA EULÀLIA');
+  assert.equal(nuevo.tournament_id,1339808);assert.equal(nuevo.match_id,145574486);assert.match(nuevo.category,/CADETE MASCULINO/);
+  assert.equal(h.c.procesarMensajeAESE_(h.msg(0,'Nuevo partido en Jornada 5','2026-10-16T08:00:00Z',sinFecha()),h.calendar),'undated');
+  assert.equal(h.events.length,0);
+  // Dentro del ciclo completo: se marca atendido, el punto de control avanza y no se envía ningún correo.
+  h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
+  const m=h.msg(0,'Nuevo partido en Jornada 5',new Date(Date.now()-1000).toISOString(),sinFecha());
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[m]}]:[]};
+  h.c.syncActaWPToCalendar=()=>({status:'complete'});
+  h.c.runAESECalendarSync();
+  assert.ok(h.properties.get('AESE_CLUPIK_DONE_'+m.getId()));assert.notEqual(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');
+  assert.equal(h.mail.length,0);assert.equal(h.events.length,0);
+  // «Modificado» sin fecha puede ser un partido que se queda sin fecha: eso sí requiere una persona.
+  assert.throws(()=>h.c.parseClupikNotice_(h.msg(0,'Modificado un partido','2026-10-16T08:00:00Z',sinFecha())),/No se pudieron localizar/);
+  // Y un aviso sin fecha de otro club no se acepta.
+  assert.throws(()=>h.c.parseClupikNotice_(h.msg(0,'Nuevo partido','2026-10-16T08:00:00Z',sinFecha().replace('A.E. SANTA EULÀLIA','C.N. OTRO').replace('C.N. BANYOLES','C.N. UNO'))),/inválidos/);
+});
+test('la auditoría cuenta los partidos nuevos sin fecha y cómo se leyó cada fecha',()=>{
+  const h=harness();
+  const mails=[h.msg(0,'Nuevo partido en Jornada 5','2026-10-10T08:00:00Z',sinFecha()),h.msg(1,'Modificado un partido','2026-10-12T08:00:00Z',fixtures[1].replace('11/22/2026','22/11/2026')),
+    h.msg(0,'Modificado un partido','2026-10-13T08:00:00Z',conFecha('11/05/2026'))];
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>mails}]:[]};
+  const r=h.c.aeseClupikCoverage_();
+  assert.equal(r.failures.length,0);assert.equal(r.undated,1);
+  assert.equal(JSON.stringify(r.stillUndated),JSON.stringify([]));                    // el mismo partido tiene luego un aviso con fecha
+  assert.equal(JSON.stringify(r.resolution),JSON.stringify({formato:1,ventana:1}));
+  assert.equal(JSON.stringify(r.statuses),JSON.stringify({confirmed:2,tentative:0,cancelled:0}));
+  assert.match(r.text,/partido nuevo sin fecha[^\n]*: 1 de 1 partidos/);assert.match(r.text,/formato 1 · ventana 1/);
 });
