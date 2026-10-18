@@ -989,6 +989,8 @@
     "total_matches_found": 80,
     "errors": [],
     "snapshot_sha256": "d23b826dd0ec7fdafe7dab538a9fdeda39a848336818a9da606c11a0e391788e",
+    "last_complete_export_at": "2026-10-10T16:25:53+00:00",
+    "last_complete_export_provenance": "Sembrado el 2026-10-18 a partir del historial de git: commit 7bf5e8f, último intento automático con complete=true. El exportador sustituirá este valor en su próxima exportación completa.",
     "reviewed_corrections": [
       {
         "identity": "1339803:145573561",
@@ -1037,6 +1039,11 @@
         "1339810:145608988"
       ],
       "method": "FCN notices and both official match pages; other 78 matches unchanged"
+    },
+    "freshness_policy": {
+      "fresh_hours": 192,
+      "outdated_hours": 360,
+      "reminder_hours": 168
     }
   },
   "venues": {
