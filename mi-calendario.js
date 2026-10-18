@@ -19,15 +19,11 @@
       row.append(copy,apple); links.append(row);
     }
   }
-  // "Validado" no dice cuándo se leyeron por última vez los datos oficiales; esto sí.
+  // Las familias solo ven qué hay en el calendario. La antigüedad de la última lectura
+  // oficial le corresponde a quien mantiene el sistema (estado.html y el correo de
+  // Apps Script a la dirección de alertas), no es un aviso para ellas.
   function freshness(data) {
-    const stamp = Date.parse(data.last_complete_export_at || ''), hours = Number.isFinite(stamp) ? (Date.now() - stamp) / 3600000 : null;
-    const when = hours === null ? 'fecha desconocida' : new Intl.DateTimeFormat('es-ES', {timeZone:'Europe/Madrid', dateStyle:'short', timeStyle:'short'}).format(stamp);
-    const age = hours === null ? '' : hours < 48 ? ` (hace ${Math.max(1, Math.round(hours))} h)` : ` (hace ${Math.round(hours / 24)} días)`;
-    const nodes = [element('span', `${data.total} partidos · ${data.categories.length} categorías. Última lectura completa de la web oficial: ${when}${age}.`)];
-    // The limit travels with the data (published by the exporter), so a weekly manual reading is not flagged as stale after two days.
-    const limit = Number(data.freshness_policy && data.freshness_policy.outdated_hours) > 0 ? Number(data.freshness_policy.outdated_hours) : 48;
-    if (hours === null || hours > limit) nodes.push(element('strong', ' Los datos pueden no incluir cambios recientes: confirma fecha y hora en el enlace oficial de tu categoría.'));
+    const nodes = [element('span', `${data.total} partidos · ${data.categories.length} categorías.`)];
     const pending = Array.isArray(data.pending_matches) ? data.pending_matches : [];
     if (pending.length) {
       const byCategory = new Map();
