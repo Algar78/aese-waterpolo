@@ -34,36 +34,107 @@ function clupikIdentity_(html) {
   return identities[keys[0]];
 }
 
-function parseClupikNotice_(message) {
+// Una fecha como 05/11/2026 puede ser día/mes o mes/día, y Clupik escribe las dos
+// (auditoría del 18/10/2026: 17 avisos día/mes y 67 mes/día, mezclados incluso dentro
+// de un mismo torneo; ni las cabeceras ni el HTML distinguen uno de otro). Antes se
+// suponía siempre mes/día y, cuando no era así, o fallaba o el partido caía en otro mes.
+// Ahora solo se lee si hay una prueba; si no la hay, el aviso no se interpreta.
+const AESE_DATE_REF_MAX_MS = 120*86400000;   // un cambio de fecha mayor que esto no se da por válido
+const AESE_DATE_REF_GAP_MS = 14*86400000;    // la lectura elegida debe estar al menos 14 días más cerca
+const AESE_DATE_WINDOW_PAST_MS = 3*86400000, AESE_DATE_WINDOW_FUTURE_MS = 300*86400000;
+
+function clupikDateReadings_(a,b,year) {
+  const valid=(day,month)=>month>=1 && month<=12 && day>=1 && day<=new Date(Date.UTC(year,month,0)).getUTCDate();
+  const readings=[];
+  if (valid(a,b)) readings.push({day:a,month:b,format:'DD/MM'});
+  if (a!==b && valid(b,a)) readings.push({day:b,month:a,format:'MM/DD'});
+  return readings;
+}
+
+function clupikResolveDate_(text,receivedAtMs,reference,knownTemplate) {
+  const [a,b,year]=text.split('/').map(Number);
+  const readings=clupikDateReadings_(a,b,year);
+  if (!readings.length) throw Error('Fecha Clupik inválida: '+text);
+  if (readings.length===1) return Object.assign({how:a===b?'igual':'formato'},readings[0]);
+  const noon=r=>Date.UTC(year,r.month-1,r.day,12);
+  const label=r=>r.day+'/'+r.month+'/'+year;
+  // 1. Lo que ya se sabe del partido (evento del calendario, aviso anterior o paquete oficial).
+  const known=reference?Date.parse(String(reference).slice(0,10)+'T12:00:00Z'):NaN;
+  if (Number.isFinite(known)) {
+    const sorted=readings.map(r=>({r,d:Math.abs(noon(r)-known)})).sort((x,y)=>x.d-y.d);
+    if (sorted[0].d<=AESE_DATE_REF_MAX_MS && sorted[1].d-sorted[0].d>=AESE_DATE_REF_GAP_MS) return Object.assign({how:'referencia'},sorted[0].r);
+  }
+  // 2. Un partido nuevo no puede estar ya jugado ni dentro de casi un año: solo en la plantilla conocida.
+  if (knownTemplate) {
+    const plausible=readings.filter(r=>noon(r)>=receivedAtMs-AESE_DATE_WINDOW_PAST_MS && noon(r)<=receivedAtMs+AESE_DATE_WINDOW_FUTURE_MS);
+    if (plausible.length===1) return Object.assign({how:'ventana'},plausible[0]);
+  }
+  throw Error('Fecha Clupik ambigua: «'+text+'» puede ser '+label(readings[0])+' o '+label(readings[1])+' y no hay dato oficial que lo decida; contrastar origen');
+}
+
+function clupikCategory_(competition,home,away) {
+  let category=obtenerCategoriaCorta_(competition).replace(/MIXTE/i,'MIXTO');
+  const aeseTeam=/SANTA EUL|\bAESE\b/i.test(home)?home:away;
+  if (!/\s[AB]$/.test(category) && /\s([AB])$/.test(aeseTeam)) category+=' '+aeseTeam.match(/\s([AB])$/)[1];
+  return category;
+}
+
+// options.reference(identity) devuelve la fecha ya conocida del partido (ISO) o null.
+function parseClupikNotice_(message,options) {
   const html=message.getBody(), identity=clupikIdentity_(html);
   const clean=text=>decodeClupikHTML_(text.replace(/<[^>]*>/g,' ')).replace(/\s+/g,' ').trim();
   // Leaf blocks avoid capturing nested col-1/row wrappers as a single field.
   const blocks=Array.from(html.replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi,'')
     .matchAll(/<(?:div|td|p|span)\b[^>]*>((?:(?!<(?:div|td|p|span)\b)[\s\S])*?)<\/(?:div|td|p|span)>/gi),m=>clean(m[1])).filter(Boolean);
+  const subject=message.getSubject();
   const ti=blocks.findIndex(b=>/^\d{1,2}:\d{2}$/.test(b));
   const di=blocks.findIndex(b=>/^\d{2}\/\d{2}\/\d{4}$/.test(b));
-  if (ti<0 || di<0) throw Error('No se pudieron localizar los datos principales del partido');
   const competition=blocks.find(b=>/LLIGA CATALANA/i.test(b));
+  const stamp={received_at:message.getDate().toISOString(), message_id:message.getId()};
+  if (ti<0 && di<0 && /nuevo partido|new match|nou partit|partit nou/i.test(subject)) {
+    // Un partido se crea antes de tener fecha (auditoría del 18/10/2026: 87 avisos así, sin hora, fecha ni
+    // piscina). No es un error: no hay nada que publicar hasta que llegue el aviso con la fecha.
+    const colon=blocks.indexOf(':');
+    const home=colon>=2?blocks[colon-2]:'', away=colon>=0?(blocks[colon+1]||''):'';
+    if (!competition || !home || !away || !/SANTA EUL|\bAESE\b/i.test(home+' '+away)) throw Error('Equipos o competición Clupik inválidos');
+    return Object.assign(identity,{undated:true,category:clupikCategory_(competition,home,away),home_team:home,away_team:away,
+      round_name:blocks[colon-1]||'',status:'undated'},stamp);
+  }
+  if (ti<0 || di<0) throw Error('No se pudieron localizar los datos principales del partido');
   const home=blocks[ti+1], away=blocks[di+1];
   const venue=blocks.slice(di+2).find(b=>/^\d+\s*-\s*\S/.test(b));
   if (!competition || !home || !away || !venue || !/SANTA EUL|\bAESE\b/i.test(home+' '+away)) throw Error('Equipos, competición o piscina Clupik inválidos');
-  const [a,b,year]=blocks[di].split('/').map(Number);
+  const year=Number(blocks[di].split('/')[2]);
   const knownTemplate=/id=["']calendar["']/.test(html) && /id=["']clock["']/.test(html);
-  if (!knownTemplate && a<=12 && b<=12 && a!==b) throw Error('Fecha Clupik ambigua; contrastar origen');
-  const day=knownTemplate?b:b>12?b:a, month=knownTemplate?a:b>12?a:b;
+  const reference=options && options.reference?options.reference(actaWPIdentity_(identity)):null;
+  const date=clupikResolveDate_(blocks[di],message.getDate().getTime(),reference,knownTemplate);
   const [hour,minute]=blocks[ti].split(':').map(Number);
-  const start=clupikMadridDate_(year,month,day,hour,minute);
-  let category=obtenerCategoriaCorta_(competition).replace(/MIXTE/i,'MIXTO');
-  const aeseTeam=/SANTA EUL|\bAESE\b/i.test(home)?home:away;
-  if (!/\s[AB]$/.test(category) && /\s([AB])$/.test(aeseTeam)) category+=' '+aeseTeam.match(/\s([AB])$/)[1];
-  const subject=message.getSubject();
+  const start=clupikMadridDate_(year,date.month,date.day,hour,minute);
   const cancelled=/cancel|anul|susp[eè]s|suspend/i.test(subject);
   const tentative=/ajorn|aplaz/i.test(subject);
-  return Object.assign(identity,{category,home_team:home,away_team:away,venue,
+  return Object.assign(identity,{category:clupikCategory_(competition,home,away),home_team:home,away_team:away,venue,
     round_name:blocks.slice(ti+2,di).find(b=>/Jornada/i.test(b))||'',
     start:Utilities.formatDate(start,'Europe/Madrid',"yyyy-MM-dd'T'HH:mm:ssXXX"),
-    status:cancelled?'cancelled':tentative?'tentative':'confirmed',
-    received_at:message.getDate().toISOString(), message_id:message.getId()});
+    date_resolution:date.how,
+    status:cancelled?'cancelled':tentative?'tentative':'confirmed'},stamp);
+}
+
+// Lo que ya se sabe de la fecha de un partido, por orden de fiabilidad: paquete oficial,
+// evento del calendario y aviso anterior. Sin nada de eso devuelve null.
+function aeseKnownStart_(calendar) {
+  const props=PropertiesService.getScriptProperties();
+  return id=>{
+    try {
+      const official=(AESE_SNAPSHOT_CACHE||[]).find(m=>actaWPIdentity_(m)===id);
+      if (official && official.start) return official.start;
+      const eventId=props.getProperty(ACTAWP_PROPERTY_PREFIX+id);
+      const event=eventId?calendar.getEventById(eventId):null;
+      if (event) return Utilities.formatDate(event.getStartTime(),'Europe/Madrid',"yyyy-MM-dd'T'HH:mm:ssXXX");
+      const saved=props.getProperty(AESE_NOTICE_PREFIX+id);
+      if (saved) { const old=JSON.parse(saved); if (old.start) return old.start; }
+    } catch (error) { /* sin referencia: la fecha ambigua se tratará como tal */ }
+    return null;
+  };
 }
 
 function applyClupikNotice_(match) {
@@ -90,7 +161,12 @@ function reconcileClupikNotice_(message,calendar) {
   let notice;
   // A notice that cannot be read fails the same way on every retry and touches
   // no state, unlike a Calendar or venue error, which can heal by itself.
-  try { notice=parseClupikNotice_(message); } catch(error) { error.unreadable=true; throw error; }
+  try { notice=parseClupikNotice_(message,{reference:aeseKnownStart_(calendar)}); } catch(error) { error.unreadable=true; throw error; }
+  if (notice.undated) {
+    // Partido nuevo sin fecha: se da por atendido; el aviso con la fecha llegará después.
+    Logger.log('Clupik '+actaWPIdentity_(notice)+' partido nuevo sin fecha');
+    return 'undated';
+  }
   const id=actaWPIdentity_(notice);
   const props=PropertiesService.getScriptProperties(), key=AESE_NOTICE_PREFIX+id;
   const saved=props.getProperty(key), old=saved?JSON.parse(saved):null;
@@ -111,23 +187,42 @@ function reconcileClupikNotice_(message,calendar) {
   return result;
 }
 
-// A Clupik notice that cannot be interpreted keeps the checkpoint (it might hold
-// a real change) for a grace period, so a person can look at it. After that it
-// is set aside, with one alert: otherwise a single email blocks every later
-// notice, repeats the alerts all day and makes each run reprocess a window that
-// only grows.
+// A Clupik notice that cannot be interpreted is never applied (guessing could
+// move a real match). It is held for a grace period, with the checkpoint kept so
+// it is read again every run in case the calendar learns the official date in
+// the meantime; after that it is set aside so it stops holding the window open.
+// Holding it is NOT a failure of the run: the person gets one email that names
+// it (aeseAlertUnreadable_), not an error every 15 minutes.
+// Returns 'new' (first sight, held), 'held' or 'aside'.
 const AESE_UNREADABLE_GRACE_MS = 72*3600000;
-function aeseSetAsideUnreadable_(props,message,error,nowMs) {
-  const key='AESE_CLUPIK_BAD_'+message.getId(), first=Number(props.getProperty(key)||0);
-  if(!first) { props.setProperty(key,String(nowMs)); return false; }
-  if(nowMs-first<AESE_UNREADABLE_GRACE_MS) return false;
-  props.setProperty('AESE_CLUPIK_DONE_'+message.getId(),new Date(nowMs).toISOString());
-  aeseAlert_('apartado_'+message.getId(),
-    'Un aviso de Clupik no se ha podido interpretar en 72 horas y se aparta para que el resto de avisos sigan procesándose.\n'+
-    'Asunto: «'+message.getSubject()+'»\nRecibido: '+message.getDate().toISOString()+'\nMotivo: '+error.message+'\n'+
-    'Puede contener un cambio real de un partido: ábrelo en Gmail y, si es así, compruébalo en ActaWP.',
-    30*86400000,'AESE: aviso de Clupik apartado por no poder interpretarse','');
-  return true;
+function aeseTriageUnreadable_(props,message,error,nowMs) {
+  const key='AESE_CLUPIK_BAD_'+message.getId(), stored=Number(props.getProperty(key)||0);
+  if(!stored) props.setProperty(key,String(nowMs));
+  if(stored && nowMs-stored>=AESE_UNREADABLE_GRACE_MS) {
+    props.setProperty('AESE_CLUPIK_DONE_'+message.getId(),new Date(nowMs).toISOString());
+    return 'aside';
+  }
+  return stored?'held':'new';
+}
+
+// One email per run for every notice not yet reported, however many there are
+// (if Clupik changed its template, twenty notices must not mean twenty emails).
+// A notice counts as reported only once the email has gone out, so a failed
+// delivery is retried on the next run.
+function aeseAlertUnreadable_(props,items,nowMs) {
+  const pending=items.filter(item=>!Number(props.getProperty('AESE_ALERT_aviso_'+item.id)||0));
+  if(!pending.length) return;
+  const shown=pending.slice(0,10).map(item=>'- «'+item.subject+'» (recibido el '+item.received.slice(0,10)+'): '+item.reason);
+  try {
+    MailApp.sendEmail(AESE_ALERT_EMAIL,
+      pending.length===1?'AESE: un aviso de Clupik no se ha podido interpretar':'AESE: '+pending.length+' avisos de Clupik no se han podido interpretar',
+      'Estos avisos de Clupik no se han podido interpretar y el calendario NO se ha modificado por ellos:\n'+shown.join('\n')+
+      (pending.length>shown.length?'\n- … y '+(pending.length-shown.length)+' más':'')+'\n\n'+
+      'Pueden contener un cambio real de un partido: ábrelos en Gmail y, si lo es, compruébalo en ActaWP.\n'+
+      'El sistema los vuelve a leer durante 72 horas por si el calendario llega a conocer la fecha oficial; pasado ese plazo los aparta para que no frenen el resto de avisos. No habrá más correos sobre ellos.\n'+
+      'https://script.google.com/home/projects/1gyRPkwFnWnzlyufrKxLL7BpFFHZjLXlNY9lDL_zVzTD_Wpwd5PIIi10A/executions');
+    pending.forEach(item=>props.setProperty('AESE_ALERT_aviso_'+item.id,String(nowMs)));
+  } catch(error) { console.log('Alert delivery failed: '+error.message); }
 }
 
 function aeseAlert_(key,detail,windowMs,subject,tail) {
