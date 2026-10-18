@@ -49,7 +49,9 @@ function loadActaWPSnapshot_() {
   }
   ACTAWP_VENUES = bundle.venues;
   validateActaWPSnapshot_(bundle.matches, bundle.status);
-  ACTAWP_SNAPSHOT_TIME = bundle.status.attempted_at || null;
+  // The age of the *official* data is the time of the last complete export, not
+  // of the last attempt: a failed attempt must never make old data look new.
+  ACTAWP_SNAPSHOT_TIME = bundle.status.last_complete_export_at || bundle.status.attempted_at || null;
   return bundle.matches;
 }
 

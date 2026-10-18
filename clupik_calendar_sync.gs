@@ -23,6 +23,7 @@ function procesarPartidosAESESinBloqueo_() {
   // Bound storage even when one poison message keeps the window checkpoint
   // from advancing. Values are processing times, not old message dates.
   Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_DONE_') && Date.parse(done[k])<now.getTime()-49*3600000).forEach(k=>{props.deleteProperty(k);delete done[k];});
+  Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_BAD_') && Number(done[k])<now.getTime()-10*86400000).forEach(k=>{props.deleteProperty(k);delete done[k];});
   // Replay overlapping delivery windows, including messages indexed late by Gmail.
   const checkpoint=Date.parse(props.getProperty('ULTIMA_EJECUCION')||'');
   const from=Number.isFinite(checkpoint)?checkpoint-48*3600000:now.getTime()-7*86400000;
@@ -32,7 +33,8 @@ function procesarPartidosAESESinBloqueo_() {
     scan={from,until:now.getTime(),offset:0,errors:0};
   const query='from:'+CLUPIK_REMITENTE+' after:'+Math.floor(scan.from/1000)+' before:'+(Math.floor(scan.until/1000)+1);
   const messages=[], seen=new Set();
-  let processed=0, skipped=0;
+  let processed=0, skipped=0, setAside=0;
+  const unreadable=[];
   for(let offset=scan.offset;;offset+=100) {
     scan.offset=offset;
     props.setProperty('AESE_CLUPIK_SCAN_V1',JSON.stringify(scan));
@@ -57,13 +59,20 @@ function procesarPartidosAESESinBloqueo_() {
       procesarMensajeAESE_(message,calendar);
       props.setProperty(doneKey,new Date().toISOString());
       processed++;
-    } catch(error) { ACTAWP_EVENT_CACHE={}; scan.errors++; Logger.log('Clupik '+message.getId()+': '+error.message); }
+    } catch(error) {
+      ACTAWP_EVENT_CACHE={};
+      if(error.unreadable && aeseSetAsideUnreadable_(props,message,error,now.getTime())) { setAside++; continue; }
+      scan.errors++;
+      if(error.unreadable) unreadable.push('«'+message.getSubject()+'» ('+message.getDate().toISOString().slice(0,10)+')');
+      Logger.log('Clupik '+message.getId()+': '+error.message);
+    }
   }
     if(threads.length<100) break;
   }
   props.deleteProperty('AESE_CLUPIK_SCAN_V1');
-  Logger.log('Clupik procesados='+processed+' omitidos='+skipped);
-  if(scan.errors) throw Error('Clupik incompleto: se conserva ULTIMA_EJECUCION para reintentar; errores='+scan.errors);
+  Logger.log('Clupik procesados='+processed+' omitidos='+skipped+(setAside?' apartados='+setAside:''));
+  if(scan.errors) throw Error('Clupik incompleto: se conserva ULTIMA_EJECUCION para reintentar; errores='+scan.errors+
+    (unreadable.length?'; avisos ilegibles (se apartarán a las 72 h si siguen igual): '+unreadable.join(', '):''));
   props.setProperty('ULTIMA_EJECUCION',new Date(scan.until).toISOString());
   Logger.log('Clupik OK mensajes='+messages.length);
   return {status:'complete'};

@@ -75,7 +75,7 @@ export function generate(root = new URL('../', import.meta.url)) {
   let previous = {};
   try { previous = JSON.parse(readFileSync(new URL('calendars/event-state.json',root))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const state = eventState(matches, previous, utc(new Date()));
-  const manifest = {source:'data/actawp_matches.json',snapshot_sha256:createHash('sha256').update(raw).digest('hex'),total:matches.length,timeZone:'Europe/Madrid',categories:Object.entries(categories).map(([name,slug])=>({name,slug,count:counts[name],url:`${baseURL}calendars/${slug}.ics`}))};
+  const manifest = {source:'data/actawp_matches.json',snapshot_sha256:createHash('sha256').update(raw).digest('hex'),total:matches.length,timeZone:'Europe/Madrid',last_complete_export_at:status.last_complete_export_at ?? null,freshness_policy:status.freshness_policy ?? null,source_mode:status.source?.mode ?? null,pending_matches:(status.pending_matches ?? []).map(({category,match_id,teams,reason,url})=>({category,match_id,teams,reason,url})),categories:Object.entries(categories).map(([name,slug])=>({name,slug,count:counts[name],url:`${baseURL}calendars/${slug}.ics`}))};
   // One validated document keeps Apps Script independent of GitHub's shared-IP API quota.
   const bundle = {schema_version:1, matches, status, venues:JSON.parse(readFileSync(new URL('data/venues.json',root)))};
   for (const match of matches) {

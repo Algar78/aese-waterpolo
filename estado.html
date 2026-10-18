@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#061a39"><title>Estado del calendario AESE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#edf2f7;color:#071a38;font:17px/1.5 system-ui,sans-serif}header{background:#061a39;color:#fff;padding:20px}header a{color:#fff}main{max-width:760px;margin:auto;padding:20px}section{background:#fff;border-radius:16px;padding:20px;margin:18px 0}
+.state{display:inline-block;border-radius:999px;padding:4px 14px;font-weight:700}.fresh{background:#d8f3e4;color:#0b5b34}.stale{background:#fff1c9;color:#6b4a00}.outdated,.unknown{background:#fbd9d9;color:#8a1212}
+dl{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 18px}dt{color:#526078}dd{margin:0;overflow-wrap:anywhere}small{color:#526078}
+@media (max-width:600px){dl{grid-template-columns:minmax(0,1fr);gap:0}dd{margin-bottom:12px}main{padding:16px}section{padding:16px}}
+</style></head>
+<body><header><a href="./">← AESE Waterpolo</a></header><main>
+<h1>Estado del calendario</h1>
+<section aria-live="polite"><h2>Datos oficiales (ActaWP / FCN)</h2><p><span id="badge" class="state unknown">Comprobando…</span></p><p id="summary"></p>
+<dl id="facts"></dl></section>
+<section><h2>Qué significa</h2>
+<p id="meaning"></p>
+<p>Los cambios de fecha, hora y sede llegan solos por los avisos de Clupik. La lectura de ActaWP la hace una persona (ver <a href="https://github.com/Algar78/aese-waterpolo/tree/main/data/manual">instrucciones</a>) y confirma que no se ha escapado nada.</p>
+<p><small>Esta página calcula la edad al abrirla, a partir de <code>calendars/index.json</code> y <code>data/actawp_last_attempt.json</code>. Un «éxito» de las sincronizaciones no implica datos actualizados; solo cuenta la última lectura completa.</small></p></section>
+</main>
+<script>
+(() => {
+  let FRESH = 12, OUTDATED = 48; const $ = id => document.getElementById(id);
+  const fmt = new Intl.DateTimeFormat('es-ES', {timeZone:'Europe/Madrid', dateStyle:'medium', timeStyle:'short'});
+  const when = stamp => Number.isFinite(stamp) ? fmt.format(stamp) : 'desconocida';
+  const hours = stamp => (Date.now() - stamp) / 3600000;
+  const age = h => h < 48 ? `${Math.round(h)} h` : `${(h / 24).toFixed(1)} días`;
+  const span = h => h < 48 ? `${h} h` : `${Math.round(h / 24)} días`;
+  const fetchJSON = url => fetch(url, {cache: 'no-store'}).then(r => { if (!r.ok) throw Error(url); return r.json(); });
+  Promise.allSettled([fetchJSON('./calendars/index.json'), fetchJSON('./data/actawp_last_attempt.json')]).then(([manifest, attempt]) => {
+    const m = manifest.status === 'fulfilled' ? manifest.value : {}, a = attempt.status === 'fulfilled' ? attempt.value : {};
+    const policy = m.freshness_policy || {};
+    if (Number(policy.fresh_hours) > 0 && Number(policy.outdated_hours) > Number(policy.fresh_hours)) { FRESH = Number(policy.fresh_hours); OUTDATED = Number(policy.outdated_hours); }
+    $('meaning').innerHTML = `<strong>Al día</strong>: ActaWP se leyó por completo hace ${span(FRESH)} o menos. <strong>Retrasado</strong>: entre ${span(FRESH)} y ${span(OUTDATED)}. <strong>Obsoleto</strong>: más de ${span(OUTDATED)}; el calendario solo recibe los cambios que lleguen por los avisos oficiales de Clupik y puede no reflejar el resto.`;
+    const complete = Date.parse(m.last_complete_export_at || ''), tried = Date.parse(a.attempted_at || '');
+    const h = Number.isFinite(complete) ? hours(complete) : null;
+    const state = h === null ? 'unknown' : h <= FRESH ? 'fresh' : h <= OUTDATED ? 'stale' : 'outdated';
+    $('badge').className = 'state ' + state;
+    $('badge').textContent = {fresh:'Al día', stale:'Retrasado', outdated:'Obsoleto', unknown:'Desconocido'}[state];
+    $('summary').textContent = h === null ? 'No se puede saber cuándo se leyeron por última vez los datos oficiales.'
+      : `La última lectura completa de ActaWP fue hace ${age(h)}.`;
+    const rows = [
+      ['Última lectura completa', `${when(complete)}${h === null ? '' : ' (hace ' + age(h) + ')'}`],
+      ['Fuente de la última lectura', {manual_import:'páginas guardadas por una persona', automated:'automática'}[m.source_mode] || 'desconocida'],
+      ['Partidos de AESE sin rival o fecha', (m.pending_matches || []).map(p => `${p.category} #${p.match_id}`).join(', ') || 'ninguno'],
+      ['Último intento', Number.isFinite(tried) ? `${when(tried)} · ${a.complete ? 'completo' : 'incompleto'}` : 'desconocido'],
+      ['Intentos fallidos seguidos', a.consecutive_failures ?? 'desconocido'],
+      ['Causas del último fallo', (a.error_classes || []).join(', ') || 'ninguna registrada'],
+      ['Filas de otros clubes ignoradas', (a.ignored_row_ids || []).join(', ') || 'ninguna'],
+      ['Partidos publicados', m.total ?? 'desconocido'],
+    ];
+    $('facts').replaceChildren(...rows.flatMap(([k, v]) => { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; return [dt, dd]; }));
+  });
+})();
+</script></body></html>

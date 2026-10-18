@@ -1,4 +1,4 @@
-const AESE_RELEASE = 'pr9-reliability-2026-10-17-v1';
+const AESE_RELEASE = 'audit-2026-10-18-v2';
 
 // Read-only evidence against the original identities, independent of Pages.
 function auditAESECalendar() {
