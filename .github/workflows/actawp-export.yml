@@ -37,7 +37,11 @@ jobs:
             echo 'complete=false' >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Confirm complete export
+        run: python scripts/validate_actawp_export.py '${{ steps.fetch.outputs.complete }}'
+
       - name: Publish JSON snapshot
+        if: steps.fetch.outputs.complete == 'true'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -50,25 +54,4 @@ jobs:
             if git push origin HEAD:main; then exit 0; fi
           done
           exit 1
-
-      - name: Confirm complete export
-        if: steps.fetch.outputs.complete != 'true'
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          status = json.loads(Path("data/actawp_last_attempt.json").read_text(encoding="utf-8"))
-          errors = status.get("errors", [])
-          # Preserve the last good snapshot, but incomplete is not success.
-          if errors and any("429" in error for error in errors) and all(
-              "429" in error or "pendiente por límite" in error for error in errors
-          ):
-              print("::error::ActaWP HTTP 429: calendario conservado; exportación incompleta, requiere alerta y reintento.")
-              raise SystemExit(1)
-          else:
-              print("::error::Exportación ActaWP incompleta por un motivo distinto de HTTP 429.")
-              for error in errors:
-                  print("::error::" + error)
-              raise SystemExit(1)
-          PY
 
