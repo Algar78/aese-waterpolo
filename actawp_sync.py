@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from html import unescape
+import os
 import re
 import unicodedata
 from zoneinfo import ZoneInfo
@@ -14,6 +15,8 @@ from bs4 import BeautifulSoup
 from actawp_fetch import fetch_html
 
 MADRID = ZoneInfo("Europe/Madrid")
+# Overridable only so the end-to-end tests can point the real HTTP client at a local server.
+BASE_URL = os.environ.get("ACTAWP_BASE_URL", "https://actawp.natacio.cat")
 AESE_MARKER = "SANTA EULALIA"
 TEAM_SUFFIX = {
     'Alevín Mixto A': 'A', 'Alevín Mixto B': 'B',
@@ -51,7 +54,7 @@ class Match:
 
 
 def calendar_url(tournament_id: int, calendar_id: int, language: str = "ca") -> str:
-    return f"https://actawp.natacio.cat/{language}/tournament/{tournament_id}/calendar/{calendar_id}/all"
+    return f"{BASE_URL}/{language}/tournament/{tournament_id}/calendar/{calendar_id}/all"
 
 
 def _clean(value: str | None) -> str:
@@ -98,7 +101,90 @@ def _extract_local_datetime(data_sort: str, display_text: str) -> datetime:
     return local
 
 
-def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_id: int) -> list[Match]:
+MAX_DIAGNOSTIC_ROWS = 25
+_SNIPPET_CHARS = 1000
+# ActaWP marks a match without a date with this sortable placeholder
+# ("5 9999-99-99 99:99:99 <team>"); real dates never contain it.
+_UNDATED_SORT = re.compile(r"(?:^|\s)9999-99-99(?:\s|$)")
+
+
+def _row_teams(row) -> list[str]:
+    """Teams in DOM order. Only team-profile links are a fallback: the results
+    link in this same cell merely says "Veure"."""
+    teams = []
+    for node in row.select('.colstyle-equipo span.ellipsis, .colstyle-equipo a[href*="/team/"]'):
+        if node.name == "a" and node.select_one("span.ellipsis"):
+            continue
+        team = _clean(node.get("title") or node.get_text(" ", strip=True))
+        if team:
+            teams.append(team)
+    return teams
+
+
+def _row_undated(row) -> bool:
+    """True only for ActaWP's explicit "no date yet" marker with no visible date."""
+    cell = row.select_one(".colstyle-fecha")
+    if cell is None:
+        return False
+    node = cell.find(attrs={"data-sort": True})
+    if node is None or not _UNDATED_SORT.search(node.get("data-sort", "")):
+        return False
+    return not re.search(r"\d{1,2}/\d{1,2}/\d{2,4}", _clean(cell.get_text(" ", strip=True)))
+
+
+def _row_mentions_aese(row) -> bool:
+    """True if AESE appears in the row outside the date/venue cell.
+
+    A row that cannot be read as two teams is only harmless when AESE is
+    demonstrably absent from it. Everything except the date/venue cell is
+    inspected (text and title/alt attributes), not just the team cells, so an
+    AESE match with a damaged team cell cannot be ignored. The venue cell is
+    excluded on purpose: AESE's own pool, "Santa Eulàlia", also hosts other
+    clubs' matches.
+    """
+    def in_venue_cell(node):
+        tag = node if hasattr(node, "attrs") else node.parent
+        return tag is not None and (tag.find_parent(class_="colstyle-fecha") is not None
+                                    or "colstyle-fecha" in (tag.get("class") or []))
+    for text in row.find_all(string=True):
+        if not in_venue_cell(text) and _is_aese(str(text)):
+            return True
+    for node in row.find_all(True):
+        if in_venue_cell(node):
+            continue
+        for attribute in ("title", "alt", "aria-label", "data-title", "data-name"):
+            value = node.get(attribute)
+            if isinstance(value, str) and _is_aese(value):
+                return True
+    return False
+
+
+def _row_diagnostic(row, match_id: int, category: str, teams: list[str]) -> dict:
+    return {
+        "category": category,
+        "match_id": match_id,
+        "teams_found": teams,
+        "aese_mentioned": False,
+        "row_text": _clean(row.get_text(" ", strip=True))[:300],
+        # Bounded excerpt kept only so an anomaly can be inspected without
+        # re-requesting the page.
+        "row_html": re.sub(r"\s+", " ", str(row))[:_SNIPPET_CHARS],
+    }
+
+
+def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_id: int,
+                        diagnostics: list | None = None, pending: list | None = None) -> list[Match]:
+    """Parse one ActaWP calendar page and return only the AESE matches.
+
+    * A row of another club that cannot be read as two teams must not block
+      AESE's own data; it is recorded in ``diagnostics`` so it stays visible.
+    * An AESE row that cannot be read blocks the snapshot: it is ambiguous.
+    * One exception, and only when the caller passes a ``pending`` list: an AESE
+      match that ActaWP itself marks as undated (rival still to be assigned
+      and/or no date yet). It cannot become a calendar event, so it is recorded
+      in ``pending`` (visible, never silently dropped) instead of blocking every
+      other match. Without a ``pending`` list those rows still block.
+    """
     soup = BeautifulSoup(html, "html.parser")
     round_name = _extract_round(soup)
     matches: list[Match] = []
@@ -112,23 +198,42 @@ def parse_calendar_html(html: str, category: str, tournament_id: int, calendar_i
             continue
         match_id = int(match_id_match.group(1))
 
-        teams = [_clean(node.get("title") or node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo span.ellipsis")]
-        if len(teams) < 2:
-            teams = [_clean(node.get_text(" ", strip=True)) for node in row.select(".colstyle-equipo a")]
-        if len(teams) < 2:
-            raise ValueError(f"Fila de partido {match_id} sin dos equipos; snapshot bloqueado")
-
-        # ActaWP calendar pages contain the complete competition calendar.
-        # Only keep matches involving A.E. Santa Eulàlia.
+        teams = _row_teams(row)
         aese_teams = [team for team in teams if _is_aese(team)]
         if not aese_teams:
+            if len(teams) < 2:
+                # Unreadable row: harmless only if AESE is demonstrably absent.
+                if _row_mentions_aese(row):
+                    raise ValueError(f"Fila de partido AESE {match_id} sin dos equipos; snapshot bloqueado")
+                if diagnostics is not None and len(diagnostics) < MAX_DIAGNOSTIC_ROWS:
+                    diagnostics.append(_row_diagnostic(row, match_id, category, teams))
+            # ActaWP calendar pages contain the complete competition calendar;
+            # only matches involving A.E. Santa Eulàlia are kept.
             continue
         expected_suffix = TEAM_SUFFIX.get(category)
         if expected_suffix and not any(_normalized(team).rstrip().endswith(' ' + expected_suffix) for team in aese_teams):
             continue
+        if len(teams) > 2:
+            raise ValueError(f"Fila de partido AESE {match_id} sin dos equipos; snapshot bloqueado")
 
         if re.search(r'\b(ajornat|aplazado|cancelado|cancel·lat|anul·lat|suspès)\b', row.get_text(' ', strip=True), re.I):
             raise ValueError(f"Partido AESE {match_id} aplazado/cancelado: revisar estado explícito antes de publicar")
+
+        undated = _row_undated(row)
+        if len(teams) < 2 or (undated and pending is not None):
+            if undated and pending is not None:
+                href = link.get("href", "")
+                pending.append({
+                    "category": category,
+                    "tournament_id": tournament_id,
+                    "calendar_id": calendar_id,
+                    "match_id": match_id,
+                    "teams": teams,
+                    "reason": "sin_rival_ni_fecha" if len(teams) < 2 else "sin_fecha",
+                    "url": "https://actawp.natacio.cat" + href if href.startswith("/") else href,
+                })
+                continue
+            raise ValueError(f"Fila de partido AESE {match_id} sin dos equipos; snapshot bloqueado")
 
         date_cell = row.select_one(".colstyle-fecha")
         if not date_cell:
