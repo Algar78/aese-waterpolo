@@ -5,9 +5,9 @@
   "timeZone": "Europe/Madrid",
   "last_complete_export_at": "2026-10-10T16:25:53+00:00",
   "freshness_policy": {
-    "fresh_hours": 192,
-    "outdated_hours": 360,
-    "reminder_hours": 168
+    "fresh_hours": 336,
+    "outdated_hours": 720,
+    "reminder_hours": 720
   },
   "source_mode": null,
   "pending_matches": [],
