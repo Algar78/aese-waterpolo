@@ -113,7 +113,8 @@ function tempRepo(overlay) {
   const dir = mkdtempSync(join(tmpdir(), 'aese-overlay-'));
   for (const sub of ['data', 'calendars']) cpSync(new URL('../' + sub, import.meta.url), join(dir, sub), {recursive: true});
   rmSync(join(dir, 'data/clupik_overlay_source.json'), {force: true});          // cada prueba decide si hay origen configurado
-  if (overlay !== undefined) writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(overlay));
+  // El workflow real ya habrá rellenado data/clupik_overlay.json: cada prueba parte de un documento propio.
+  writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(overlay === undefined ? doc([]) : overlay));
   return dir;
 }
 const root = dir => new URL('file://' + dir + '/');
