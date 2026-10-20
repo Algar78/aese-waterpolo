@@ -122,8 +122,16 @@ test('un evento de Calendar creado con «Jornada: …» pierde esa línea en su 
 });
 test('la política de frescura publicada coincide con la del repositorio y avisa como mucho una vez al mes',()=>{
   const policy=json('data/freshness_policy.json'),published=bundle.status.freshness_policy;
-  for(const key of ['fresh_hours','outdated_hours','reminder_hours']) assert.equal(published[key],policy[key],key);
+  for(const key of ['fresh_hours','outdated_hours','reminder_hours','automated_attempts']) assert.equal(published[key],policy[key],key);
   assert.ok(policy.outdated_hours>policy.fresh_hours);
   assert.ok(policy.reminder_hours>=720,'recordatorio al menos cada 30 días');
   assert.deepEqual(index.freshness_policy,published);
+});
+
+test('la bandera de intentos automáticos coincide con el workflow de lectura: si se reprograma, hay que declararlo',()=>{
+  const workflow=read('.github/workflows/actawp-export.yml').replace(/^\s*#.*$/gm,'');
+  const scheduled=/^\s*schedule:/m.test(workflow);
+  assert.equal(json('data/freshness_policy.json').automated_attempts,scheduled,
+    'automated_attempts debe ser true si y solo si actawp-export.yml tiene schedule; actualiza también freshness_policy de data/actawp_export_status.json');
+  assert.equal(bundle.status.freshness_policy.automated_attempts,scheduled);
 });

@@ -561,3 +561,40 @@ test('la auditoría cuenta los partidos nuevos sin fecha y cómo se leyó cada f
   assert.equal(JSON.stringify(r.statuses),JSON.stringify({confirmed:2,tentative:0,cancelled:0}));
   assert.match(r.text,/partido nuevo sin fecha[^\n]*: 1 de 1 partidos/);assert.match(r.text,/formato 1 · ventana 1/);
 });
+
+// ---- Sin lectura automática de ActaWP no hay intentos que vigilar (20/10/2026) -------------------------------
+// El 20/10 llegó un correo «incidencia de sincronización — fuente» con los 429 del último intento (18/10): la
+// lectura automática está desactivada a propósito, así que nunca habrá otro intento y el aviso se repetiría
+// cada 24 h sin que nada fallase, además de prometer «se reintentará automáticamente».
+const oldFailedAttempt={complete:false,attempted_at:'2026-10-18T10:35:28Z',errors:['Absoluto Masculino: HTTP 429'],error_classes:['rate_limited'],consecutive_failures:30};
+const manualPolicy={fresh_hours:336,outdated_hours:720,reminder_hours:720,automated_attempts:false};
+const fuente=h=>h.mail.filter(m=>/— fuente/.test(m[1]));
+test('sin lectura automática declarada, un último intento antiguo y fallido no genera aviso ni promete reintentos',()=>{
+  const h=harness();
+  health(h,{lastComplete:hoursAgo(24*20),attempt:oldFailedAttempt,policy:manualPolicy});health(h,{lastComplete:hoursAgo(24*20),attempt:oldFailedAttempt,policy:manualPolicy});
+  assert.equal(h.mail.length,0);assert.equal(h.properties.get('AESE_FRESHNESS_STATE'),'stale');   // sigue midiéndose la edad de los datos
+});
+test('con lectura automática declarada (o sin política), el último intento antiguo y fallido sigue avisando',()=>{
+  for(const policy of [{...manualPolicy,automated_attempts:true},{fresh_hours:336,outdated_hours:720,reminder_hours:720},undefined,{fresh_hours:100,outdated_hours:50,automated_attempts:false}]) {
+    const h=harness();health(h,{lastComplete:hoursAgo(24*10),attempt:oldFailedAttempt,policy});
+    assert.equal(fuente(h).length,1,JSON.stringify(policy));
+    assert.match(String(fuente(h)[0][2]),/429/);
+  }
+});
+test('el aviso de datos obsoletos sin lectura automática no culpa a un intento viejo ni promete reintentos, y dice qué hacer',()=>{
+  const h=harness();
+  health(h,{lastComplete:hoursAgo(24*31),attempt:oldFailedAttempt,policy:manualPolicy});
+  const mails=h.mail.filter(m=>/sin actualizar/.test(m[1]));
+  assert.equal(mails.length,1);assert.equal(fuente(h).length,0);
+  assert.doesNotMatch(String(mails[0][2]),/rate_limited|429|reintentar/);
+  assert.match(String(mails[0][2]),/Clupik/);assert.match(String(mails[0][2]),/data\/manual/);
+  health(h,{lastComplete:hoursAgo(24*31),attempt:oldFailedAttempt,policy:manualPolicy});
+  assert.equal(h.mail.filter(m=>/sin actualizar/.test(m[1])).length,1);                      // un solo correo al mes
+});
+test('un fallo al leer el paquete publicado sigue avisando aunque no haya lectura automática',()=>{
+  const h=harness();h.properties.set('AESE_LAST_SUCCESS',new Date().toISOString());h.properties.set('ACTAWP_LAST_SYNC',new Date().toISOString());
+  h.c.fetchActaWPJSON_=()=>{throw Error('Pages caído')};
+  h.c.ScriptApp={getProjectTriggers:()=>[{getHandlerFunction:()=> 'runAESECalendarSync'}]};
+  h.c.checkAESECalendarHealth();
+  assert.equal(fuente(h).length,1);assert.match(String(fuente(h)[0][2]),/Pages caído/);
+});

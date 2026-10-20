@@ -115,6 +115,17 @@ class ManualImportTests(unittest.TestCase):
         exporter.main()
         self.assertEqual(self.read('actawp_export_status.json')['freshness_policy']['outdated_hours'], 48)
 
+    def test_automated_attempts_flag_travels_only_when_explicit(self):
+        policy = self.tmp / 'data/freshness_policy.json'
+        for written, expected in [({'automated_attempts': False}, False), ({'automated_attempts': True}, True)]:
+            policy.write_text(json.dumps({'fresh_hours': 336, 'outdated_hours': 720, 'reminder_hours': 720, **written}), encoding='utf-8')
+            exporter.main()
+            self.assertIs(self.read('actawp_export_status.json')['freshness_policy']['automated_attempts'], expected)
+        for junk in ['no', 0, None, 'false']:                       # not a boolean: dropped, Apps Script keeps full watch
+            policy.write_text(json.dumps({'fresh_hours': 336, 'outdated_hours': 720, 'reminder_hours': 720, 'automated_attempts': junk}), encoding='utf-8')
+            exporter.main()
+            self.assertNotIn('automated_attempts', self.read('actawp_export_status.json')['freshness_policy'])
+
     # --- matches ActaWP lists without rival and/or date ---------------------
     def test_aese_matches_without_rival_or_date_are_shown_as_pending_and_do_not_block(self):
         self.with_rows(fixture_rows('aese-145573588-incomplete.html') + fixture_rows('aese-145573633-incomplete.html')
