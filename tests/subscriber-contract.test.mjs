@@ -4,9 +4,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync, existsSync} from 'node:fs';
+import {applyOverlay} from '../scripts/calendar-feeds.mjs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const json=p=>JSON.parse(read(p));
 const matches=json('data/actawp_matches.json'), index=json('calendars/index.json'), bundle=json('calendars/general-calendar.json');
+// Lo que publican los .ics: el snapshot de ActaWP más los avisos de Clupik (data/clupik_overlay.json).
+const effective=applyOverlay(matches,bundle.status,json('data/clupik_overlay.json')).matches;
 const BASE='https://algar78.github.io/aese-waterpolo/';
 // Written down on 2026-10-18 from what was published then. Adding to this is fine; changing or removing is not.
 const FEEDS={'Absoluto Masculino':'absoluto-masculino','Alevín Mixto A':'alevin-mixto-a','Alevín Mixto B':'alevin-mixto-b','Cadete Masculino':'cadete-masculino',
@@ -18,7 +21,7 @@ test('las 9 direcciones de suscripción siguen existiendo y no cambian',()=>{
     const entry=index.categories.find(c=>c.name===name);
     assert.ok(entry,name);assert.equal(entry.slug,slug);assert.equal(entry.url,BASE+'calendars/'+slug+'.ics');
     assert.ok(existsSync(new URL('../calendars/'+slug+'.ics',import.meta.url)),slug+'.ics');
-    assert.equal(entry.count,matches.filter(m=>m.category===name).length);
+    assert.equal(entry.count,effective.filter(m=>m.category===name).length);
   }
   for(const key of ['source','snapshot_sha256','total','timeZone','categories']) assert.ok(key in index,'index.json perdió '+key);
   assert.equal(index.timeZone,'Europe/Madrid');
@@ -34,8 +37,10 @@ test('cada evento de cada .ics conserva su UID y su cabecera; no hay UID repetid
     assert.ok(text.includes('X-WR-TIMEZONE:Europe/Madrid'));
     for(const m of text.matchAll(/^UID:(.+)$/gm)) uids.push(m[1]);
   }
-  assert.equal(uids.length,matches.length);assert.equal(new Set(uids).size,uids.length);
-  assert.deepEqual([...uids].sort(),matches.map(m=>`actawp-${m.tournament_id}-${m.match_id}@aese-waterpolo`).sort());
+  assert.equal(uids.length,effective.length);assert.equal(new Set(uids).size,uids.length);
+  assert.deepEqual([...uids].sort(),effective.map(m=>`actawp-${m.tournament_id}-${m.match_id}@aese-waterpolo`).sort());
+  // Los avisos de Clupik nunca quitan un partido que ya estaba: todos los del snapshot siguen.
+  for(const m of matches) assert.ok(uids.includes(`actawp-${m.tournament_id}-${m.match_id}@aese-waterpolo`));
 });
 test('los campos nuevos del paquete publicado son solo añadidos',()=>{
   const status=bundle.status;

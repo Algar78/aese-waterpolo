@@ -2,7 +2,7 @@
 
 El sistema **no consulta ActaWP por su cuenta**: las condiciones de uso de Clupik prohíben el acceso automatizado sin autorización escrita. Mientras no la haya, una persona abre las páginas en su navegador, las guarda y las sube aquí. El resto (comprobar, publicar, avisar) es automático.
 
-Los cambios de fecha, hora y sede siguen llegando solos por los avisos de Clupik. Esta lectura sirve para **confirmar contra la fuente oficial** que no se ha escapado nada y para detectar partidos nuevos.
+Los cambios de fecha, hora y sede siguen llegando solos por los avisos de Clupik, tanto al Google Calendar como a los 9 enlaces `.ics` (`docs/audit-2026-10-18.md`, §9). Esta lectura sirve para **confirmar contra la fuente oficial** que no se ha escapado nada y para detectar partidos nuevos.
 
 ## Cada semana (unos 10 minutos)
 
