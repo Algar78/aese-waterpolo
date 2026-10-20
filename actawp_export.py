@@ -176,6 +176,10 @@ def load_policy():
             policy[key] = number
     if policy["outdated_hours"] <= policy["fresh_hours"]:
         return dict(DEFAULT_POLICY)
+    # False declares that nobody attempts to read ActaWP by machine: Apps Script then does not treat the
+    # age of the last attempt as a failure. Only an explicit boolean is carried; anything else is dropped.
+    if isinstance(value.get("automated_attempts"), bool):
+        policy["automated_attempts"] = value["automated_attempts"]
     return policy
 
 

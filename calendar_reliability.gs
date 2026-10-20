@@ -251,8 +251,12 @@ const AESE_FRESHNESS_REMINDER_MS = 48*3600000;
 function aeseFreshnessPolicy_(status) {
   const p=(status && status.freshness_policy) || {};
   const fresh=Number(p.fresh_hours), outdated=Number(p.outdated_hours), reminder=Number(p.reminder_hours);
-  if(!(fresh>0 && outdated>fresh)) return {freshHours:AESE_FRESH_HOURS,outdatedHours:AESE_OUTDATED_HOURS,reminderMs:AESE_FRESHNESS_REMINDER_MS};
-  return {freshHours:fresh,outdatedHours:outdated,reminderMs:(reminder>0?reminder:outdated)*3600000};
+  // «automated_attempts»: false declara que nadie intenta leer ActaWP por sistema (lectura automática sin
+  // autorización); entonces la antigüedad del último intento no es un fallo y solo vigila la frescura.
+  // Solo un false explícito lo apaga: una política ausente o inservible mantiene la vigilancia completa.
+  const automatedAttempts=p.automated_attempts!==false;
+  if(!(fresh>0 && outdated>fresh)) return {freshHours:AESE_FRESH_HOURS,outdatedHours:AESE_OUTDATED_HOURS,reminderMs:AESE_FRESHNESS_REMINDER_MS,automatedAttempts:true};
+  return {freshHours:fresh,outdatedHours:outdated,reminderMs:(reminder>0?reminder:outdated)*3600000,automatedAttempts};
 }
 
 function aeseFreshness_(status, now) {
@@ -273,19 +277,19 @@ function aeseCheckFreshness_(status, attempt) {
   // Causes live in the latest attempt; the published status only describes the last good export.
   const errors=(attempt && attempt.error_classes && attempt.error_classes.length)?attempt.error_classes.join(', '):'';
   const failures=(attempt && attempt.consecutive_failures) || 0;
-  const lastTry=(failures>0 && errors)?' El último intento de lectura falló ('+errors+'; '+failures+' seguidos).':'';
+  const lastTry=(f.policy.automatedAttempts && failures>0 && errors)?' El último intento de lectura falló ('+errors+'; '+failures+' seguidos).':'';
   if(f.state==='outdated') {
     aeseAlert_('frescura_obsoleta','Los datos oficiales de ActaWP no se actualizan desde hace '+days+' días '+
       '(última lectura completa: '+when+', hora de Madrid).'+lastTry+'\n'+
       'El calendario sigue funcionando con los avisos oficiales de Clupik, pero un cambio que no llegue por correo no se reflejará.\n'+
       'Para confirmarlo contra la fuente oficial, sube las páginas guardadas: https://github.com/Algar78/aese-waterpolo/tree/main/data/manual',
-      f.policy.reminderMs,'AESE: datos oficiales sin actualizar desde hace '+days+' días');
+      f.policy.reminderMs,'AESE: datos oficiales sin actualizar desde hace '+days+' días','');
   } else if(f.state==='unknown') {
     aeseAlert_('frescura_desconocida','No se puede saber cuándo se leyeron por última vez los datos oficiales: el paquete publicado no incluye last_complete_export_at.',
-      24*3600000,'AESE: no se puede comprobar la frescura de los datos');
+      24*3600000,'AESE: no se puede comprobar la frescura de los datos','');
   } else if(f.state==='fresh' && previous==='outdated') {
     aeseAlert_('frescura_recuperada','Los datos oficiales de ActaWP vuelven a estar al día (última lectura completa: '+when+').',
-      3600000,'AESE: datos oficiales de nuevo al día');
+      3600000,'AESE: datos oficiales de nuevo al día','');
   }
   return f;
 }
@@ -351,9 +355,11 @@ function checkAESECalendarHealth() {
   try {
   const attempt=fetchActaWPJSON_('https://algar78.github.io/aese-waterpolo/data/actawp_last_attempt.json');
   const attempted=Date.parse(attempt.attempted_at||'');
-  if(!attempt.complete || !Number.isFinite(attempted) || Date.now()-attempted>8*3600000)
-    aeseAlert_('fuente','Exportación ActaWP incompleta o sin intento en 8 horas: '+JSON.stringify(attempt.errors||[]),24*3600000);
   const bundle=fetchActaWPJSON_(ACTAWP_BUNDLE_URL);
+  // Sin lectura automática de ActaWP no hay intentos que vigilar (data/freshness_policy.json, automated_attempts):
+  // el último registro puede tener días y no es un fallo. La edad de los datos la vigila aeseCheckFreshness_.
+  if(aeseFreshnessPolicy_(bundle.status || {}).automatedAttempts && (!attempt.complete || !Number.isFinite(attempted) || Date.now()-attempted>8*3600000))
+    aeseAlert_('fuente','Exportación ActaWP incompleta o sin intento en 8 horas: '+JSON.stringify(attempt.errors||[]),24*3600000);
   aeseCheckFreshness_(bundle.status || {}, attempt);
   const published=Date.parse((bundle.status || {}).attempted_at || '');
   if(attempt.complete && Date.now()-attempted>30*60000 && (!Number.isFinite(published) || published<attempted))
