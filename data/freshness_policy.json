@@ -1,6 +1,6 @@
 {
-  "fresh_hours": 192,
-  "outdated_hours": 360,
-  "reminder_hours": 168,
-  "nota": "Lectura oficial completa cada semana por una persona: al día hasta 8 días, obsoleto a partir de 15."
+  "fresh_hours": 336,
+  "outdated_hours": 720,
+  "reminder_hours": 720,
+  "nota": "Lectura oficial completa opcional, una vez al mes: al día hasta 14 días, obsoleto a partir de 30; un correo al responsable al pasar a obsoleto y otro cada 30 días. Las familias no ven ningún aviso."
 }

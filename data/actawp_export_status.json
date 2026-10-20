@@ -77,8 +77,8 @@
     "method": "FCN notices and both official match pages; other 78 matches unchanged"
   },
   "freshness_policy": {
-    "fresh_hours": 192,
-    "outdated_hours": 360,
-    "reminder_hours": 168
+    "fresh_hours": 336,
+    "outdated_hours": 720,
+    "reminder_hours": 720
   }
 }
