@@ -1,0 +1,55 @@
+name: Clupik overlay
+# Lleva a los .ics de las familias los cambios que Clupik avisa por correo y que Apps Script ya aplica al
+# Google Calendar. Lee los avisos ya interpretados (clupik_overlay_endpoint.gs), los guarda en
+# data/clupik_overlay.json y regenera los feeds. Sin data/clupik_overlay_source.json no hace nada.
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+# Mismo grupo que «Calendarios de familias»: nunca dos procesos escribiendo calendars/ a la vez.
+concurrency:
+  group: family-calendar-refs/heads/main
+  cancel-in-progress: false
+jobs:
+  overlay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Leer los avisos de Clupik
+        id: read
+        run: node scripts/clupik-overlay.mjs
+      - name: Regenerar y comprobar los feeds
+        if: steps.read.outputs.changed == 'true'
+        run: |
+          node scripts/calendar-feeds.mjs
+          node --test tests/*.test.mjs
+      - name: Publicar si ha cambiado algo
+        if: steps.read.outputs.configured == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          published=no
+          for attempt in 1 2 3; do
+            git add data/clupik_overlay.json calendars/
+            if git diff --cached --quiet; then published=yes; break; fi
+            git commit -m 'Update Clupik notices and family calendar feeds'
+            if git push origin HEAD:main; then published=yes; break; fi
+            # main avanzó mientras tanto: se parte de la última versión y se repite (nunca force-push).
+            git fetch origin main
+            git reset --hard origin/main
+            node scripts/clupik-overlay.mjs
+            node scripts/calendar-feeds.mjs
+          done
+          test "$published" = yes
+      - name: Avisar si Apps Script lleva horas sin leer el correo de Clupik
+        if: steps.read.outputs.alert == 'true'
+        run: |
+          echo '::error::Apps Script no ha terminado de leer el correo de Clupik en más de 6 horas. Revisa Apps Script > Ejecuciones y el correo de alertas.'
+          exit 1
