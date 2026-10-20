@@ -7,7 +7,8 @@
   "freshness_policy": {
     "fresh_hours": 336,
     "outdated_hours": 720,
-    "reminder_hours": 720
+    "reminder_hours": 720,
+    "automated_attempts": false
   },
   "source_mode": null,
   "pending_matches": [],
