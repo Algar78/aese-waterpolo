@@ -102,3 +102,28 @@ test('un evento que ya existe se actualiza en su sitio: mismo ID, ningún duplic
   assert.notEqual(after.getStartTime().toISOString(),original);
   assert.equal(after.getStartTime().toISOString(),'2026-10-24T12:30:00.000Z');
 });
+
+// ActaWP da «Jornada 1» a casi todos los partidos y sin ActaWP no se puede saber la real:
+// mejor no decir nada que decir algo falso (decisión del responsable, 20/10/2026).
+test('ni los .ics ni los eventos de Google Calendar afirman una jornada que no se conoce',()=>{
+  for(const slug of Object.values(FEEDS)) assert.doesNotMatch(read('calendars/'+slug+'.ics').replace(/\r\n /g,''),/Jornada/i,slug);
+  const h=harness(bundle);sync(h);
+  assert.equal(h.events.length,matches.length);
+  for(const e of h.events) assert.doesNotMatch(e.getDescription(),/Jornada/i);
+});
+test('un evento de Calendar creado con «Jornada: …» pierde esa línea en su sitio, sin duplicar',()=>{
+  const h=harness(bundle);sync(h);
+  const target=h.events[0],id=target.getId();
+  target.setDescription(target.getDescription().replace('Piscina:','Jornada: Jornada 1\nPiscina:'));
+  assert.match(target.getDescription(),/Jornada: Jornada 1/);
+  sync(h);
+  assert.equal(h.events.length,matches.length);
+  assert.equal(h.events.find(e=>e.getId()===id).getDescription().includes('Jornada'),false);
+});
+test('la política de frescura publicada coincide con la del repositorio y avisa como mucho una vez al mes',()=>{
+  const policy=json('data/freshness_policy.json'),published=bundle.status.freshness_policy;
+  for(const key of ['fresh_hours','outdated_hours','reminder_hours']) assert.equal(published[key],policy[key],key);
+  assert.ok(policy.outdated_hours>policy.fresh_hours);
+  assert.ok(policy.reminder_hours>=720,'recordatorio al menos cada 30 días');
+  assert.deepEqual(index.freshness_policy,published);
+});

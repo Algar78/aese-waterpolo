@@ -246,7 +246,6 @@ function buildActaWPDescription_(match) {
   return [
     ACTAWP_MARKER + actaWPIdentity_(match),
     'Categoría: ' + (match.category || ''),
-    'Jornada: ' + (match.round_name || ''),
     'Piscina: ' + (match.venue || ''),
     'ActaWP: ' + (match.url || ''),
     'Estado: ' + (match.status || 'confirmed'),

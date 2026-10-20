@@ -130,7 +130,7 @@ export function eventState(matches, previous = {}, now = '20261010T000000Z') {
   if (Object.keys(previous).some(id => !current.has(id))) throw Error('Partido desaparecido sin cancelación explícita: se conservan los feeds');
   return Object.fromEntries(matches.map(m => {
     const id = uid(m);
-    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.round_name,m.url,m.status || 'confirmed',mapsURL(m.venue)])).digest('hex');
+    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.url,m.status || 'confirmed',mapsURL(m.venue)])).digest('hex');
     const old = previous[id];
     return [id, old?.hash === hash ? old : {hash,sequence:old ? old.sequence+1 : 0,stamp:now}];
   }));
@@ -140,7 +140,7 @@ export function feed(name, matches, state = eventState(matches)) {
   for (const m of matches.filter(m => m.category === name).sort((a,b) => a.match_id-b.match_id)) {
     // No se inventa una duración: el snapshot solo contiene la hora de inicio.
     const revision = state[uid(m)];
-    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`STATUS:${(m.status || 'confirmed').toUpperCase()}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`${m.round_name}\nHorario Europe/Madrid. Fuente: ActaWP\n${m.url}\nEstado: ${m.status || 'confirmed'}\nGoogle Maps: ${mapsURL(m.venue)}`)}`,`URL:${m.url}`,'END:VEVENT');
+    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`STATUS:${(m.status || 'confirmed').toUpperCase()}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`Horario Europe/Madrid. Fuente: ActaWP\n${m.url}\nEstado: ${m.status || 'confirmed'}\nGoogle Maps: ${mapsURL(m.venue)}`)}`,`URL:${m.url}`,'END:VEVENT');
   }
   lines.push('END:VCALENDAR');
   return lines.map(fold).join('\r\n')+'\r\n';
