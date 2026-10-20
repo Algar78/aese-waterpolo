@@ -1,14 +1,14 @@
-# Lectura semanal de ActaWP, hecha por una persona
+# Lectura de ActaWP, hecha por una persona (opcional, una vez al mes)
 
 El sistema **no consulta ActaWP por su cuenta**: las condiciones de uso de Clupik prohíben el acceso automatizado sin autorización escrita. Mientras no la haya, una persona abre las páginas en su navegador, las guarda y las sube aquí. El resto (comprobar, publicar, avisar) es automático.
 
-Los cambios de fecha, hora y sede siguen llegando solos por los avisos de Clupik, tanto al Google Calendar como a los 9 enlaces `.ics` (`docs/audit-2026-10-18.md`, §9). Esta lectura sirve para **confirmar contra la fuente oficial** que no se ha escapado nada y para detectar partidos nuevos.
+Los cambios de fecha, hora y sede siguen llegando solos por los avisos de Clupik, tanto al Google Calendar como a los 9 enlaces `.ics` (`docs/audit-2026-10-18.md`, §9). Esta lectura es **opcional**: sirve para **confirmar contra la fuente oficial** que no se ha escapado nada y para detectar partidos nuevos. Basta una vez al mes; el sistema no la exige.
 
-## Cada semana (unos 10 minutos)
+## Cada mes, si quieres (unos 10 minutos)
 
 1. Abre cada enlace de la tabla en tu navegador y comprueba que ves el calendario.
 2. Pulsa **Ctrl+S** (en Mac, **Cmd+S**). En «Formato» elige **Página web, solo HTML** y guarda con **exactamente** el nombre de la tabla.
-3. En GitHub abre la carpeta `data/manual`, pulsa **Add file → Upload files**, arrastra los 9 ficheros (se sustituyen los de la semana anterior) y pulsa **Commit changes** sobre `main`.
+3. En GitHub abre la carpeta `data/manual`, pulsa **Add file → Upload files**, arrastra los 9 ficheros (se sustituyen los de la lectura anterior) y pulsa **Commit changes** sobre `main`.
 4. Espera un par de minutos y abre la pestaña **Actions**. Si «ActaWP export» sale en verde, ya está. Si sale en rojo, abre la ejecución: el mensaje dice qué falta (por ejemplo, un fichero o una página equivocada). Corrígelo y vuelve a subir.
 
 Guarda las páginas **justo antes de subirlas**: la fecha de la lectura que figura en `estado.html` es la de la subida.
@@ -35,6 +35,6 @@ Guarda las páginas **justo antes de subirlas**: la fecha de la lectura que figu
 
 ## Cuánto tiempo puede pasar sin leer
 
-La política está en `data/freshness_policy.json`: **al día** hasta 8 días, **obsoleto** pasados 15. Si nadie sube las páginas, el calendario sigue funcionando con los avisos de Clupik, pero el sistema lo dice con claridad, solo al responsable (correo a la dirección de alertas y página `estado.html`), en lugar de aparentar que está al día. Las familias no ven ningún aviso.
+La política está en `data/freshness_policy.json` (y se copia en `data/actawp_export_status.json`, que es lo que lee Apps Script): **al día** hasta 14 días, **obsoleto** pasados 30. Si nadie sube las páginas, el calendario sigue funcionando con los avisos de Clupik, pero el sistema lo dice con claridad, solo al responsable (un correo a la dirección de alertas al pasar a obsoleto y otro cada 30 días, y la página `estado.html`), en lugar de aparentar que está al día. Las familias no ven ningún aviso.
 
 Si algún día la FCN o Clupik autorizan por escrito la lectura automática, se activa con `ACTAWP_AUTOMATED_ACCESS_AUTHORIZED=yes` y se vuelve a programar el workflow; el código del cliente educado se conserva en `actawp_fetch.py`.
