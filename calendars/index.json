@@ -69,7 +69,9 @@
     }
   ],
   "clupik_overlay": {
-    "changed": [],
+    "changed": [
+      "1339806:145574452"
+    ],
     "added": [],
     "discordant": [],
     "skipped": []

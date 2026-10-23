@@ -211,17 +211,18 @@ URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574446/result
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339806-145574452@aese-waterpolo
-DTSTAMP:20261020T100648Z
-DTSTART:20261107T173000Z
-SEQUENCE:3
-LAST-MODIFIED:20261020T100648Z
+DTSTAMP:20261023T222740Z
+DTSTART:20261122T111000Z
+SEQUENCE:4
+LAST-MODIFIED:20261023T222740Z
 STATUS:CONFIRMED
 SUMMARY:1a Div Fem Absoluta B: C.N. BADIA — A.E. SANTA EULÀLIA B
-LOCATION:195 - Badia\, CN - 25m
+LOCATION:228 - Santa Eulàlia\, AE
 DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
  at/ca/tournament/1339806/match/145574452/results\nEstado: confirmed\nGoogl
- e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
- 3%20Badia%2C%20Avinguda%20de%20la%20Plata%2C%20Badia%20del%20Vall%C3%A8s
+ e Maps: https://www.google.com/maps/search/?api=1&query=Poliesportiu%20Mun
+ icipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%20L'Hospital
+ et%20de%20Llobregat
 URL:https://actawp.natacio.cat/ca/tournament/1339806/match/145574452/result
  s
 END:VEVENT
