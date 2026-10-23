@@ -4,6 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
+import {execFileSync} from 'node:child_process';
 import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, cpSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
@@ -109,36 +110,65 @@ test('el feed refleja el cambio con la misma identidad y sube SEQUENCE', () => {
   assert.match(same, /SEQUENCE:0\r\n/);
 });
 
+// Los .ics de calendars/ ya incluyen los avisos reales que el workflow ha ido guardando en data/clupik_overlay.json.
+// Si estas pruebas partieran de ellos, el primer cambio real de Clupik (un partido movido, cancelado o nuevo) las haría
+// fallar y el workflow se negaría a publicarlo. Por eso cada prueba parte de una línea base limpia: los 9 .ics y el
+// estado salen del snapshot y de un documento de avisos vacío, y después se aplica el documento de la prueba.
 function tempRepo(overlay) {
   const dir = mkdtempSync(join(tmpdir(), 'aese-overlay-'));
-  for (const sub of ['data', 'calendars']) cpSync(new URL('../' + sub, import.meta.url), join(dir, sub), {recursive: true});
+  cpSync(new URL('../data', import.meta.url), join(dir, 'data'), {recursive: true});
   rmSync(join(dir, 'data/clupik_overlay_source.json'), {force: true});          // cada prueba decide si hay origen configurado
+  writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(doc([])));
+  const log = console.log; console.log = () => {};
+  try { generate(new URL('file://' + dir + '/')); } finally { console.log = log; }
   // El workflow real ya habrá rellenado data/clupik_overlay.json: cada prueba parte de un documento propio.
   writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(overlay === undefined ? doc([]) : overlay));
+  return dir;
+}
+// El estado publicado tal cual está en el repositorio (con sus avisos reales), para comprobar que regenerarlo no cambia nada.
+function tempRepoPublished() {
+  const dir = mkdtempSync(join(tmpdir(), 'aese-overlay-'));
+  for (const sub of ['data', 'calendars']) cpSync(new URL('../' + sub, import.meta.url), join(dir, sub), {recursive: true});
+  rmSync(join(dir, 'data/clupik_overlay_source.json'), {force: true});
   return dir;
 }
 const root = dir => new URL('file://' + dir + '/');
 const slugs = Object.values(categories);
 
-test('generate(): sin avisos los 9 .ics y el estado quedan idénticos byte a byte', () => {
-  const dir = tempRepo(doc([]));
+test('generate(): regenerar el estado publicado deja los 9 .ics y el estado idénticos byte a byte', () => {
+  const dir = tempRepoPublished();
   try {
-    generate(root(dir));
+    const log = console.log; console.log = () => {};
+    try { generate(root(dir)); } finally { console.log = log; }
     for (const slug of slugs) assert.equal(readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8'), read(`calendars/${slug}.ics`), slug);
     assert.equal(readFileSync(join(dir, 'calendars/event-state.json'), 'utf8'), read('calendars/event-state.json'));
     assert.equal(readFileSync(join(dir, 'calendars/general-calendar.json'), 'utf8'), read('calendars/general-calendar.json'));
   } finally { rmSync(dir, {recursive: true, force: true}); }
 });
 
+test('generate(): sin avisos los 9 .ics salen del snapshot y una segunda pasada no cambia nada', () => {
+  const dir = tempRepo(doc([]));
+  try {
+    const first = Object.fromEntries(slugs.map(slug => [slug, readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8')]));
+    const state = readFileSync(join(dir, 'calendars/event-state.json'), 'utf8');
+    const log = console.log; console.log = () => {};
+    try { generate(root(dir)); } finally { console.log = log; }
+    for (const slug of slugs) assert.equal(readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8'), first[slug], slug);
+    assert.equal(readFileSync(join(dir, 'calendars/event-state.json'), 'utf8'), state);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
 test('generate(): solo cambia el .ics de la categoría afectada; el paquete de Apps Script sigue siendo el snapshot', () => {
   const dir = tempRepo(doc([noticeFor(target, {start: '2026-10-24T15:00:00+02:00'})]));
   try {
+    const before = Object.fromEntries(slugs.map(slug => [slug, readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8')]));
+    const bundle = readFileSync(join(dir, 'calendars/general-calendar.json'), 'utf8');
     const manifest = generate(root(dir));
-    const changed = slugs.filter(slug => readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8') !== read(`calendars/${slug}.ics`));
+    const changed = slugs.filter(slug => readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8') !== before[slug]);
     assert.deepEqual(changed, ['cadete-masculino']);
     assert.deepEqual(manifest.clupik_overlay.changed, ['1339808:145574486']);
     assert.equal(manifest.total, snapshot.length);
-    assert.equal(readFileSync(join(dir, 'calendars/general-calendar.json'), 'utf8'), read('calendars/general-calendar.json'));
+    assert.equal(readFileSync(join(dir, 'calendars/general-calendar.json'), 'utf8'), bundle);
   } finally { rmSync(dir, {recursive: true, force: true}); }
 });
 
@@ -158,6 +188,22 @@ test('generate(): sin fichero de avisos funciona igual', () => {
   const dir = tempRepo();
   try { rmSync(join(dir, 'data/clupik_overlay.json'), {force: true}); assert.equal(generate(root(dir)).total, snapshot.length); }
   finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+// El workflow «Clupik overlay» regenera los .ics y, justo después, pasa estas pruebas. El 23/10/2026 el primer cambio real
+// de Clupik las hizo fallar (comparaban con los .ics anteriores) y los .ics dejaron de actualizarse. Esta prueba reproduce
+// ese paso con un aviso real ya aplicado y exige que el generador y las pruebas de contrato sigan en verde.
+test('con un aviso real ya aplicado, el generador y las pruebas de contrato siguen en verde', {skip: process.env.AESE_META === '1'}, () => {
+  const dir = mkdtempSync(join(tmpdir(), 'aese-meta-'));
+  try {
+    for (const sub of ['data', 'calendars', 'scripts', 'tests']) cpSync(new URL('../' + sub, import.meta.url), join(dir, sub), {recursive: true});
+    rmSync(join(dir, 'data/clupik_overlay_source.json'), {force: true});
+    const published = JSON.parse(read('data/clupik_overlay.json'));
+    const moved = noticeFor(target, {start: '2026-10-24T15:09:00+02:00', received_at: new Date().toISOString()});
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify({...published, notices: [...published.notices.filter(n => n.match_id !== target.match_id), moved]}));
+    execFileSync(process.execPath, ['scripts/calendar-feeds.mjs'], {cwd: dir, stdio: 'pipe'});
+    execFileSync(process.execPath, ['--test', 'tests/overlay.test.mjs', 'tests/subscriber-contract.test.mjs', 'tests/calendar-feeds.test.mjs'], {cwd: dir, stdio: 'pipe', env: {...process.env, AESE_META: '1'}});
+  } finally { rmSync(dir, {recursive: true, force: true}); }
 });
 
 // ---- Apps Script: el punto de lectura ------------------------------------
