@@ -350,8 +350,8 @@ function checkAESECalendarHealth() {
     aeseAlert_('retraso','Sin procesamiento Clupik correcto en 45 minutos. Se intenta recuperación.');
     runAESECalendarSync();
   }
-  const lastFull=Date.parse(props.getProperty(ACTAWP_SYNC_PROPERTY)||'');
-  if(!Number.isFinite(lastFull)||Date.now()-lastFull>6*3600000) aeseAlert_('conciliacion','Sin conciliación completa ActaWP en seis horas.');
+  // No exigir una vuelta completa cada seis horas: la lectura oficial es manual.
+  // La antigüedad del último snapshot válido se vigila con aeseCheckFreshness_.
   try {
   const attempt=fetchActaWPJSON_('https://algar78.github.io/aese-waterpolo/data/actawp_last_attempt.json');
   const attempted=Date.parse(attempt.attempted_at||'');
