@@ -117,7 +117,7 @@ class EndToEndTests(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp(prefix='aese-e2e-'))
         self.addCleanup(shutil.rmtree, self.tmp, True)
         (self.tmp / 'data').mkdir()
-        for name in ('actawp_matches.json', 'actawp_export_status.json', 'actawp_calendar_overrides.json', 'venues.json'):
+        for name in ('actawp_matches.json', 'actawp_export_status.json', 'actawp_calendar_overrides.json', 'venues.json', 'clupik_overlay.json'):
             shutil.copy(REPO / 'data' / name, self.tmp / 'data' / name)
         shutil.copytree(REPO / 'calendars', self.tmp / 'calendars')
         self.server = FakeActaWP(self.pages)
