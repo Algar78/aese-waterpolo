@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-23T22:27:38.876Z",
-  "clupik_last_success": "2026-10-23T22:23:40.098Z",
+  "checked_at": "2026-10-27T08:45:50.090Z",
+  "clupik_last_success": "2026-10-27T08:38:39.780Z",
   "notices": [
     {
       "tournament_id": 1339803,
@@ -14,6 +14,18 @@
       "start": "2026-11-15T13:30:00+01:00",
       "status": "confirmed",
       "received_at": "2026-10-15T08:39:12.000Z"
+    },
+    {
+      "tournament_id": 1339803,
+      "match_id": 145573609,
+      "category": "Absoluto Masculino",
+      "home_team": "C.N. GRANOLLERS",
+      "away_team": "A.E. SANTA EULÀLIA",
+      "venue": "100 - Granollers, CN - P3 - 25m coberta",
+      "round_name": "Jornada 14",
+      "start": "2026-10-30T21:30:00+01:00",
+      "status": "confirmed",
+      "received_at": "2026-10-27T07:47:10.000Z"
     },
     {
       "tournament_id": 1339806,
