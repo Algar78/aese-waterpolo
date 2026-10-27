@@ -39,4 +39,103 @@ DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
 URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145608803/result
  s
 END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145791159@aese-waterpolo
+DTSTAMP:20261027T113347Z
+DTSTART:20261107T080000Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T113347Z
+STATUS:CONFIRMED
+SUMMARY:Alevín Mixto A: C.N. SABADELL A — A.E. SANTA EULÀLIA A
+LOCATION:264 - Sabadell\, CN - Can Llong - 33m
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339810/match/145791159/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
+ 3%20Sabadell%20Can%20Llong%2C%20Budapest%201%2C%20Sabadell
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145791159/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145791161@aese-waterpolo
+DTSTAMP:20261027T113347Z
+DTSTART:20261114T162000Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T113347Z
+STATUS:CONFIRMED
+SUMMARY:Alevín Mixto A: A.E. SANTA EULÀLIA A — C.N. TERRASSA A
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339810/match/145791161/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Poliesportiu%20Mun
+ icipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%20L'Hospital
+ et%20de%20Llobregat
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145791161/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145791163@aese-waterpolo
+DTSTAMP:20261027T113347Z
+DTSTART:20261121T084500Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T113347Z
+STATUS:CONFIRMED
+SUMMARY:Alevín Mixto A: C.N. BARCELONA A — A.E. SANTA EULÀLIA A
+LOCATION:160 - Barcelona\, CN - Nova Escollera - 50m
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339810/match/145791163/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
+ 3%20Barcelona%2C%20Passeig%20Joan%20de%20Borb%C3%B3%2093%2C%20Barcelona
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145791163/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145791165@aese-waterpolo
+DTSTAMP:20261027T113347Z
+DTSTART:20261128T162000Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T113347Z
+STATUS:CONFIRMED
+SUMMARY:Alevín Mixto A: A.E. SANTA EULÀLIA A — C.N. SABADELL A
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339810/match/145791165/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Poliesportiu%20Mun
+ icipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%20L'Hospital
+ et%20de%20Llobregat
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145791165/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145791167@aese-waterpolo
+DTSTAMP:20261027T113347Z
+DTSTART:20261212T141500Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T113347Z
+STATUS:CONFIRMED
+SUMMARY:Alevín Mixto A: C.N. TERRASSA A — A.E. SANTA EULÀLIA A
+LOCATION:163 - Terrassa C.N.
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339810/match/145791167/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
+ 3%20Terrassa%2C%20Avinguda%20Abat%20Marcet%2C%20Terrassa
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145791167/result
+ s
+END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339810-145791169@aese-waterpolo
+DTSTAMP:20261027T113347Z
+DTSTART:20261219T162000Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T113347Z
+STATUS:CONFIRMED
+SUMMARY:Alevín Mixto A: A.E. SANTA EULÀLIA A — C.N. BARCELONA A
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339810/match/145791169/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Poliesportiu%20Mun
+ icipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%20L'Hospital
+ et%20de%20Llobregat
+URL:https://actawp.natacio.cat/ca/tournament/1339810/match/145791169/result
+ s
+END:VEVENT
 END:VCALENDAR
