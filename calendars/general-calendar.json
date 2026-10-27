@@ -1151,6 +1151,14 @@
     "259 - Mataró, CN - Joan Serra - 25m coberta": {
       "query": "Centre Natació Mataró Complex Joan Serra, Passeig del Callao, Mataró",
       "source": "https://www.cnmataro.cat/la-historia-del-centre-natacio-mataro/"
+    },
+    "167 - Tarraco, C.N.": {
+      "query": "Club Natació Tarraco, Passeig de Torroja 86, 43007 Tarragona",
+      "source": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x12a3fcce6c64a441:0x60a18a1099324888"
+    },
+    "168 - G.E.I.E.G.": {
+      "query": "Complex Esportiu GEiEG Sant Ponç, Carrer de l'Esport 16, 17007 Girona",
+      "source": "https://www.girona.cat/turisme/eng/dte_equipaments_santponc.php"
     }
   }
 }

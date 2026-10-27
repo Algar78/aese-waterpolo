@@ -90,6 +90,22 @@ URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145791302/result
  s
 END:VEVENT
 BEGIN:VEVENT
+UID:actawp-1339809-145791308@aese-waterpolo
+DTSTAMP:20261027T121915Z
+DTSTART:20261213T154500Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T121915Z
+STATUS:CONFIRMED
+SUMMARY:Infantil Mixto A: C.N. TARRACO — A.E. SANTA EULÀLIA A
+LOCATION:167 - Tarraco\, C.N.
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339809/match/145791308/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
+ 3%20Tarraco%2C%20Passeig%20de%20Torroja%2086%2C%2043007%20Tarragona
+URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145791308/result
+ s
+END:VEVENT
+BEGIN:VEVENT
 UID:actawp-1339809-145791313@aese-waterpolo
 DTSTAMP:20261027T113347Z
 DTSTART:20261220T083000Z
