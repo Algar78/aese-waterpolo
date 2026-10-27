@@ -1,7 +1,7 @@
 {
   "source": "data/actawp_matches.json",
   "snapshot_sha256": "d23b826dd0ec7fdafe7dab538a9fdeda39a848336818a9da606c11a0e391788e",
-  "total": 94,
+  "total": 108,
   "timeZone": "Europe/Madrid",
   "last_complete_export_at": "2026-10-10T16:25:53+00:00",
   "freshness_policy": {
@@ -40,7 +40,7 @@
     {
       "name": "Infantil Mixto A",
       "slug": "infantil-mixto-a",
-      "count": 11,
+      "count": 12,
       "url": "https://algar78.github.io/aese-waterpolo/calendars/infantil-mixto-a.ics"
     },
     {
@@ -64,7 +64,7 @@
     {
       "name": "Juvenil Masculino",
       "slug": "juvenil-masculino",
-      "count": 2,
+      "count": 15,
       "url": "https://algar78.github.io/aese-waterpolo/calendars/juvenil-masculino.ics"
     }
   ],
@@ -87,7 +87,21 @@
       "1339810:145791163",
       "1339810:145791165",
       "1339810:145791167",
-      "1339810:145791169"
+      "1339810:145791169",
+      "1339807:145791403",
+      "1339807:145791407",
+      "1339807:145791411",
+      "1339807:145791415",
+      "1339807:145791419",
+      "1339807:145791423",
+      "1339807:145791427",
+      "1339807:145791431",
+      "1339807:145791439",
+      "1339807:145791443",
+      "1339807:145791447",
+      "1339807:145791451",
+      "1339807:145791455",
+      "1339809:145791350"
     ],
     "discordant": [],
     "skipped": []
