@@ -188,4 +188,21 @@ DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
 URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145791343/result
  s
 END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339809-145791350@aese-waterpolo
+DTSTAMP:20261027T120132Z
+DTSTART:20270228T083000Z
+SEQUENCE:0
+LAST-MODIFIED:20261027T120132Z
+STATUS:CONFIRMED
+SUMMARY:Infantil Mixto A: A.E. SANTA EULÀLIA A — C.N. OLOT
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339809/match/145791350/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Poliesportiu%20Mun
+ icipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%20L'Hospital
+ et%20de%20Llobregat
+URL:https://actawp.natacio.cat/ca/tournament/1339809/match/145791350/result
+ s
+END:VEVENT
 END:VCALENDAR
