@@ -529,21 +529,28 @@ test('un aviso ambiguo se resuelve con el evento que ya está en el calendario y
   assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-18T08:00:00Z',conFecha('03/05/2027')),h.calendar),/ambigua/);   // 5 de marzo (28 días) o 3 de mayo (31 días)
   assert.equal(h.events[0].getStartTime().toISOString(),'2027-04-02T11:00:00.000Z');
 });
-test('partido nuevo sin fecha: no es un error, no crea evento, no bloquea ni avisa; modificado sin fecha sigue siéndolo',()=>{
+test('partido nuevo sin fecha: no es un error, no crea evento ni bloquea, y avisa por correo una sola vez; modificado sin fecha sigue siéndolo',()=>{
   const h=harness();
   const nuevo=h.c.parseClupikNotice_(h.msg(0,'Nuevo partido en Jornada 5','2026-10-16T08:00:00Z',sinFecha()));
   assert.equal(nuevo.undated,true);assert.equal(nuevo.home_team,'C.N. BANYOLES');assert.equal(nuevo.away_team,'A.E. SANTA EULÀLIA');
   assert.equal(nuevo.tournament_id,1339808);assert.equal(nuevo.match_id,145574486);assert.match(nuevo.category,/CADETE MASCULINO/);
   assert.equal(h.c.procesarMensajeAESE_(h.msg(0,'Nuevo partido en Jornada 5','2026-10-16T08:00:00Z',sinFecha()),h.calendar),'undated');
   assert.equal(h.events.length,0);
-  // Dentro del ciclo completo: se marca atendido, el punto de control avanza y no se envía ningún correo.
+  // Dentro del ciclo completo: se marca atendido, el punto de control avanza y se envía UN correo de aviso.
+  h.properties.delete('AESE_NEW_MATCH_QUEUE');
   h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
   const m=h.msg(0,'Nuevo partido en Jornada 5',new Date(Date.now()-1000).toISOString(),sinFecha());
   h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[m]}]:[]};
   h.c.syncActaWPToCalendar=()=>({status:'complete'});
   h.c.runAESECalendarSync();
   assert.ok(h.properties.get('AESE_CLUPIK_DONE_'+m.getId()));assert.notEqual(h.properties.get('ULTIMA_EJECUCION'),'2026-10-15T10:00:00Z');
-  assert.equal(h.mail.length,0);assert.equal(h.events.length,0);
+  assert.equal(h.mail.length,1);assert.equal(h.events.length,0);
+  assert.match(String(h.mail[0][1]),/partido nuevo en Clupik, sin fecha ni piscina/);
+  assert.match(String(h.mail[0][2]),/C\.N\. BANYOLES vs A\.E\. SANTA EULÀLIA/);assert.equal(h.properties.get('AESE_NEW_MATCH_QUEUE'),undefined);
+  // El mismo aviso no vuelve a mandar correo, ni aunque se reprocese.
+  h.properties.delete('AESE_CLUPIK_DONE_'+m.getId());h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
+  h.c.runAESECalendarSync();
+  assert.equal(h.mail.length,1);
   // «Modificado» sin fecha puede ser un partido que se queda sin fecha: eso sí requiere una persona.
   assert.throws(()=>h.c.parseClupikNotice_(h.msg(0,'Modificado un partido','2026-10-16T08:00:00Z',sinFecha())),/No se pudieron localizar/);
   // Y un aviso sin fecha de otro club no se acepta.
@@ -597,4 +604,55 @@ test('un fallo al leer el paquete publicado sigue avisando aunque no haya lectur
   h.c.ScriptApp={getProjectTriggers:()=>[{getHandlerFunction:()=> 'runAESECalendarSync'}]};
   h.c.checkAESECalendarHealth();
   assert.equal(fuente(h).length,1);assert.match(String(fuente(h)[0][2]),/Pages caído/);
+});
+
+// ---- Piscina sin verificar y partidos nuevos (27/10/2026) ---------------------------------------------------
+const conSede=(fecha,sede)=>conFecha(fecha).replace('171 - Banyoles, CN',sede);
+test('una piscina sin verificar no retrasa el partido: se publica con el nombre de la sede, sin Maps, y se avisa una vez por sede',()=>{
+  const h=harness();
+  const a=h.msg(0,'Modificado un partido','2026-10-16T08:00:00Z',conSede('10/24/2026','999 - Piscina Nueva'));
+  const result=h.c.procesarMensajeAESE_(a,h.calendar);
+  assert.notEqual(result,undefined);
+  assert.equal(h.events.length,1);
+  assert.equal(h.events[0].getLocation(),'999 - Piscina Nueva');
+  assert.ok(!/Google Maps/.test(h.events[0].getDescription()));
+  assert.match(h.events[0].getDescription(),/ACTAWP_MATCH_ID:/);
+  const avisos=()=>h.mail.filter(x=>/piscina nueva sin enlace/.test(String(x[1])));
+  assert.equal(avisos().length,1);assert.match(String(avisos()[0][2]),/999 - Piscina Nueva/);
+  // Otro aviso con la misma sede no repite el correo.
+  h.c.procesarMensajeAESE_(h.msg(1,'Modificado un partido','2026-10-17T08:00:00Z',conSede('10/24/2026','999 - Piscina Nueva').replace('Banyoles','Banyoles')),h.calendar);
+  assert.equal(avisos().length,1);
+  // Con la sede ya verificada, el mismo evento recupera el enlace de Maps en su sitio (mismo evento, sin duplicar).
+  venues['999 - Piscina Nueva']={query:'Piscina Nueva, Calle 1, Girona',source:'https://example.org/sede'};   // el paquete publicado ya la trae
+  try {
+    h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-18T08:00:00Z',conSede('10/24/2026','999 - Piscina Nueva')),h.calendar);
+    assert.equal(h.events.length,1);
+    assert.ok(/Google Maps: https:\/\/www\.google\.com\/maps\/search/.test(h.events[0].getDescription()));
+  } finally { delete venues['999 - Piscina Nueva']; }
+});
+test('el snapshot de ActaWP sigue exigiendo sede verificada, pero un partido de Clupik con sede nueva no es un error',()=>{
+  const h=harness();
+  assert.throws(()=>h.c.actaWPMapsURL_('Sede inventada'),/Sede sin verificar/);
+  assert.equal(h.c.actaWPVenueVerified_('Sede inventada'),false);
+  assert.equal(h.c.actaWPVenueVerified_('171 - Banyoles, CN'),true);
+  const match={tournament_id:1,match_id:2,category:'X',venue:'Sede inventada',url:'https://actawp.natacio.cat/x',status:'confirmed'};
+  assert.ok(!/Google Maps/.test(h.c.buildActaWPDescription_(match)));
+  assert.match(h.c.buildActaWPDescription_({...match,venue:'171 - Banyoles, CN'}),/Google Maps: https:\/\/www\.google\.com\/maps\/search/);
+});
+test('varios partidos nuevos sin fecha llegan en un solo correo, y si el correo falla se reintenta sin perder ninguno',()=>{
+  const h=harness();
+  for(const [i,id] of [[0,'a'],[1,'b'],[2,'c']]) {
+    const msg=h.msg(0,'Nuevo partido en Jornada '+(i+4),'2026-10-1'+(i+1)+'T08:00:00Z',sinFecha().replace('145574486','14557448'+(i+6)));
+    h.c.procesarMensajeAESE_(msg,h.calendar);
+  }
+  const cola=JSON.parse(h.properties.get('AESE_NEW_MATCH_QUEUE'));
+  assert.equal(cola.length,3);
+  const send=h.c.MailApp.sendEmail;let fail=true;
+  h.c.MailApp.sendEmail=(...x)=>{if(fail)throw Error('mail quota');return send(...x)};
+  h.c.aeseFlushNewMatches_();
+  assert.equal(h.mail.length,0);assert.equal(JSON.parse(h.properties.get('AESE_NEW_MATCH_QUEUE')).length,3);
+  fail=false;h.c.aeseFlushNewMatches_();
+  assert.equal(h.mail.length,1);assert.match(String(h.mail[0][1]),/3 partidos nuevos en Clupik/);
+  assert.equal(h.properties.get('AESE_NEW_MATCH_QUEUE'),undefined);
+  h.c.aeseFlushNewMatches_();assert.equal(h.mail.length,1);
 });

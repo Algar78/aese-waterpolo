@@ -8,7 +8,7 @@ import {execFileSync} from 'node:child_process';
 import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, cpSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {applyOverlay, parseOverlay, generate, feed, eventState, uid, categories} from '../scripts/calendar-feeds.mjs';
+import {applyOverlay, parseOverlay, generate, feed, eventState, uid, categories, validate} from '../scripts/calendar-feeds.mjs';
 import {mergeOverlay, plan, run, readSource, sourcePattern, STALE_SCAN_MS} from '../scripts/clupik-overlay.mjs';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -77,20 +77,43 @@ test('un partido nuevo de un torneo que ya se publica se añade; los demás avis
     noticeFor(target, {match_id: 155555555, venue: 'Piscina sin verificar'}),
     noticeFor(target, {match_id: 144444444, start: '2026-12-05 10:00'})
   ]));
-  assert.equal(out.matches.length, snapshot.length + 1);
-  const added = out.matches.at(-1);
+  // La sede sin verificar (155555555) no retrasa el partido: entra igual, y solo falta el enlace de Maps.
+  assert.equal(out.matches.length, snapshot.length + 2);
+  const added = out.matches.at(-2);
   assert.deepEqual([added.match_id, added.home_team, added.category], [199999999, 'C.N. NUEVO', 'Cadete Masculino']);
   assert.equal(added.url, 'https://actawp.natacio.cat/ca/tournament/1339808/match/199999999/results');
-  assert.deepEqual(out.added, ['1339808:199999999']);
-  assert.equal(out.skipped.length, 5);
-  assert.equal(out.counts['Cadete Masculino'], snapshot.filter(m => m.category === 'Cadete Masculino').length + 1);
+  assert.deepEqual(out.added, ['1339808:199999999', '1339808:155555555']);
+  assert.equal(out.matches.at(-1).venue, 'Piscina sin verificar');
+  assert.equal(out.skipped.length, 4);
+  assert.equal(out.counts['Cadete Masculino'], snapshot.filter(m => m.category === 'Cadete Masculino').length + 2);
+});
+
+test('una sede sin verificar se publica con su nombre y sin enlace de Maps; al verificarla, el evento se actualiza', () => {
+  const nueva = noticeFor(target, {match_id: 155555555, venue: 'Piscina sin verificar', start: '2026-12-05T10:00:00+01:00'});
+  const out = applyOverlay(snapshot, status, doc([nueva]));
+  const m = out.matches.find(x => x.match_id === 155555555);
+  const state = eventState(out.matches);
+  const text = feed('Cadete Masculino', out.matches, state).replace(/\r\n /g, '');
+  const event = text.split('BEGIN:VEVENT').find(t => t.includes('UID:' + uid(m) + '\r\n'));
+  assert.ok(event.includes('\r\nLOCATION:Piscina sin verificar\r\n'));
+  assert.ok(event.includes('\r\nDTSTART:20261205T090000Z\r\n'));
+  assert.ok(!event.includes('Google Maps'));
+  // Los partidos con sede verificada siguen con su enlace y su versión: el cambio no toca ningún evento existente.
+  assert.equal(text.split('BEGIN:VEVENT').filter(t => t.includes('Google Maps: ')).length, out.matches.filter(x => x.category === 'Cadete Masculino').length - 1);
+  assert.deepEqual(eventState(snapshot), eventState(out.matches.filter(x => snapshot.includes(x))));
+  // Un partido del snapshot que cambia a una sede nueva se actualiza (antes se quedaba con la sede antigua).
+  const moved = applyOverlay(snapshot, status, doc([noticeFor(target, {venue: 'Piscina sin verificar'})]));
+  assert.equal(moved.matches.find(x => x.match_id === target.match_id).venue, 'Piscina sin verificar');
+  assert.deepEqual(moved.changed, [target.tournament_id + ':' + target.match_id]);
+  // El snapshot de ActaWP sigue exigiendo sede verificada.
+  assert.throws(() => validate(snapshot.map((m, i) => i === 0 ? {...m, venue: 'Piscina sin verificar'} : m), status), /Sede pendiente de verificar/);
 });
 
 test('un aviso defectuoso no impide aplicar los demás; nunca desaparece un partido', () => {
   const other = snapshot.find(m => m.match_id === 145608988);
-  const out = applyOverlay(snapshot, status, doc([noticeFor(target, {venue: 'Piscina sin verificar'}), noticeFor(other, {start: '2026-11-22T10:00:00+01:00'}), 'basura', null]));
+  const out = applyOverlay(snapshot, status, doc([noticeFor(target, {home_team: ''}), noticeFor(other, {start: '2026-11-22T10:00:00+01:00'}), 'basura', null]));
   assert.equal(out.matches.find(m => m.match_id === other.match_id).start, '2026-11-22T10:00:00+01:00');
-  assert.equal(out.matches.find(m => m.match_id === target.match_id).venue, target.venue);
+  assert.equal(out.matches.find(m => m.match_id === target.match_id).home_team, target.home_team);
   assert.equal(out.skipped.length, 3);
   assert.deepEqual(snapshot.map(uid).filter(id => !out.matches.map(uid).includes(id)), []);
 });
