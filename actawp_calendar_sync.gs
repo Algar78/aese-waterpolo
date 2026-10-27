@@ -81,6 +81,11 @@ function actaWPMapsURL_(venue) {
   if (!entry || !entry.query || !/^https:\/\//.test(entry.source)) throw new Error('Sede sin verificar: ' + venue);
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(entry.query);
 }
+// Una sede sin verificar no retrasa un partido de Clupik: se publica con el nombre de la sede y sin enlace de Maps.
+function actaWPVenueVerified_(venue) {
+  const entry = ACTAWP_VENUES[venue];
+  return !!(entry && entry.query && /^https:\/\//.test(entry.source));
+}
 
 function ownsActaWPEvent_(event, match) {
   // Calendar descriptions may fold the following field onto the marker line.
@@ -248,11 +253,9 @@ function buildActaWPDescription_(match) {
     'Categoría: ' + (match.category || ''),
     'Piscina: ' + (match.venue || ''),
     'ActaWP: ' + (match.url || ''),
-    'Estado: ' + (match.status || 'confirmed'),
-    'Google Maps: ' + actaWPMapsURL_(match.venue),
-    '',
-    'Evento sincronizado automáticamente desde ActaWP.'
-  ].join('\n');
+    'Estado: ' + (match.status || 'confirmed')
+  ].concat(actaWPVenueVerified_(match.venue) ? ['Google Maps: ' + actaWPMapsURL_(match.venue)] : [],
+    ['', 'Evento sincronizado automáticamente desde ActaWP.']).join('\n');
 }
 
 function installActaWPSyncTrigger() {
