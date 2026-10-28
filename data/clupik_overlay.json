@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-28T14:50:25.407Z",
+  "checked_at": "2026-10-28T17:08:47.069Z",
   "clupik_last_success": "2026-10-28T14:25:12.471Z",
   "notices": [
     {
@@ -143,9 +143,9 @@
       "away_team": "C.N. OLOT",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 8",
-      "start": "2027-01-17T12:10:00+01:00",
+      "start": "2027-01-24T12:10:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-27T12:05:00.000Z"
+      "received_at": "2026-10-28T17:05:06.000Z"
     },
     {
       "tournament_id": 1339807,
