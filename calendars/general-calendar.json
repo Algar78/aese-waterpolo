@@ -1159,6 +1159,10 @@
     "168 - G.E.I.E.G.": {
       "query": "Complex Esportiu GEiEG Sant Ponç, Carrer de l'Esport 16, 17007 Girona",
       "source": "https://www.girona.cat/turisme/eng/dte_equipaments_santponc.php"
+    },
+    "260 - Sabadell, CN - Antoni Monés": {
+      "query": "Club Natació Sabadell, Carrer dels Montcada 2, 08203 Sabadell",
+      "source": "https://www.sabadell.cat/en/fitxa-repertori/102943-repertori-1681"
     }
   }
 }
