@@ -58,6 +58,11 @@ export function validate(matches, status) {
 //    confirme, y se deja constancia (`discordant`) para que alguien lo revise;
 //  - un aviso nunca borra un partido: solo cambia fecha, equipos, sede o estado, o
 //    añade un partido nuevo de un torneo que ya está en el snapshot.
+// Clupik escribe la categoría en mayúsculas («ALEVÍN MIXTO A») en los partidos que no están en el snapshot; en los .ics se usa
+// el nombre canónico. Sin esto, el segundo aviso de uno de esos partidos (28/10/2026) se descartaba, el partido «desaparecía» y el
+// generador se negaba a publicar: los .ics quedaban congelados. Un nombre que no coincide con ninguna categoría sigue rechazándose.
+const plain = text => String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+export const canonicalCategory = name => Object.keys(categories).find(known => plain(known) === plain(name)) ?? name;
 const noticeKeys = ['tournament_id','match_id','category','home_team','away_team','venue','round_name','start','status','received_at'];
 const agreeKeys = ['start','venue','home_team','away_team'];
 export function parseOverlay(document) {
@@ -75,6 +80,7 @@ export function parseOverlay(document) {
       if (raw.acknowledged_snapshot !== undefined && !Number.isFinite(Date.parse(raw.acknowledged_snapshot))) throw Error('acknowledged_snapshot inválido');
       seen.add(id);
       const entry = Object.fromEntries(noticeKeys.map(key => [key, raw[key] ?? '']));
+      entry.category = canonicalCategory(raw.category);
       if (raw.acknowledged_snapshot !== undefined) entry.acknowledged_snapshot = raw.acknowledged_snapshot;
       entries.push(entry);
     } catch (error) { rejected.push({identity: raw && raw.tournament_id !== undefined ? `${raw.tournament_id}:${raw.match_id}` : '?', reason: error.message}); }
