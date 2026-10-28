@@ -31,6 +31,7 @@ function procesarPartidosAESESinBloqueo_() {
   const doneLimit=Math.min(now.getTime()-49*3600000,from-3600000);
   Object.keys(done).filter(k=>k.startsWith('AESE_CLUPIK_DONE_') && Date.parse(done[k])<doneLimit).forEach(k=>{props.deleteProperty(k);delete done[k];});
   Object.keys(done).filter(k=>(k.startsWith('AESE_CLUPIK_BAD_') || k.startsWith('AESE_ALERT_aviso_')) && Number(done[k])<now.getTime()-10*86400000).forEach(k=>{props.deleteProperty(k);delete done[k];});
+  Object.keys(done).filter(k=>k.startsWith('AESE_ALERT_nuevo_') && Number(done[k])<now.getTime()-90*86400000).forEach(k=>{props.deleteProperty(k);delete done[k];});
   let scan={};
   try { scan=JSON.parse(props.getProperty('AESE_CLUPIK_SCAN_V1')||'{}'); } catch(_) {}
   if(!Number.isFinite(scan.from)||!Number.isFinite(scan.until)||!Number.isInteger(scan.offset)||scan.offset<0)

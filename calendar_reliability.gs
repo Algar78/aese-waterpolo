@@ -165,6 +165,7 @@ function reconcileClupikNotice_(message,calendar) {
   if (notice.undated) {
     // Partido nuevo sin fecha: se da por atendido; el aviso con la fecha llegará después.
     Logger.log('Clupik '+actaWPIdentity_(notice)+' partido nuevo sin fecha');
+    aeseQueueNewMatch_(notice);
     return 'undated';
   }
   const id=actaWPIdentity_(notice);
@@ -179,8 +180,11 @@ function reconcileClupikNotice_(message,calendar) {
   }
   const match=Object.assign({},source||{},notice,{category:source?source.category:notice.category});
   // Persist before Calendar: if Calendar fails, the next ActaWP run repairs it.
-  // Unknown venues fail safely before persisting or creating an event.
-  actaWPMapsURL_(match.venue);
+  // Una sede sin verificar no retrasa el partido: se publica con el nombre de la sede y sin enlace de Maps,
+  // y se avisa una vez por sede para que se compruebe la dirección y se añada a data/venues.json.
+  if(!actaWPVenueVerified_(match.venue)) aeseAlert_('sede_'+String(match.venue).replace(/[^A-Za-z0-9]+/g,'_').slice(0,60),
+    'El partido '+id+' ('+match.home_team+' vs '+match.away_team+') se ha publicado sin enlace de Google Maps porque la piscina «'+match.venue+'» aún no está verificada. '+
+    'Hay que comprobar su dirección y añadirla a data/venues.json.',30*86400000,'AESE: piscina nueva sin enlace de Maps','');
   props.setProperty(key,JSON.stringify(match));
   const result=reconcileActaWPMatch_(calendar,match);
   Logger.log('Clupik '+id+' '+result);
@@ -222,6 +226,37 @@ function aeseAlertUnreadable_(props,items,nowMs) {
       'El sistema los vuelve a leer durante 72 horas por si el calendario llega a conocer la fecha oficial; pasado ese plazo los aparta para que no frenen el resto de avisos. No habrá más correos sobre ellos.\n'+
       'https://script.google.com/home/projects/1gyRPkwFnWnzlyufrKxLL7BpFFHZjLXlNY9lDL_zVzTD_Wpwd5PIIi10A/executions');
     pending.forEach(item=>props.setProperty('AESE_ALERT_aviso_'+item.id,String(nowMs)));
+  } catch(error) { console.log('Alert delivery failed: '+error.message); }
+}
+
+// Un partido nuevo llega a Clupik sin fecha ni piscina: el sistema no puede completarlo solo (la fecha solo está en
+// ActaWP). Se avisa por correo, un solo mensaje por tanda, para completarlo a mano. La cola se guarda al leer el aviso
+// y se vacía al enviar el correo, de modo que ningún aviso se pierde si la ejecución termina antes de tiempo.
+function aeseQueueNewMatch_(notice) {
+  const props=PropertiesService.getScriptProperties(), id=actaWPIdentity_(notice);
+  if(Number(props.getProperty('AESE_ALERT_nuevo_'+id)||0)) return;
+  let queue=[];
+  try { queue=JSON.parse(props.getProperty('AESE_NEW_MATCH_QUEUE')||'[]'); } catch(_) {}
+  if(!Array.isArray(queue)) queue=[];
+  if(queue.some(item=>item.id===id)) return;
+  queue.push({id,category:notice.category||'',round:notice.round_name||'',home:notice.home_team||'',away:notice.away_team||''});
+  props.setProperty('AESE_NEW_MATCH_QUEUE',JSON.stringify(queue.slice(-100)));
+}
+
+function aeseFlushNewMatches_() {
+  const props=PropertiesService.getScriptProperties();
+  let queue=[];
+  try { queue=JSON.parse(props.getProperty('AESE_NEW_MATCH_QUEUE')||'[]'); } catch(_) {}
+  if(!Array.isArray(queue) || !queue.length) return;
+  const shown=queue.slice(0,30).map(item=>'- '+(item.category||'Categoría sin identificar')+(item.round?' · '+item.round:'')+': '+item.home+' vs '+item.away);
+  try {
+    MailApp.sendEmail(AESE_ALERT_EMAIL,
+      queue.length===1?'AESE: partido nuevo en Clupik, sin fecha ni piscina':'AESE: '+queue.length+' partidos nuevos en Clupik, sin fecha ni piscina',
+      shown.join('\n')+(queue.length>shown.length?'\n- … y '+(queue.length-shown.length)+' más':'')+'\n\n'+
+      'Clupik avisa de estos partidos sin fecha ni piscina; la fecha solo está en la página del partido en ActaWP. '+
+      'No aparecerán en el calendario hasta que se completen: revisar y añadirlos a mano si hace falta.');
+    queue.forEach(item=>props.setProperty('AESE_ALERT_nuevo_'+item.id,String(Date.now())));
+    props.deleteProperty('AESE_NEW_MATCH_QUEUE');
   } catch(error) { console.log('Alert delivery failed: '+error.message); }
 }
 
@@ -311,6 +346,7 @@ function runAESECalendarSync() {
     props.setProperty('AESE_CLUPIK_LAST_ERROR',error.message);
     aeseAlert_('clupik','No se procesaron los avisos Clupik: '+error.message);
   }
+  aeseFlushNewMatches_();
   let actawpFailure=null;
   try {
     const result=syncActaWPToCalendar();

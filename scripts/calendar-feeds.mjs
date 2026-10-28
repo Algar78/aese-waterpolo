@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { mapsURL } from './venues.mjs';
+import { mapsURL, verifiedMapsURL } from './venues.mjs';
 
 export const baseURL = 'https://algar78.github.io/aese-waterpolo/';
 export const categories = {
@@ -27,7 +27,8 @@ export function fold(line) {
 export const utc = value => new Date(value).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 export const uid = match => `actawp-${match.tournament_id}-${match.match_id}@aese-waterpolo`;
 // Lo que debe cumplir cada partido para publicarse; lo comparten el snapshot y los avisos de Clupik.
-function validateMatch(match, ids, counts) {
+// `strictVenue`: el snapshot de ActaWP exige sede verificada; un aviso de Clupik no la exige (se publica sin enlace de Maps).
+function validateMatch(match, ids, counts, strictVenue = true) {
   if (!(match.category in categories)) throw Error('Categoría desconocida');
   if (!Number.isSafeInteger(match.match_id) || !Number.isSafeInteger(match.tournament_id) || ids.has(uid(match))) throw Error('Identidad inválida o duplicada');
   ids.add(uid(match));
@@ -38,7 +39,7 @@ function validateMatch(match, ids, counts) {
   if (!match.url.startsWith('https://actawp.natacio.cat/')) throw Error('URL no válida');
   counts[match.category]++;
   if (!['confirmed','tentative','cancelled'].includes(match.status || 'confirmed')) throw Error('Estado desconocido');
-  mapsURL(match.venue);
+  if (strictVenue) mapsURL(match.venue);
 }
 export function validate(matches, status) {
   if (!status.complete || status.errors.length || status.categories_expected.length !== 9) throw Error('Snapshot incompleto: se conservan los feeds publicados');
@@ -95,7 +96,7 @@ export function applyOverlay(matches, status, overlay) {
   for (const m of matches) known.set(m.tournament_id, (known.get(m.tournament_id) ?? new Set()).add(m.category));
   const replaced = new Map(), changed = [], added = [], discordant = [], skipped = [...rejected];
   const take = (id, match) => {                  // el partido resultante debe cumplir lo mismo que cualquiera del snapshot
-    validateMatch(match, new Set(), Object.fromEntries(Object.keys(categories).map(name => [name, 0])));
+    validateMatch(match, new Set(), Object.fromEntries(Object.keys(categories).map(name => [name, 0])), false);
     return match;
   };
   for (const notice of entries) {
@@ -127,7 +128,7 @@ export function applyOverlay(matches, status, overlay) {
   }
   const effective = [...matches.map(m => replaced.get(uid(m)) ?? m), ...added];
   const ids = new Set(), counts = Object.fromEntries(Object.keys(categories).map(name => [name, 0]));
-  for (const match of effective) validateMatch(match, ids, counts);
+  for (const match of effective) validateMatch(match, ids, counts, false);   // el snapshot ya se validó con sede verificada
   if (matches.some(m => !ids.has(uid(m)))) throw Error('La superposición habría quitado un partido: se conservan los feeds');
   return {matches: effective, counts, changed, added: added.map(m => `${m.tournament_id}:${m.match_id}`), discordant, skipped};
 }
@@ -136,7 +137,7 @@ export function eventState(matches, previous = {}, now = '20261010T000000Z') {
   if (Object.keys(previous).some(id => !current.has(id))) throw Error('Partido desaparecido sin cancelación explícita: se conservan los feeds');
   return Object.fromEntries(matches.map(m => {
     const id = uid(m);
-    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.url,m.status || 'confirmed',mapsURL(m.venue)])).digest('hex');
+    const hash = createHash('sha256').update(JSON.stringify([m.category,m.start,m.home_team,m.away_team,m.venue,m.url,m.status || 'confirmed',verifiedMapsURL(m.venue)])).digest('hex');
     const old = previous[id];
     return [id, old?.hash === hash ? old : {hash,sequence:old ? old.sequence+1 : 0,stamp:now}];
   }));
@@ -146,7 +147,7 @@ export function feed(name, matches, state = eventState(matches)) {
   for (const m of matches.filter(m => m.category === name).sort((a,b) => a.match_id-b.match_id)) {
     // No se inventa una duración: el snapshot solo contiene la hora de inicio.
     const revision = state[uid(m)];
-    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`STATUS:${(m.status || 'confirmed').toUpperCase()}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`Horario Europe/Madrid. Fuente: ActaWP\n${m.url}\nEstado: ${m.status || 'confirmed'}\nGoogle Maps: ${mapsURL(m.venue)}`)}`,`URL:${m.url}`,'END:VEVENT');
+    lines.push('BEGIN:VEVENT',`UID:${uid(m)}`,`DTSTAMP:${revision.stamp}`,`DTSTART:${utc(m.start)}`,`SEQUENCE:${revision.sequence}`,`LAST-MODIFIED:${revision.stamp}`,`STATUS:${(m.status || 'confirmed').toUpperCase()}`,`SUMMARY:${escapeICS(`${name}: ${m.home_team} — ${m.away_team}`)}`,`LOCATION:${escapeICS(m.venue)}`,`DESCRIPTION:${escapeICS(`Horario Europe/Madrid. Fuente: ActaWP\n${m.url}\nEstado: ${m.status || 'confirmed'}${verifiedMapsURL(m.venue) ? `\nGoogle Maps: ${verifiedMapsURL(m.venue)}` : ''}`)}`,`URL:${m.url}`,'END:VEVENT');
   }
   lines.push('END:VCALENDAR');
   return lines.map(fold).join('\r\n')+'\r\n';
@@ -182,6 +183,7 @@ export function generate(root = new URL('../', import.meta.url)) {
   writeFileSync(new URL('calendars/general-calendar.json',root),JSON.stringify(bundle,null,2)+'\n');
   console.log(`Validados y generados: ${Object.keys(categories).length} feeds, ${matches.length} partidos`+
     (overlay.changed.length || overlay.added.length || overlay.skipped.length || overlay.discordant.length ? ` (avisos de Clupik: ${overlay.changed.length} cambiados, ${overlay.added.length} nuevos, ${overlay.discordant.length} sin confirmar por ActaWP, ${overlay.skipped.length} descartados)` : ''));
+  for (const m of matches) if (!verifiedMapsURL(m.venue)) console.log(`::warning::Partido ${m.tournament_id}:${m.match_id} publicado sin enlace de Maps: sede sin verificar (${m.venue}). Comprobar la dirección y añadirla a data/venues.json`);
   for (const item of overlay.skipped) console.log(`::warning::Aviso de Clupik descartado (${item.identity}): ${item.reason}`);
   for (const identity of overlay.discordant) console.log(`::warning::El aviso de Clupik ${identity} no coincide con la última lectura de ActaWP: se mantiene el aviso`);
   return manifest;
