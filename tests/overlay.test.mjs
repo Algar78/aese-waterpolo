@@ -8,8 +8,8 @@ import {execFileSync} from 'node:child_process';
 import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, cpSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {applyOverlay, parseOverlay, generate, feed, eventState, uid, categories, canonicalCategory, validate} from '../scripts/calendar-feeds.mjs';
-import {mergeOverlay, plan, run, readSource, sourcePattern, STALE_SCAN_MS} from '../scripts/clupik-overlay.mjs';
+import {applyOverlay, parseOverlay, generate, feed, eventState, uid, categories, canonicalCategory, validate, readMemory} from '../scripts/calendar-feeds.mjs';
+import {mergeOverlay, plan, run, readSource, sourcePattern, STALE_SCAN_MS, attentionAlert, report} from '../scripts/clupik-overlay.mjs';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const snapshot = JSON.parse(read('data/actawp_matches.json'));
@@ -199,6 +199,8 @@ test('generate(): regenerar el estado publicado deja los 9 .ics y el estado idé
     for (const slug of slugs) assert.equal(readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8'), read(`calendars/${slug}.ics`), slug);
     assert.equal(readFileSync(join(dir, 'calendars/event-state.json'), 'utf8'), read('calendars/event-state.json'));
     assert.equal(readFileSync(join(dir, 'calendars/general-calendar.json'), 'utf8'), read('calendars/general-calendar.json'));
+    assert.equal(readFileSync(join(dir, 'calendars/clupik-published.json'), 'utf8'), read('calendars/clupik-published.json'));
+    assert.equal(readFileSync(join(dir, 'calendars/index.json'), 'utf8'), read('calendars/index.json'));
   } finally { rmSync(dir, {recursive: true, force: true}); }
 });
 
@@ -432,6 +434,164 @@ test('el workflow comparte grupo con «Calendarios de familias», no fuerza el p
   assert.ok(yml.includes('group: family-calendar-refs/heads/main'));
   assert.ok(!/--force|-f origin/.test(yml));
   assert.ok(yml.includes("cron: '7,37 * * * *'"));
-  assert.ok(yml.includes("steps.read.outputs.changed == 'true'"));
+  assert.ok(yml.includes("steps.read.outputs.regenerate == 'true'"));
   assert.ok(JSON.parse(read('data/clupik_overlay.json')).notices.every(n => n.match_id));
+});
+
+test('el workflow regenera mientras haya algo pendiente, avisa después de publicar y publica también la copia de partidos', () => {
+  const yml = read('.github/workflows/clupik-overlay.yml');
+  const steps = yml.split('\n      - ').map(t => t.split('\n')[0]);
+  const at = text => steps.findIndex(t => t.includes(text));
+  assert.ok(at('Publicar si ha cambiado algo') >= 0 && at('Publicar si ha cambiado algo') < at('Avisar si hay avisos de Clupik que no se han podido aplicar'));   // primero se publica, luego se avisa
+  assert.ok(yml.includes('run: node scripts/clupik-overlay.mjs --report'));
+  assert.ok(yml.includes("git add data/clupik_overlay.json calendars/"));                               // incluye calendars/clupik-published.json
+  assert.ok(yml.includes("if: ${{ !cancelled() && steps.read.outputs.alert == 'true' }}"));            // un aviso en rojo no oculta el otro
+});
+
+// ---- Un aviso que deja de valer no congela los .ics (28/10/2026) -------------------------------------
+// Aquel día un aviso de un partido ya publicado dejó de ser válido, el partido «desapareció» y el generador se negó a publicar
+// durante horas. Ahora el partido conserva su última versión, los demás avisos se aplican y el problema queda a la vista.
+const quiet = fn => { const log = console.log; console.log = () => {}; try { return fn(); } finally { console.log = log; } };
+const nuevo = {match_id: 199999999, home_team: 'C.N. NUEVO', start: '2026-12-05T10:00:00+01:00'};
+const otro = snapshot.find(m => m.match_id === 145608988), otroSlug = categories[otro.category], otroId = `${otro.tournament_id}:${otro.match_id}`;   // Alevín Mixto B
+const icsOf = (dir, slug) => readFileSync(join(dir, `calendars/${slug}.ics`), 'utf8');
+const eventOf = (dir, slug, id) => icsOf(dir, slug).split('BEGIN:VEVENT').find(t => t.includes(`UID:${id}@aese-waterpolo`));
+const T1 = new Date('2026-10-28T12:00:00Z'), T2 = new Date('2026-10-28T13:00:00Z'), T3 = new Date('2026-10-28T15:00:00Z');
+const roto = {...nuevo, category: 'Categoría inventada', start: '2027-01-09T16:00:00+01:00', received_at: '2026-10-28T11:00:00.000Z'};
+
+test('un aviso que deja de ser válido no congela los .ics: el partido conserva su última versión, los demás se actualizan y queda constancia', () => {
+  const dir = tempRepo(doc([noticeFor(target, nuevo)]));
+  try {
+    quiet(() => generate(root(dir), new Date('2026-10-28T10:00:00Z')));
+    const before = eventOf(dir, 'cadete-masculino', 'actawp-1339808-199999999');
+    assert.ok(before.includes('DTSTART:20261205T090000Z') && before.includes('SEQUENCE:0'));
+    assert.deepEqual(JSON.parse(readFileSync(join(dir, 'calendars/clupik-published.json'), 'utf8')).matches.map(m => m.match_id), [nuevo.match_id]);
+    // Llega un aviso más reciente que no se puede aplicar y, a la vez, un cambio válido de otro partido.
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(doc([noticeFor(target, roto), noticeFor(otro, {start: '2026-11-22T10:00:00+01:00'})])));
+    const manifest = quiet(() => generate(root(dir), T1));
+    assert.equal(eventOf(dir, 'cadete-masculino', 'actawp-1339808-199999999'), before);                  // ni fecha ni SEQUENCE ni marcas inventadas
+    const moved = eventOf(dir, otroSlug, uid(otro).replace('@aese-waterpolo', ''));
+    assert.ok(moved.includes('DTSTART:20261122T090000Z') && moved.includes('SEQUENCE:1'));               // el resto sigue su curso
+    assert.equal(manifest.total, snapshot.length + 1);
+    assert.deepEqual(manifest.clupik_overlay.retained, [{identity: '1339808:199999999', reason: 'categoría que el snapshot no publica en este torneo'}]);
+    assert.deepEqual(manifest.clupik_overlay.attention, [{kind: 'partido-retenido', identity: '1339808:199999999', reason: 'categoría que el snapshot no publica en este torneo', first_seen: T1.toISOString()}]);
+    assert.deepEqual(manifest.clupik_overlay.skipped.map(x => x.kind), ['no-valido']);
+    assert.deepEqual(JSON.parse(readFileSync(join(dir, 'calendars/clupik-published.json'), 'utf8')).matches.map(m => m.start), [nuevo.start]);   // la copia sigue siendo la última publicada
+    // Mientras siga sin resolverse, otra pasada no cambia ni los .ics ni la fecha en que se vio por primera vez.
+    const files = Object.fromEntries(slugs.map(slug => [slug, icsOf(dir, slug)]));
+    const again = quiet(() => generate(root(dir), T2));
+    for (const slug of slugs) assert.equal(icsOf(dir, slug), files[slug], slug);
+    assert.equal(again.clupik_overlay.attention[0].first_seen, T1.toISOString());
+    // Se arregla solo: llega un aviso válido más reciente.
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(doc([noticeFor(target, {...nuevo, start: '2027-01-09T16:00:00+01:00', received_at: '2026-10-28T14:00:00.000Z'}), noticeFor(otro, {start: '2026-11-22T10:00:00+01:00'})])));
+    const healed = quiet(() => generate(root(dir), T3));
+    assert.deepEqual([healed.clupik_overlay.retained, healed.clupik_overlay.attention, healed.clupik_overlay.skipped], [[], [], []]);
+    const fixed = eventOf(dir, 'cadete-masculino', 'actawp-1339808-199999999');
+    assert.ok(fixed.includes('DTSTART:20270109T150000Z') && fixed.includes('SEQUENCE:1'));
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('también se arregla solo cuando se corrige el código: el mismo aviso, ya válido, se aplica sin tocar los datos', () => {
+  const dir = tempRepo(doc([noticeFor(target, nuevo)]));
+  try {
+    quiet(() => generate(root(dir), T1));
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(doc([noticeFor(target, {...roto, category: 'CADETE  MASCULINO'})])));   // se lee como la categoría canónica
+    const manifest = quiet(() => generate(root(dir), T2));
+    assert.deepEqual([manifest.clupik_overlay.retained, manifest.clupik_overlay.attention], [[], []]);
+    assert.ok(eventOf(dir, 'cadete-masculino', 'actawp-1339808-199999999').includes('DTSTART:20270109T150000Z'));
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('sin la copia de partidos publicados el generador sigue negándose a publicar un partido que desaparece (no se publica a ciegas)', () => {
+  const dir = tempRepo(doc([noticeFor(target, nuevo)]));
+  try {
+    quiet(() => generate(root(dir), T1));
+    const files = Object.fromEntries(slugs.map(slug => [slug, icsOf(dir, slug)]));
+    rmSync(join(dir, 'calendars/clupik-published.json'));
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(doc([noticeFor(target, roto)])));
+    assert.throws(() => quiet(() => generate(root(dir), T2)), /Partido desaparecido/);
+    for (const slug of slugs) assert.equal(icsOf(dir, slug), files[slug], slug);                         // y no toca lo publicado
+    writeFileSync(join(dir, 'calendars/clupik-published.json'), '{no es json');                          // una copia ilegible no es peor que no tenerla
+    assert.throws(() => quiet(() => generate(root(dir), T2)), /Partido desaparecido/);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('un aviso no válido de un partido que aún no está publicado no entra en los .ics y pide atención; uno de otra temporada, no', () => {
+  const dir = tempRepo(doc([noticeFor(target, {...nuevo, category: 'Categoría inventada'}), noticeFor(target, {match_id: 188888888, tournament_id: 1200000}), noticeFor(otro, {start: '2026-11-22T10:00:00+01:00'})]));
+  try {
+    const manifest = quiet(() => generate(root(dir), T1));
+    assert.equal(manifest.total, snapshot.length);
+    assert.deepEqual(manifest.clupik_overlay.skipped.map(x => [x.identity, x.kind]), [['1339808:199999999', 'no-valido'], ['1200000:188888888', 'fuera-de-alcance']]);
+    assert.deepEqual(manifest.clupik_overlay.attention.map(x => [x.kind, x.identity]), [['aviso-no-valido', '1339808:199999999']]);
+    assert.ok(eventOf(dir, otroSlug, uid(otro).replace('@aese-waterpolo', '')).includes('DTSTART:20261122T090000Z'));
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('un aviso que el repositorio no puede leer se guarda aparte con la fecha en que se vio y llega a la lista de atención', () => {
+  const malo = {...noticeFor(otro), home_team: ''};
+  const dir = tempRepo(doc([]));
+  try {
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify({...doc([]), rejected: [{identity: otroId, reason: 'campo home_team inválido', first_seen: T1.toISOString()}]}));
+    const manifest = quiet(() => generate(root(dir), T2));
+    assert.deepEqual(manifest.clupik_overlay.attention, [{kind: 'aviso-ilegible', identity: otroId, reason: 'campo home_team inválido', first_seen: T1.toISOString()}]);
+    // plan(): la primera vez se anota, después no cambia nada y, al llegar un aviso válido, desaparece.
+    let p = plan({current: doc([]), fetched: fetched([malo]), now: NOW});
+    assert.deepEqual(p.document.rejected, [{identity: otroId, reason: 'campo home_team inválido', first_seen: new Date(NOW).toISOString()}]);
+    assert.deepEqual([p.rejectedChanged, p.write, p.changed], [true, true, false]);
+    p = plan({current: {...p.document}, fetched: fetched([malo], {}, NOW + 1800000), now: NOW + 1800000});
+    assert.deepEqual([p.rejectedChanged, p.write, p.document.rejected[0].first_seen], [false, false, new Date(NOW).toISOString()]);
+    const fixedNotice = noticeFor(otro, {received_at: '2026-10-20T09:00:00Z'});
+    p = plan({current: {...p.document}, fetched: fetched([fixedNotice], {}, NOW + 3600000), now: NOW + 3600000});
+    assert.deepEqual([p.rejectedChanged, 'rejected' in p.document], [true, false]);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('attentionAlert: avisa en la misma pasada en que aparece el problema y luego una vez al día; report() lo cuenta en el registro', () => {
+  const item = {kind: 'aviso-no-valido', identity: '1339808:199999999', reason: 'categoría inventada', first_seen: '2026-10-28T12:00:00.000Z'};
+  const at = iso => attentionAlert({attention: [item], now: Date.parse(iso)}).alert;
+  assert.equal(at('2026-10-28T12:07:00Z'), true);                                                       // la pasada en que aparece
+  assert.equal(at('2026-10-28T12:37:00Z'), false);                                                      // la siguiente no repite el correo
+  assert.equal(at('2026-10-28T18:07:00Z'), false);
+  assert.equal(at('2026-10-29T06:07:00Z'), true);                                                       // recordatorio diario
+  assert.equal(at('2026-10-29T06:37:00Z'), false);
+  for (const none of [[], undefined, null, 'x']) assert.equal(attentionAlert({attention: none, now: Date.parse('2026-10-29T06:07:00Z')}).alert, false);
+  const dir = tempRepo(doc([]));
+  try {
+    const lines = [], at2 = iso => report({root: root(dir), now: Date.parse(iso), log: x => lines.push(x)});
+    assert.equal(at2('2026-10-29T06:07:00Z').alert, false);assert.deepEqual(lines, []);                  // sin nada pendiente, silencio
+    const index = JSON.parse(readFileSync(join(dir, 'calendars/index.json'), 'utf8'));
+    index.clupik_overlay.attention = [item];
+    writeFileSync(join(dir, 'calendars/index.json'), JSON.stringify(index));
+    assert.equal(at2('2026-10-28T12:07:00Z').alert, true);
+    assert.ok(lines.some(x => x.startsWith('::error::Clupik 1339808:199999999') && x.includes('NO está en los .ics')));
+    assert.ok(lines.some(x => x.includes('docs/audit-2026-10-18.md §15')));
+    lines.length = 0;
+    assert.equal(at2('2026-10-28T12:37:00Z').alert, false);
+    assert.ok(lines.length === 1 && lines[0].startsWith('::warning::'));                                 // visible, pero sin correo
+    rmSync(join(dir, 'calendars/index.json'));
+    assert.equal(at2('2026-10-28T12:07:00Z').alert, false);                                              // sin manifiesto no hay nada que decir
+  } finally { rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('run(): con algo pendiente en el manifiesto se regenera aunque no haya avisos nuevos; sin nada pendiente, no', async () => {
+  const dir = tempRepo(doc([noticeFor(target)]));
+  try {
+    writeFileSync(join(dir, 'data/clupik_overlay_source.json'), JSON.stringify({url: URL_OK}));
+    const body = JSON.stringify(fetched([noticeFor(target)]));
+    const fetchImpl = async () => ({ok: true, status: 200, text: async () => body});
+    let result = await run({root: root(dir), now: NOW, log() {}, fetchImpl});
+    assert.deepEqual([result.changed, result.regenerate], [false, false]);
+    const index = JSON.parse(readFileSync(join(dir, 'calendars/index.json'), 'utf8'));
+    index.clupik_overlay.attention = [{kind: 'aviso-no-valido', identity: '1:2', reason: 'x', first_seen: '2026-10-28T12:00:00.000Z'}];
+    writeFileSync(join(dir, 'calendars/index.json'), JSON.stringify(index));
+    result = await run({root: root(dir), now: NOW, log() {}, fetchImpl});
+    assert.deepEqual([result.changed, result.regenerate], [false, true]);
+    // Un aviso ilegible nuevo también obliga a regenerar para que llegue a la lista de atención.
+    const bad = JSON.stringify(fetched([noticeFor(target), {...noticeFor(otro), home_team: ''}]));
+    index.clupik_overlay.attention = [];
+    writeFileSync(join(dir, 'calendars/index.json'), JSON.stringify(index));
+    result = await run({root: root(dir), now: NOW, log() {}, fetchImpl: async () => ({ok: true, status: 200, text: async () => bad})});
+    assert.deepEqual([result.changed, result.regenerate], [false, true]);
+    assert.equal(JSON.parse(readFileSync(join(dir, 'data/clupik_overlay.json'), 'utf8')).rejected.length, 1);
+  } finally { rmSync(dir, {recursive: true, force: true}); }
 });
