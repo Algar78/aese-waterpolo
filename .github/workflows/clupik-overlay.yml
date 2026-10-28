@@ -26,7 +26,8 @@ jobs:
         id: read
         run: node scripts/clupik-overlay.mjs
       - name: Regenerar y comprobar los feeds
-        if: steps.read.outputs.changed == 'true'
+        # También cuando hay algo pendiente (un aviso que no se pudo aplicar): se arregla solo al llegar un aviso válido o un arreglo del código.
+        if: steps.read.outputs.regenerate == 'true'
         run: |
           node scripts/calendar-feeds.mjs
           node --test tests/*.test.mjs
@@ -48,8 +49,12 @@ jobs:
             node scripts/calendar-feeds.mjs
           done
           test "$published" = yes
+      - name: Avisar si hay avisos de Clupik que no se han podido aplicar
+        # Después de publicar: los demás partidos ya están al día; este paso solo se pone en rojo para que GitHub avise por correo.
+        if: ${{ !cancelled() && steps.read.outputs.configured == 'true' }}
+        run: node scripts/clupik-overlay.mjs --report
       - name: Avisar si Apps Script lleva horas sin leer el correo de Clupik
-        if: steps.read.outputs.alert == 'true'
+        if: ${{ !cancelled() && steps.read.outputs.alert == 'true' }}
         run: |
           echo '::error::Apps Script no ha terminado de leer el correo de Clupik en más de 6 horas. Revisa Apps Script > Ejecuciones y el correo de alertas.'
           exit 1
