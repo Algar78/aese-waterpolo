@@ -4,12 +4,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync, existsSync} from 'node:fs';
-import {applyOverlay} from '../scripts/calendar-feeds.mjs';
+import {applyOverlay, readMemory} from '../scripts/calendar-feeds.mjs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const json=p=>JSON.parse(read(p));
 const matches=json('data/actawp_matches.json'), index=json('calendars/index.json'), bundle=json('calendars/general-calendar.json');
 // Lo que publican los .ics: el snapshot de ActaWP más los avisos de Clupik (data/clupik_overlay.json).
-const effective=applyOverlay(matches,bundle.status,json('data/clupik_overlay.json')).matches;
+// Con la misma memoria que usa el generador: un partido conservado por un aviso que dejó de valer también está en los .ics.
+const effective=applyOverlay(matches,bundle.status,json('data/clupik_overlay.json'),readMemory(new URL('../',import.meta.url),json('calendars/event-state.json'))).matches;
 const BASE='https://algar78.github.io/aese-waterpolo/';
 // Written down on 2026-10-18 from what was published then. Adding to this is fine; changing or removing is not.
 const FEEDS={'Absoluto Masculino':'absoluto-masculino','Alevín Mixto A':'alevin-mixto-a','Alevín Mixto B':'alevin-mixto-b','Cadete Masculino':'cadete-masculino',

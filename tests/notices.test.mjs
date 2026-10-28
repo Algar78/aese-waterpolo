@@ -387,7 +387,10 @@ test('aviso ilegible: un solo correo que lo nombra, no cuenta como fallo del cic
 });
 test('avisos ilegibles: varios a la vez dan un solo correo y, si el envío falla, se reintenta sin duplicar',()=>{
   const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
-  const rotos=[0,1,2].map(i=>h.msg(0,'Partido roto '+i,new Date(Date.now()-1000-i).toISOString(),'<b>roto '+i+'</b>'));
+  // El identificador del mensaje de prueba es su fecha: se fija la hora una sola vez, porque tres lecturas de Date.now()
+  // podían cruzar un milisegundo y dos mensajes quedaban con el mismo identificador (la prueba fallaba 1 de cada ~30 veces).
+  const t0=Date.now();
+  const rotos=[0,1,2].map(i=>h.msg(0,'Partido roto '+i,new Date(t0-1000-i).toISOString(),'<b>roto '+i+'</b>'));
   h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>rotos}]:[]};
   h.c.syncActaWPToCalendar=()=>({status:'complete'});
   const send=h.c.MailApp.sendEmail;let fail=true;

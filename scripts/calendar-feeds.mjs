@@ -58,7 +58,11 @@ export function validate(matches, status) {
 //  - si es posterior y no coincide, se conserva el aviso hasta que una lectura lo
 //    confirme, y se deja constancia (`discordant`) para que alguien lo revise;
 //  - un aviso nunca borra un partido: solo cambia fecha, equipos, sede o estado, o
-//    añade un partido nuevo de un torneo que ya está en el snapshot.
+//    añade un partido nuevo de un torneo que ya está en el snapshot;
+//  - un partido que ya se publicó gracias a un aviso tampoco desaparece si ese aviso deja de ser válido: conserva la
+//    última versión publicada (calendars/clupik-published.json), los demás partidos se siguen actualizando y queda
+//    constancia en `retained`/`attention` para que el workflow avise. Se arregla solo cuando llega un aviso válido más
+//    nuevo o cuando se corrige el código.
 // Clupik escribe la categoría en mayúsculas («ALEVÍN MIXTO A») en los partidos que no están en el snapshot; en los .ics se usa
 // el nombre canónico. Sin esto, el segundo aviso de uno de esos partidos (28/10/2026) se descartaba, el partido «desaparecía» y el
 // generador se negaba a publicar: los .ics quedaban congelados. Un nombre que no coincide con ninguna categoría sigue rechazándose.
@@ -88,13 +92,14 @@ export function parseOverlay(document) {
   }
   return {entries, rejected};
 }
-export function applyOverlay(matches, status, overlay) {
+export function applyOverlay(matches, status, overlay, memory = {}) {
   const {entries, rejected} = parseOverlay(overlay);
+  const published = memory.published ?? new Set(), lastGood = memory.lastGood ?? [];
   const snapshotTime = Date.parse(status.last_complete_export_at || status.attempted_at || '');
   const byUid = new Map(matches.map(m => [uid(m), m]));
   const known = new Map();                       // torneo -> categorías que ya publica el snapshot
   for (const m of matches) known.set(m.tournament_id, (known.get(m.tournament_id) ?? new Set()).add(m.category));
-  const replaced = new Map(), changed = [], added = [], discordant = [], skipped = [...rejected];
+  const replaced = new Map(), changed = [], added = [], discordant = [], skipped = rejected.map(item => ({...item, kind: 'no-valido'}));
   const take = (id, match) => {                  // el partido resultante debe cumplir lo mismo que cualquiera del snapshot
     validateMatch(match, new Set(), Object.fromEntries(Object.keys(categories).map(name => [name, 0])), false);
     return match;
@@ -119,18 +124,58 @@ export function applyOverlay(matches, status, overlay) {
       } else {
         // Solo partidos nuevos de torneos y categorías que el snapshot ya publica: un aviso de otra
         // temporada, que sigue guardado en Apps Script, no puede colar partidos antiguos en los .ics.
-        if (!known.get(notice.tournament_id)?.has(notice.category)) throw Error('torneo o categoría que el snapshot no publica');
+        // Un torneo que el snapshot no publica (otra temporada) es «fuera-de-alcance»: no hay nada que arreglar. En cambio, una
+        // categoría que no cuadra dentro de un torneo que sí se publica es un aviso «no-valido»: un partido de AESE no estaría en los .ics.
+        const here = known.get(notice.tournament_id);
+        if (!here) throw Object.assign(Error('torneo que el snapshot no publica'), {scope: true});
+        if (!here.has(notice.category)) throw Error('categoría que el snapshot no publica en este torneo');
         added.push(take(id, {category: notice.category, tournament_id: notice.tournament_id, match_id: notice.match_id, home_team: notice.home_team, away_team: notice.away_team,
           start: notice.start, venue: notice.venue, round_name: notice.round_name, status: notice.status,
           url: `https://actawp.natacio.cat/ca/tournament/${notice.tournament_id}/match/${notice.match_id}/results`}));
       }
-    } catch (error) { skipped.push({identity, reason: error.message}); }
+    } catch (error) { skipped.push({identity, reason: error.message, kind: error.scope ? 'fuera-de-alcance' : 'no-valido'}); }
   }
-  const effective = [...matches.map(m => replaced.get(uid(m)) ?? m), ...added];
+  // Un partido ya publicado por un aviso no puede desaparecer porque ese aviso ya no sea válido (o falte): se conserva tal y
+  // como se publicó. Sin esta copia, eventState se negaba a publicar y los 9 .ics quedaban congelados (28/10/2026).
+  const present = new Set([...byUid.keys(), ...added.map(uid)]);
+  const kept = [], retained = [];
+  for (const old of lastGood) {
+    if (!old || typeof old !== 'object') continue;
+    const id = uid(old), identity = `${old.tournament_id}:${old.match_id}`;
+    if (present.has(id) || !published.has(id)) continue;
+    try { take(id, old); } catch (_) { continue; }          // si la copia ya no cumple las reglas no se publica a ciegas: eventState se negará
+    kept.push(old);
+    retained.push({identity, reason: skipped.find(item => item.identity === identity)?.reason ?? 'ya no hay un aviso vigente de este partido'});
+  }
+  const effective = [...matches.map(m => replaced.get(uid(m)) ?? m), ...added, ...kept];
   const ids = new Set(), counts = Object.fromEntries(Object.keys(categories).map(name => [name, 0]));
   for (const match of effective) validateMatch(match, ids, counts, false);   // el snapshot ya se validó con sede verificada
   if (matches.some(m => !ids.has(uid(m)))) throw Error('La superposición habría quitado un partido: se conservan los feeds');
-  return {matches: effective, counts, changed, added: added.map(m => `${m.tournament_id}:${m.match_id}`), discordant, skipped};
+  return {matches: effective, counts, changed, added: added.map(m => `${m.tournament_id}:${m.match_id}`), discordant, skipped, retained};
+}
+// Lo que hay que mirar a mano: avisos que no se han podido aplicar (y por tanto no están en los .ics) y partidos conservados.
+// `first_seen` se arrastra de una pasada a otra para saber si el problema es nuevo (el workflow avisa en seguida) o viejo
+// (recordatorio diario). Un aviso de otra temporada («fuera-de-alcance») no cuenta.
+export function attentionItems({overlay, ingested = [], previous = [], now}) {
+  const kept = new Set(overlay.retained.map(item => item.identity));
+  const items = [
+    ...ingested.map(item => ({kind: 'aviso-ilegible', identity: item.identity, reason: item.reason, first_seen: item.first_seen})),
+    ...overlay.retained.map(item => ({kind: 'partido-retenido', identity: item.identity, reason: item.reason})),
+    ...overlay.skipped.filter(item => item.kind === 'no-valido' && !kept.has(item.identity)).map(item => ({kind: 'aviso-no-valido', identity: item.identity, reason: item.reason}))
+  ];
+  const seen = new Map(previous.filter(item => item && typeof item === 'object').map(item => [`${item.kind}|${item.identity}|${item.reason}`, item.first_seen]));
+  return items.map(item => ({...item, first_seen: item.first_seen ?? seen.get(`${item.kind}|${item.identity}|${item.reason}`) ?? now}))
+    .sort((a, b) => a.kind.localeCompare(b.kind) || a.identity.localeCompare(b.identity));
+}
+// Qué se publicó en la pasada anterior (event-state.json) y los partidos que añadieron los avisos (clupik-published.json).
+export const publishedFile = 'calendars/clupik-published.json';
+export function readMemory(root = new URL('../', import.meta.url), previous = {}) {
+  let lastGood = [];
+  try {
+    const document = JSON.parse(readFileSync(new URL(publishedFile, root)));
+    if (document?.schema_version === 1 && Array.isArray(document.matches)) lastGood = document.matches;
+  } catch (error) { if (error.code !== 'ENOENT') console.log(`::warning::${publishedFile} no se puede leer: sin copia de los partidos añadidos por avisos`); }
+  return {published: new Set(Object.keys(previous)), lastGood};
 }
 export function eventState(matches, previous = {}, now = '20261010T000000Z') {
   const current = new Set(matches.map(uid));
@@ -152,7 +197,7 @@ export function feed(name, matches, state = eventState(matches)) {
   lines.push('END:VCALENDAR');
   return lines.map(fold).join('\r\n')+'\r\n';
 }
-export function generate(root = new URL('../', import.meta.url)) {
+export function generate(root = new URL('../', import.meta.url), now = new Date()) {
   const raw = readFileSync(new URL('data/actawp_matches.json',root));
   const snapshot = JSON.parse(raw);
   const status = JSON.parse(readFileSync(new URL('data/actawp_export_status.json',root)));
@@ -162,13 +207,18 @@ export function generate(root = new URL('../', import.meta.url)) {
   // scripts/clupik-overlay.mjs). Sin fichero o sin avisos, el resultado es exactamente el del snapshot.
   let document = {schema_version:1, notices:[]};
   try { document = JSON.parse(readFileSync(new URL('data/clupik_overlay.json',root))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  const overlay = applyOverlay(snapshot, status, document);
-  const matches = overlay.matches, counts = overlay.counts;
   let previous = {};
   try { previous = JSON.parse(readFileSync(new URL('calendars/event-state.json',root))); } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  const state = eventState(matches, previous, utc(new Date()));
+  const overlay = applyOverlay(snapshot, status, document, readMemory(root, previous));
+  const matches = overlay.matches, counts = overlay.counts;
+  let before = [];
+  try { before = JSON.parse(readFileSync(new URL('calendars/index.json',root))).clupik_overlay?.attention ?? []; } catch (_) { before = []; }
+  // Avisos que scripts/clupik-overlay.mjs no pudo ni leer (los guarda en `rejected`); siguen sin estar en los .ics.
+  const ingested = (Array.isArray(document.rejected) ? document.rejected : []).filter(item => item && typeof item.identity === 'string' && typeof item.reason === 'string' && Number.isFinite(Date.parse(item.first_seen)));
+  const attention = attentionItems({overlay, ingested, previous: Array.isArray(before) ? before : [], now: new Date(now).toISOString()});
+  const state = eventState(matches, previous, utc(now));
   const manifest = {source:'data/actawp_matches.json',snapshot_sha256:createHash('sha256').update(raw).digest('hex'),total:matches.length,timeZone:'Europe/Madrid',last_complete_export_at:status.last_complete_export_at ?? null,freshness_policy:status.freshness_policy ?? null,source_mode:status.source?.mode ?? null,pending_matches:(status.pending_matches ?? []).map(({category,match_id,teams,reason,url})=>({category,match_id,teams,reason,url})),categories:Object.entries(categories).map(([name,slug])=>({name,slug,count:counts[name],url:`${baseURL}calendars/${slug}.ics`})),
-    clupik_overlay:{changed:overlay.changed,added:overlay.added,discordant:overlay.discordant,skipped:overlay.skipped}};
+    clupik_overlay:{changed:overlay.changed,added:overlay.added,discordant:overlay.discordant,skipped:overlay.skipped,retained:overlay.retained,attention}};
   // One validated document keeps Apps Script independent of GitHub's shared-IP API quota.
   // Apps Script aplica por su cuenta los avisos de Clupik, así que el paquete lleva solo el snapshot.
   const bundle = {schema_version:1, matches:snapshot, status, venues:JSON.parse(readFileSync(new URL('data/venues.json',root)))};
@@ -179,12 +229,17 @@ export function generate(root = new URL('../', import.meta.url)) {
   mkdirSync(new URL('calendars/',root),{recursive:true});
   for (const [name,slug] of Object.entries(categories)) writeFileSync(new URL(`calendars/${slug}.ics`,root),feed(name,matches,state));
   writeFileSync(new URL('calendars/event-state.json',root),JSON.stringify(state,null,2)+'\n');
+  // Copia de los partidos que solo existen por un aviso de Clupik, tal y como se publican: es lo que se conserva si el aviso deja de valer.
+  const snapshotIds = new Set(snapshot.map(uid));
+  const fromNotices = matches.filter(m => !snapshotIds.has(uid(m))).sort((a,b) => a.tournament_id-b.tournament_id || a.match_id-b.match_id);
+  writeFileSync(new URL(publishedFile,root),JSON.stringify({schema_version:1,matches:fromNotices},null,2)+'\n');
   writeFileSync(new URL('calendars/index.json',root),JSON.stringify(manifest,null,2)+'\n');
   writeFileSync(new URL('calendars/general-calendar.json',root),JSON.stringify(bundle,null,2)+'\n');
   console.log(`Validados y generados: ${Object.keys(categories).length} feeds, ${matches.length} partidos`+
-    (overlay.changed.length || overlay.added.length || overlay.skipped.length || overlay.discordant.length ? ` (avisos de Clupik: ${overlay.changed.length} cambiados, ${overlay.added.length} nuevos, ${overlay.discordant.length} sin confirmar por ActaWP, ${overlay.skipped.length} descartados)` : ''));
+    (overlay.changed.length || overlay.added.length || overlay.skipped.length || overlay.discordant.length || overlay.retained.length ? ` (avisos de Clupik: ${overlay.changed.length} cambiados, ${overlay.added.length} nuevos, ${overlay.discordant.length} sin confirmar por ActaWP, ${overlay.skipped.length} descartados, ${overlay.retained.length} conservados)` : ''));
   for (const m of matches) if (!verifiedMapsURL(m.venue)) console.log(`::warning::Partido ${m.tournament_id}:${m.match_id} publicado sin enlace de Maps: sede sin verificar (${m.venue}). Comprobar la dirección y añadirla a data/venues.json`);
   for (const item of overlay.skipped) console.log(`::warning::Aviso de Clupik descartado (${item.identity}): ${item.reason}`);
+  for (const item of overlay.retained) console.log(`::warning::Partido ${item.identity} conservado tal y como estaba publicado: ${item.reason}`);
   for (const identity of overlay.discordant) console.log(`::warning::El aviso de Clupik ${identity} no coincide con la última lectura de ActaWP: se mantiene el aviso`);
   return manifest;
 }
