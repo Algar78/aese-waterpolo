@@ -8,7 +8,7 @@ import {execFileSync} from 'node:child_process';
 import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, cpSync, rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {applyOverlay, parseOverlay, generate, feed, eventState, uid, categories} from '../scripts/calendar-feeds.mjs';
+import {applyOverlay, parseOverlay, generate, feed, eventState, uid, categories, canonicalCategory} from '../scripts/calendar-feeds.mjs';
 import {mergeOverlay, plan, run, readSource, sourcePattern, STALE_SCAN_MS} from '../scripts/clupik-overlay.mjs';
 
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
@@ -84,6 +84,39 @@ test('un partido nuevo de un torneo que ya se publica se añade; los demás avis
   assert.deepEqual(out.added, ['1339808:199999999']);
   assert.equal(out.skipped.length, 5);
   assert.equal(out.counts['Cadete Masculino'], snapshot.filter(m => m.category === 'Cadete Masculino').length + 1);
+});
+
+test('la categoría de Clupik en mayúsculas y con o sin tildes se lee como la categoría canónica; un nombre desconocido se sigue rechazando', () => {
+  for (const name of Object.keys(categories)) {
+    assert.equal(canonicalCategory(name), name);
+    assert.equal(canonicalCategory(name.toLocaleUpperCase('es')), name);
+    assert.equal(canonicalCategory(' ' + name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/ /g, '  ') + ' '), name);
+  }
+  assert.equal(canonicalCategory('ALEVÍN MIXTO A'), 'Alevín Mixto A');
+  assert.equal(canonicalCategory('Categoría inventada'), 'Categoría inventada');
+  const out = parseOverlay(doc([noticeFor(target, {category: 'CADETE MASCULINO'}), noticeFor(target, {match_id: 1, category: 'ALEVÍN MIXTO C'})]));
+  assert.deepEqual(out.entries.map(e => e.category), ['Cadete Masculino', 'ALEVÍN MIXTO C']);
+});
+
+// Incidente del 28/10/2026: Clupik modificó la fecha de un partido de la 2.ª fase que no está en el snapshot. El aviso llegó con la
+// categoría en mayúsculas, el generador lo descartó, el partido «desapareció» y «Clupik overlay» falló en cada pasada.
+test('generate(): un partido nuevo ya publicado se actualiza con un aviso que trae la categoría en mayúsculas, sin bloquear los .ics', () => {
+  const nuevo = {match_id: 199999999, home_team: 'C.N. NUEVO', start: '2026-12-05T10:00:00+01:00'};
+  const dir = tempRepo(doc([noticeFor(target, nuevo)]));
+  try {
+    generate(root(dir));
+    const first = readFileSync(join(dir, 'calendars/cadete-masculino.ics'), 'utf8');
+    assert.ok(first.includes('DTSTART:20261205T090000Z') && first.includes('SEQUENCE:0'));
+    writeFileSync(join(dir, 'data/clupik_overlay.json'), JSON.stringify(doc([noticeFor(target, {...nuevo, category: 'CADETE MASCULINO', start: '2027-01-09T16:00:00+01:00', received_at: '2026-10-28T08:33:12.000Z'})])));
+    const manifest = generate(root(dir));
+    assert.deepEqual(manifest.clupik_overlay.skipped, []);
+    assert.equal(manifest.total, snapshot.length + 1);
+    const text = readFileSync(join(dir, 'calendars/cadete-masculino.ics'), 'utf8');
+    const event = text.split('BEGIN:VEVENT').find(t => t.includes('UID:actawp-1339808-199999999@aese-waterpolo'));
+    assert.ok(event.includes('DTSTART:20270109T150000Z') && !event.includes('DTSTART:20261205'));
+    assert.ok(event.includes('SEQUENCE:1'));
+    assert.ok(text.includes('X-WR-CALNAME:AESE · Cadete Masculino'));
+  } finally { rmSync(dir, {recursive: true, force: true}); }
 });
 
 test('un aviso defectuoso no impide aplicar los demás; nunca desaparece un partido', () => {
