@@ -186,6 +186,7 @@ function reconcileClupikNotice_(message,calendar) {
     'El partido '+id+' ('+match.home_team+' vs '+match.away_team+') se ha publicado sin enlace de Google Maps porque la piscina «'+match.venue+'» aún no está verificada. '+
     'Hay que comprobar su dirección y añadirla a data/venues.json.',30*86400000,'AESE: piscina nueva sin enlace de Maps','');
   props.setProperty(key,JSON.stringify(match));
+  aeseMarkFeedsDirty_(props);       // los .ics de las familias aún no recogen este aviso (aeseRefreshFeeds_)
   const result=reconcileActaWPMatch_(calendar,match);
   Logger.log('Clupik '+id+' '+result);
   return result;
@@ -271,6 +272,82 @@ function aeseAlert_(key,detail,windowMs,subject,tail) {
   } catch(error) { console.log('Alert delivery failed: '+error.message); }
 }
 
+// ---- Aviso inmediato a los .ics de las familias ---------------------------
+// El Google Calendar se actualiza en este mismo ciclo, pero los .ics los regenera el workflow «Clupik
+// overlay» de GitHub, y GitHub ejecuta los workflows programados solo cada pocas horas (el 29/10 hubo
+// tres pasadas entre las 22:53 y las 09:24). Cuando se guarda un aviso nuevo se marca «pendiente» y, si
+// existe un token de GitHub en las propiedades del script, se pide al workflow que se ejecute ya
+// (workflow_dispatch, la API oficial). Es un acelerador opcional y nunca un requisito:
+//  - sin token no hace nada y el workflow programado sigue haciendo su trabajo;
+//  - un fallo aquí jamás detiene ni hace fallar el ciclo del Calendar;
+//  - mientras no se consiga avisar, la marca se conserva y se reintenta en cada ciclo;
+//  - el token no sale nunca en registros ni en correos.
+// Token: «fine-grained», solo este repositorio, permiso «Actions: Read and write», en la propiedad
+// AESE_GITHUB_TOKEN (docs/dispatch-github.md).
+const AESE_FEEDS_DIRTY = 'AESE_FEEDS_DIRTY';
+const AESE_GITHUB_TOKEN = 'AESE_GITHUB_TOKEN';
+const AESE_DISPATCH_URL = 'https://api.github.com/repos/Algar78/aese-waterpolo/actions/workflows/clupik-overlay.yml/dispatches';
+const AESE_DISPATCH_TRANSIENT_MS = 2*3600000;     // un fallo pasajero (red, 5xx) no avisa hasta durar más de 2 h
+const AESE_TOKEN_WARNING_MS = 14*86400000;        // aviso previo a la caducidad del token
+
+function aeseMarkFeedsDirty_(props) {
+  // Se conserva la marca más antigua: mide cuánto lleva esperando el primer aviso sin entregar.
+  if(!Number(props.getProperty(AESE_FEEDS_DIRTY)||0)) props.setProperty(AESE_FEEDS_DIRTY,String(Date.now()));
+}
+
+function aeseTokenExpiry_(response) {
+  // GitHub informa de la caducidad de los tokens «fine-grained» en una cabecera: «2026-11-30 12:00:00 UTC».
+  try {
+    const headers=response.getAllHeaders ? response.getAllHeaders() : {};
+    const name=Object.keys(headers).find(k=>k.toLowerCase()==='github-authentication-token-expiration');
+    if(!name) return null;
+    const stamp=Date.parse(String(headers[name]).trim().replace(' UTC','Z').replace(' ','T'));
+    return Number.isFinite(stamp)?stamp:null;
+  } catch(_) { return null; }
+}
+
+// Devuelve 'clean' (nada pendiente), 'no-token', 'dispatched' o 'failed'. Nunca lanza.
+function aeseRefreshFeeds_() {
+  try {
+    const props=PropertiesService.getScriptProperties(), now=Date.now();
+    const dirty=Number(props.getProperty(AESE_FEEDS_DIRTY)||0);
+    if(!dirty) return 'clean';
+    const token=props.getProperty(AESE_GITHUB_TOKEN);
+    if(!token) { props.deleteProperty(AESE_FEEDS_DIRTY); return 'no-token'; }
+    const tail='\nEl Google Calendar no se ve afectado. Los .ics de las familias se seguirán actualizando con el ciclo programado de GitHub (cada pocas horas) '+
+      'o ejecutando a mano «Clupik overlay» en https://github.com/Algar78/aese-waterpolo/actions/workflows/clupik-overlay.yml.';
+    let response, code;
+    try {
+      response=UrlFetchApp.fetch(AESE_DISPATCH_URL,{method:'post',contentType:'application/json',payload:JSON.stringify({ref:'main'}),muteHttpExceptions:true,
+        headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
+      code=response.getResponseCode();
+    } catch(error) { code=0; }
+    if(code===204) {
+      if(Number(props.getProperty(AESE_FEEDS_DIRTY)||0)===dirty) props.deleteProperty(AESE_FEEDS_DIRTY);
+      props.setProperty('AESE_FEEDS_LAST_DISPATCH',new Date(now).toISOString());
+      Logger.log('Familias: aviso enviado a GitHub');
+      const expiry=aeseTokenExpiry_(response);
+      if(expiry!==null && expiry-now<AESE_TOKEN_WARNING_MS)
+        aeseAlert_('github_token_caduca','El token de GitHub que avisa a los .ics de las familias '+(expiry<=now?'ha caducado':'caduca el '+
+          Utilities.formatDate(new Date(expiry),'Europe/Madrid','dd/MM/yyyy'))+'. Hay que crear otro igual y sustituirlo en la propiedad AESE_GITHUB_TOKEN '+
+          '(docs/dispatch-github.md). Mientras tanto los .ics se actualizan solo con el ciclo programado de GitHub.',3*86400000,'AESE: el token de GitHub está a punto de caducar','');
+      return 'dispatched';
+    }
+    // 401/403/404/422: el token no vale (caducado, revocado, sin permiso) o el workflow no existe. No se arregla solo.
+    // Red, 429 y 5xx suelen ser pasajeros: solo avisan si llevan más de 2 h sin conseguirse.
+    const persistent=code===401||code===403||code===404||code===422;
+    Logger.log('Familias: GitHub respondió '+code+'; se reintentará');
+    if(persistent) aeseAlert_('github_aviso','GitHub rechaza el aviso a los .ics de las familias (respuesta '+code+'): el token ha caducado, ha sido revocado o no tiene permiso «Actions: Read and write» sobre el repositorio.',24*3600000,
+      'AESE: no se puede avisar a GitHub de los cambios de Clupik',tail);
+    else if(now-dirty>AESE_DISPATCH_TRANSIENT_MS) aeseAlert_('github_aviso','Llevo más de 2 horas sin poder avisar a GitHub de un cambio de Clupik (respuesta '+(code||'sin conexión')+').',24*3600000,
+      'AESE: GitHub no responde a los avisos de Clupik',tail);
+    return 'failed';
+  } catch(error) {
+    console.log('Familias: aviso a GitHub no completado: '+error.message);
+    return 'failed';
+  }
+}
+
 // ---- Frescura de los datos oficiales -------------------------------------
 // "Ejecutado correctamente" no significa "actualizado": el 16/10 el ciclo
 // terminó bien con datos de hacía seis días. Estas funciones miden la edad del
@@ -346,6 +423,8 @@ function runAESECalendarSync() {
     props.setProperty('AESE_CLUPIK_LAST_ERROR',error.message);
     aeseAlert_('clupik','No se procesaron los avisos Clupik: '+error.message);
   }
+  // Aunque este ciclo haya fallado a medias, los avisos ya guardados no esperan al siguiente.
+  aeseRefreshFeeds_();
   aeseFlushNewMatches_();
   let actawpFailure=null;
   try {
