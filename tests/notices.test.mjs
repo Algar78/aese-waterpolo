@@ -659,3 +659,80 @@ test('varios partidos nuevos sin fecha llegan en un solo correo, y si el correo 
   assert.equal(h.properties.get('AESE_NEW_MATCH_QUEUE'),undefined);
   h.c.aeseFlushNewMatches_();assert.equal(h.mail.length,1);
 });
+
+// ---- Aviso inmediato a GitHub (acelerador opcional de los .ics de las familias) ----
+const DISPATCH_URL='https://api.github.com/repos/Algar78/aese-waterpolo/actions/workflows/clupik-overlay.yml/dispatches';
+function dispatchHarness(token='github_pat_SECRETO'){
+  const h=harness();h.properties.set('ULTIMA_EJECUCION','2026-10-15T10:00:00Z');
+  if(token)h.properties.set('AESE_GITHUB_TOKEN',token);
+  const m=h.msg(1,'Modificado un partido',new Date(Date.now()-1000).toISOString());
+  h.c.GmailApp={search:(q,o)=>o===0?[{getMessages:()=>[m]}]:[]};
+  h.c.syncActaWPToCalendar=()=>({status:'complete'});
+  const calls=[];const reply={code:204,headers:{},throws:false};
+  h.c.UrlFetchApp.fetch=(url,opts)=>{calls.push({url,opts});if(reply.throws)throw Error('sin red');return {getResponseCode:()=>reply.code,getAllHeaders:()=>reply.headers,getContentText:()=>''}};
+  return {h,m,calls,reply};
+}
+const noSecret=(h)=>{assert.ok(!JSON.stringify([h.logs,h.mail]).includes('SECRETO'),'el token no debe salir en registros ni correos');};
+test('aviso a GitHub: un aviso nuevo pide ejecutar el workflow una sola vez y el token solo viaja en la cabecera',()=>{
+  const {h,calls}=dispatchHarness();
+  h.c.runAESECalendarSync();
+  assert.equal(h.events.length,1);                                         // el Calendar se actualiza como siempre
+  assert.equal(calls.length,1);assert.equal(calls[0].url,DISPATCH_URL);
+  assert.equal(calls[0].opts.method,'post');assert.deepEqual(JSON.parse(calls[0].opts.payload),{ref:'main'});
+  assert.equal(calls[0].opts.headers.Authorization,'Bearer github_pat_SECRETO');
+  assert.ok(!calls[0].url.includes('SECRETO')&&!calls[0].opts.payload.includes('SECRETO'));
+  assert.equal(h.properties.has('AESE_FEEDS_DIRTY'),false);assert.ok(h.properties.get('AESE_FEEDS_LAST_DISPATCH'));
+  h.c.runAESECalendarSync();h.c.runAESECalendarSync();
+  assert.equal(calls.length,1);                                            // nada nuevo: no se vuelve a avisar
+  assert.equal(h.mail.length,0);noSecret(h);
+});
+test('aviso a GitHub: sin token no se llama a GitHub, no hay correos y la marca no se acumula',()=>{
+  const {h,calls}=dispatchHarness(null);
+  h.c.runAESECalendarSync();
+  assert.equal(h.events.length,1);assert.equal(calls.length,0);assert.equal(h.mail.length,0);
+  assert.equal(h.properties.has('AESE_FEEDS_DIRTY'),false);
+});
+test('aviso a GitHub: repetir un aviso ya aplicado no vuelve a pedir el workflow',()=>{
+  const {h,m,calls}=dispatchHarness();
+  h.c.runAESECalendarSync();assert.equal(calls.length,1);
+  h.properties.delete('AESE_CLUPIK_DONE_'+m.getId());                      // el correo se vuelve a leer
+  h.c.runAESECalendarSync();
+  assert.equal(calls.length,1);
+});
+test('aviso a GitHub: token rechazado no frena el Calendar, conserva la marca, avisa una vez y se recupera solo',()=>{
+  const {h,calls,reply}=dispatchHarness();
+  reply.code=401;
+  assert.doesNotThrow(()=>h.c.runAESECalendarSync());
+  assert.equal(h.events.length,1);assert.equal(h.properties.get('AESE_LAST_ERROR'),'');assert.ok(h.properties.get('AESE_CLUPIK_LAST_SUCCESS'));
+  assert.ok(h.properties.has('AESE_FEEDS_DIRTY'));
+  assert.equal(h.mail.length,1);assert.match(h.mail[0][1],/no se puede avisar a GitHub/);assert.match(h.mail[0][2],/401/);
+  assert.match(h.mail[0][2],/Google Calendar no se ve afectado/);
+  h.c.runAESECalendarSync();                                               // reintenta en cada ciclo, sin más correos
+  assert.equal(calls.length,2);assert.equal(h.mail.length,1);
+  reply.code=204;h.c.runAESECalendarSync();                                // token nuevo: se entrega el aviso que esperaba
+  assert.equal(calls.length,3);assert.equal(h.properties.has('AESE_FEEDS_DIRTY'),false);
+  assert.equal(h.mail.length,1);noSecret(h);
+});
+test('aviso a GitHub: un fallo pasajero no envía correo hasta pasar 2 horas, y un fallo de red tampoco rompe el ciclo',()=>{
+  const {h,calls,reply}=dispatchHarness();
+  reply.code=503;h.c.runAESECalendarSync();
+  assert.equal(h.mail.length,0);assert.ok(h.properties.has('AESE_FEEDS_DIRTY'));
+  reply.throws=true;assert.doesNotThrow(()=>h.c.runAESECalendarSync());
+  assert.equal(h.mail.length,0);assert.equal(calls.length,2);
+  h.properties.set('AESE_FEEDS_DIRTY',String(Date.now()-3*3600000));       // lleva 3 h sin entregarse
+  h.c.runAESECalendarSync();
+  assert.equal(h.mail.length,1);assert.match(h.mail[0][1],/GitHub no responde/);
+  h.c.runAESECalendarSync();assert.equal(h.mail.length,1);                 // y no insiste
+  reply.throws=false;reply.code=204;h.c.runAESECalendarSync();
+  assert.equal(h.properties.has('AESE_FEEDS_DIRTY'),false);noSecret(h);
+});
+test('aviso a GitHub: avisa 14 días antes de que caduque el token y no antes',()=>{
+  const stamp=days=>new Date(Date.now()+days*86400000).toISOString().slice(0,19).replace('T',' ')+' UTC';
+  const lejos=dispatchHarness();lejos.reply.headers={'github-authentication-token-expiration':stamp(60)};
+  lejos.h.c.runAESECalendarSync();assert.equal(lejos.h.mail.length,0);
+  const cerca=dispatchHarness();cerca.reply.headers={'GitHub-Authentication-Token-Expiration':stamp(5)};
+  cerca.h.c.runAESECalendarSync();
+  assert.equal(cerca.h.mail.length,1);assert.match(cerca.h.mail[0][1],/a punto de caducar/);assert.match(cerca.h.mail[0][2],/AESE_GITHUB_TOKEN/);
+  assert.equal(cerca.h.properties.has('AESE_FEEDS_DIRTY'),false);          // el aviso sí se entregó
+  noSecret(cerca.h);
+});
