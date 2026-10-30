@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-30T11:11:53.204Z",
+  "checked_at": "2026-10-30T13:10:48.475Z",
   "clupik_last_success": "2026-10-30T10:53:43.669Z",
   "notices": [
     {
@@ -230,6 +230,18 @@
       "start": "2026-10-24T13:00:00+02:00",
       "status": "confirmed",
       "received_at": "2026-10-16T06:33:09.000Z"
+    },
+    {
+      "tournament_id": 1339809,
+      "match_id": 145574598,
+      "category": "Infantil Mixto B",
+      "home_team": "A.E. SANTA EULÀLIA B",
+      "away_team": "C.N. RUBÍ B",
+      "venue": "228 - Santa Eulàlia, AE",
+      "round_name": "Jornada 9",
+      "start": "2027-01-09T18:45:00+01:00",
+      "status": "confirmed",
+      "received_at": "2026-10-30T13:08:07.000Z"
     },
     {
       "tournament_id": 1339809,
