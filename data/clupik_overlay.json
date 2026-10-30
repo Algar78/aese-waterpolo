@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-29T15:31:43.789Z",
-  "clupik_last_success": "2026-10-29T15:23:41.653Z",
+  "checked_at": "2026-10-30T11:11:53.204Z",
+  "clupik_last_success": "2026-10-30T10:53:43.669Z",
   "notices": [
     {
       "tournament_id": 1339803,
@@ -107,9 +107,9 @@
       "away_team": "A.E. SANTA EULÀLIA",
       "venue": "171 - Banyoles, CN",
       "round_name": "Jornada 5",
-      "start": "2026-12-13T11:15:00+01:00",
+      "start": "2026-12-13T13:00:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-27T12:05:00.000Z"
+      "received_at": "2026-10-30T07:36:11.000Z"
     },
     {
       "tournament_id": 1339807,
@@ -203,9 +203,9 @@
       "away_team": "A.E. SANTA EULÀLIA",
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 13",
-      "start": "2026-11-28T20:15:00+01:00",
+      "start": "2027-01-23T20:15:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-28T13:45:19.000Z"
+      "received_at": "2026-10-30T11:05:09.000Z"
     },
     {
       "tournament_id": 1339807,
@@ -335,9 +335,9 @@
       "away_team": "A.E. SANTA EULÀLIA A",
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 10",
-      "start": "2026-11-28T16:45:00+01:00",
+      "start": "2027-01-16T18:30:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-28T13:45:07.000Z"
+      "received_at": "2026-10-30T11:06:17.000Z"
     },
     {
       "tournament_id": 1339809,
