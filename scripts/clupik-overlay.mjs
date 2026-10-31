@@ -20,6 +20,7 @@ import { parseOverlay, uid } from './calendar-feeds.mjs';
 
 export const sourcePattern = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]{20,}\/exec$/;
 export const STALE_SCAN_MS = 6 * 3600000;       // Apps Script sin terminar una lectura del correo en 6 h
+export const STALE_ALERT_MS = 6 * 3600000;      // y, mientras siga así, un aviso por correo como mucho cada 6 h
 export const MAX_RESPONSE_AGE_MS = 3600000;     // una respuesta con más de 1 h no es «de ahora»
 export const REFRESH_MS = 5 * 86400000;
 export const FRESH_MS = 20 * 60000;             // un problema visto hace menos de 20 min es de esta pasada: se avisa en seguida
@@ -55,10 +56,15 @@ export function plan({current, fetched, now}) {
     first_seen: firstSeen.get(`${item.identity}|${item.reason}`) ?? new Date(now).toISOString()}])).values()]
     .sort((a, b) => a.identity.localeCompare(b.identity) || a.reason.localeCompare(b.reason));
   const rejectedChanged = JSON.stringify(ingested) !== JSON.stringify(Array.isArray(current.rejected) ? current.rejected : []);
-  const write = changed || rejectedChanged || !Number.isFinite(checked) || now - checked > REFRESH_MS;
-  const document = {schema_version: 1, checked_at: new Date(now).toISOString(), clupik_last_success: Number.isFinite(lastScan) ? new Date(lastScan).toISOString() : null, notices, ...(ingested.length ? {rejected: ingested} : {})};
-  // Un aviso por correo solo cada 6 h aunque siga el problema; el resto de ejecuciones solo avisan en el registro.
-  const alert = stale && new Date(now).getUTCHours() % 6 === 0 && new Date(now).getUTCMinutes() < 30;
+  // Un aviso por correo como mucho cada 6 h aunque siga el problema; el resto de ejecuciones solo avisan en el registro. Cuándo se
+  // avisó por última vez queda anotado en el propio fichero (`stale_alerted_at`) y no depende de la hora a la que GitHub lance
+  // la ejecución: los workflows programados se retrasan y se saltan pasadas, y una ventana horaria fija casi nunca coincidía.
+  const alertedAt = Date.parse(current.stale_alerted_at);
+  const alert = stale && (!Number.isFinite(alertedAt) || alertedAt > now || now - alertedAt >= STALE_ALERT_MS);
+  const staleAlertedAt = alert ? new Date(now).toISOString() : stale ? new Date(alertedAt).toISOString() : null;   // sin problema, se borra la marca
+  const alertedChanged = staleAlertedAt !== (current.stale_alerted_at ?? null);
+  const write = changed || rejectedChanged || alertedChanged || !Number.isFinite(checked) || now - checked > REFRESH_MS;
+  const document = {schema_version: 1, checked_at: new Date(now).toISOString(), clupik_last_success: Number.isFinite(lastScan) ? new Date(lastScan).toISOString() : null, notices, ...(staleAlertedAt ? {stale_alerted_at: staleAlertedAt} : {}), ...(ingested.length ? {rejected: ingested} : {})};
   return {document, changed, write, stale, alert, rejected, lastScan, rejectedChanged};
 }
 
