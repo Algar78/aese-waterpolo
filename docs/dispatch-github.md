@@ -40,7 +40,7 @@ Borrar la propiedad `AESE_GITHUB_TOKEN` desactiva el aviso al instante (y se pue
 
 ## Despliegue
 
-Es un cambio en `calendar_reliability.gs`, un archivo del Apps Script real. **No se despliega hasta después de la comprobación del permiso «En producción» (31/10–1/11)**; se hace en el mismo paso que los `.gs` de la PR #29 y la tabla de sedes de `calendar_offline_bundle.gs` (167, 168 y 260): copiar el archivo al proyecto de Apps Script, guardar y ejecutar una vez `runAESECalendarSync` para comprobar que termina en «Completada». Sin token, el comportamiento es idéntico al de ahora.
+**Desplegado el 1/11/2026** en el Apps Script real, junto con los `.gs` de la PR #29 y la tabla de sedes (167, 168 y 260) de `calendar_offline_bundle.gs` (ver `docs/audit-2026-10-18.md` §18). Sin token (`AESE_GITHUB_TOKEN`) el comportamiento no cambia: este aviso sigue dormido hasta que el mantenedor cree el token y lo guarde, como se explica arriba.
 
 ## Comprobaciones hechas
 
