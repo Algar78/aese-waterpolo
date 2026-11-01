@@ -366,17 +366,33 @@ test('plan: respuesta antigua, lectura de correo parada y cuándo se escribe o s
   assert.equal(p.write, true);                                                                    // como mucho cada 5 días, para mantener activo el workflow
   p = plan({current: checked, fetched: fetched([noticeFor(target)]), now: NOW});
   assert.deepEqual([p.changed, p.write], [true, true]);
-  // «Parada» = Apps Script lleva más de 6 h sin terminar una lectura del correo. Solo se avisa (con un
-  // workflow en rojo, que GitHub envía por correo) en la primera media hora de cada bloque de 6 h UTC.
+  // «Parada» = Apps Script lleva más de 6 h sin terminar una lectura del correo. Se avisa (con un workflow en rojo, que GitHub
+  // envía por correo) en la primera pasada en que se ve y después como mucho cada 6 h, a la hora que GitHub lance la pasada:
+  // cuándo se avisó por última vez queda anotado en el fichero (`stale_alerted_at`), no en una ventana horaria.
   const at = iso => Date.parse(iso);
-  const stopped = iso => plan({current: checked, fetched: fetched([], {clupik_last_success: new Date(at(iso) - STALE_SCAN_MS - 60000).toISOString()}, at(iso)), now: at(iso)});
-  assert.deepEqual([stopped('2026-10-20T12:10:00Z').stale, stopped('2026-10-20T12:10:00Z').alert], [true, true]);
-  assert.deepEqual([stopped('2026-10-20T12:40:00Z').stale, stopped('2026-10-20T12:40:00Z').alert], [true, false]);
-  assert.deepEqual([stopped('2026-10-20T13:10:00Z').stale, stopped('2026-10-20T13:10:00Z').alert], [true, false]);
+  const stoppedAt = (iso, current = checked) => plan({current, fetched: fetched([], {clupik_last_success: new Date(at(iso) - STALE_SCAN_MS - 60000).toISOString()}, at(iso)), now: at(iso)});
+  const first = stoppedAt('2026-10-20T12:41:00Z');                                                // una hora «rara», fuera de cualquier ventana fija
+  assert.deepEqual([first.stale, first.alert, first.write, first.document.stale_alerted_at], [true, true, true, '2026-10-20T12:41:00.000Z']);
+  const second = stoppedAt('2026-10-20T15:52:00Z', first.document);                               // GitHub vuelve 3 h después: ya se avisó
+  assert.deepEqual([second.stale, second.alert, second.write, second.document.stale_alerted_at], [true, false, false, '2026-10-20T12:41:00.000Z']);
+  const almost = stoppedAt('2026-10-20T18:40:00Z', first.document);                               // 5 h 59 min después: todavía no
+  assert.deepEqual([almost.alert, almost.write], [false, false]);
+  const again = stoppedAt('2026-10-20T18:41:00Z', first.document);                                // 6 h después: recordatorio, y se anota
+  assert.deepEqual([again.alert, again.write, again.document.stale_alerted_at], [true, true, '2026-10-20T18:41:00.000Z']);
   const never = plan({current: checked, fetched: fetched([], {clupik_last_success: null}, at('2026-10-20T18:07:00Z')), now: at('2026-10-20T18:07:00Z')});
   assert.deepEqual([never.stale, never.alert], [true, true]);
   const fine = plan({current: checked, fetched: fetched([], {}, at('2026-10-20T18:07:00Z')), now: at('2026-10-20T18:07:00Z')});
-  assert.deepEqual([fine.stale, fine.alert], [false, false]);
+  assert.deepEqual([fine.stale, fine.alert, fine.write, 'stale_alerted_at' in fine.document], [false, false, false, false]);
+  // Cuando Apps Script se recupera, la marca se borra (una escritura) y el siguiente problema vuelve a avisar en seguida.
+  const healed = plan({current: again.document, fetched: fetched([], {}, at('2026-10-20T19:07:00Z')), now: at('2026-10-20T19:07:00Z')});
+  assert.deepEqual([healed.stale, healed.alert, healed.write, 'stale_alerted_at' in healed.document], [false, false, true, false]);
+  const relapse = stoppedAt('2026-10-21T03:20:00Z', healed.document);
+  assert.deepEqual([relapse.alert, relapse.document.stale_alerted_at], [true, '2026-10-21T03:20:00.000Z']);
+  // Una marca ilegible o del futuro no silencia el aviso.
+  for (const broken of ['no es una fecha', '2030-01-01T00:00:00.000Z', 42]) {
+    const p2 = stoppedAt('2026-10-20T12:41:00Z', {...checked, stale_alerted_at: broken});
+    assert.deepEqual([p2.alert, p2.write, p2.document.stale_alerted_at], [true, true, '2026-10-20T12:41:00.000Z']);
+  }
 });
 
 test('run(): sin fichero de origen no hace nada; con él escribe solo si hay algo que guardar', async () => {
@@ -395,6 +411,19 @@ test('run(): sin fichero de origen no hace nada; con él escribe solo si hay alg
     const again = await run({root: root(dir), now: NOW + 1800000, log: x => lines.push(x), fetchImpl: async () => ({ok: true, status: 200, text: async () => JSON.stringify(fetched([noticeFor(target, {start: '2026-10-24T15:00:00+02:00'})], {}, NOW + 1800000))})});
     assert.equal(again.changed, false);
     assert.equal(JSON.parse(readFileSync(join(dir, 'data/clupik_overlay.json'), 'utf8')).checked_at, new Date(NOW).toISOString());
+    // Apps Script parado: la primera pasada avisa y deja anotado cuándo; la siguiente (3 h después) no repite; a las 6 h, recordatorio.
+    const stoppedAt = at => async () => ({ok: true, status: 200, text: async () => JSON.stringify(fetched([noticeFor(target, {start: '2026-10-24T15:00:00+02:00'})], {clupik_last_success: new Date(at - STALE_SCAN_MS - 60000).toISOString()}, at))});
+    const saved1 = () => JSON.parse(readFileSync(join(dir, 'data/clupik_overlay.json'), 'utf8'));
+    const t1 = NOW + 7 * 3600000 + 13 * 60000;                                                           // una hora cualquiera, no «en punto»
+    const s1 = await run({root: root(dir), now: t1, log: x => lines.push(x), fetchImpl: stoppedAt(t1)});
+    assert.deepEqual([s1.stale, s1.alert], [true, true]);assert.equal(saved1().stale_alerted_at, new Date(t1).toISOString());
+    const s2 = await run({root: root(dir), now: t1 + 3 * 3600000, log: x => lines.push(x), fetchImpl: stoppedAt(t1 + 3 * 3600000)});
+    assert.deepEqual([s2.stale, s2.alert], [true, false]);assert.equal(saved1().stale_alerted_at, new Date(t1).toISOString());
+    const s3 = await run({root: root(dir), now: t1 + 6 * 3600000, log: x => lines.push(x), fetchImpl: stoppedAt(t1 + 6 * 3600000)});
+    assert.deepEqual([s3.stale, s3.alert], [true, true]);assert.equal(saved1().stale_alerted_at, new Date(t1 + 6 * 3600000).toISOString());
+    const t4 = t1 + 7 * 3600000;                                                                          // Apps Script se recupera: se borra la marca
+    const s4 = await run({root: root(dir), now: t4, log: x => lines.push(x), fetchImpl: async () => ({ok: true, status: 200, text: async () => JSON.stringify(fetched([noticeFor(target, {start: '2026-10-24T15:00:00+02:00'})], {}, t4))})});
+    assert.deepEqual([s4.stale, s4.alert], [false, false]);assert.equal('stale_alerted_at' in saved1(), false);
   } finally { rmSync(dir, {recursive: true, force: true}); }
 });
 
