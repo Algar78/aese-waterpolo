@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-11-02T10:09:20.385Z",
-  "clupik_last_success": "2026-11-02T10:09:11.039Z",
+  "checked_at": "2026-11-02T11:24:20.148Z",
+  "clupik_last_success": "2026-11-02T11:24:06.816Z",
   "notices": [
     {
       "tournament_id": 1339803,
@@ -323,9 +323,9 @@
       "away_team": "A.E. SANTA EULÀLIA A",
       "venue": "298 - St Adria, Wp C (Marina Besós)",
       "round_name": "Jornada 8",
-      "start": "2027-01-31T10:00:00+01:00",
+      "start": "2027-01-30T15:00:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-27T11:30:00.000Z"
+      "received_at": "2026-11-02T11:14:12.000Z"
     },
     {
       "tournament_id": 1339809,
