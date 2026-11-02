@@ -209,18 +209,18 @@ URL:https://actawp.natacio.cat/ca/tournament/1339807/match/145791439/result
 END:VEVENT
 BEGIN:VEVENT
 UID:actawp-1339807-145791443@aese-waterpolo
-DTSTAMP:20261027T120055Z
-DTSTART:20270221T080000Z
-SEQUENCE:0
-LAST-MODIFIED:20261027T120055Z
+DTSTAMP:20261102T100921Z
+DTSTART:20261212T154500Z
+SEQUENCE:1
+LAST-MODIFIED:20261102T100921Z
 STATUS:CONFIRMED
 SUMMARY:Juvenil Masculino: C.N. TARRACO - C.N. Vallirana — A.E. SANTA EUL
  ÀLIA
-LOCATION:188 - Vallirana\, C.N.
+LOCATION:167 - Tarraco\, C.N.
 DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
  at/ca/tournament/1339807/match/145791443/results\nEstado: confirmed\nGoogl
- e Maps: https://www.google.com/maps/search/?api=1&query=CEM%20Vallirana%2C
- %20Vallirana
+ e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
+ 3%20Tarraco%2C%20Passeig%20de%20Torroja%2086%2C%2043007%20Tarragona
 URL:https://actawp.natacio.cat/ca/tournament/1339807/match/145791443/result
  s
 END:VEVENT
