@@ -39,4 +39,21 @@ DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
 URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145574490/result
  s
 END:VEVENT
+BEGIN:VEVENT
+UID:actawp-1339808-145814540@aese-waterpolo
+DTSTAMP:20261106T075351Z
+DTSTART:20261220T123000Z
+SEQUENCE:0
+LAST-MODIFIED:20261106T075351Z
+STATUS:CONFIRMED
+SUMMARY:Cadete Masculino: A.E. SANTA EULÀLIA — C.N. PREMIÀ
+LOCATION:228 - Santa Eulàlia\, AE
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339808/match/145814540/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Poliesportiu%20Mun
+ icipal%20Santa%20Eul%C3%A0lia%2C%20Jacint%20Verdaguer%2015%2C%20L'Hospital
+ et%20de%20Llobregat
+URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145814540/result
+ s
+END:VEVENT
 END:VCALENDAR
