@@ -1,0 +1,241 @@
+{
+  "date": "2026-11-07",
+  "pages_checked": [
+    {
+      "category": "Absoluto Masculino",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all",
+      "count": 16,
+      "pending": 2
+    },
+    {
+      "category": "Alevín Mixto A",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714189/all",
+      "count": 2,
+      "pending": 0
+    },
+    {
+      "category": "Alevín Mixto B",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all",
+      "count": 12,
+      "pending": 1
+    },
+    {
+      "category": "Cadete Masculino",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/calendar/3714157/all",
+      "count": 2,
+      "pending": 1
+    },
+    {
+      "category": "Infantil Mixto A",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/calendar/3714172/all",
+      "count": 3,
+      "pending": 0
+    }
+  ],
+  "stopped_reason": "HTTP 429 on Infantil Mixto B; no partial export published",
+  "corrections": [
+    {
+      "identity": "1339803:145573564",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 5",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145608803",
+      "category": "Alevín Mixto A",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 2",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714189/all"
+    },
+    {
+      "identity": "1339809:145574536",
+      "category": "Infantil Mixto A",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 2",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339809/calendar/3714172/all"
+    },
+    {
+      "identity": "1339810:145608996",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 2",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339808:145574490",
+      "category": "Cadete Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 3",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339808/calendar/3714157/all"
+    },
+    {
+      "identity": "1339810:145609003",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 3",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339809:145574539",
+      "category": "Infantil Mixto A",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 3",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339809/calendar/3714172/all"
+    },
+    {
+      "identity": "1339803:145573609",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 14",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339803:145573552",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 2",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609011",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 4",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573556",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 3",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609018",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 5",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573570",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 6",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339803:145573576",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 7",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609026",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 6",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573582",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 8",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609048",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 7",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573592",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 10",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339803:145573597",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 11",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609062",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 9",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573601",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 12",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609069",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 10",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573606",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 13",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609071",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 11",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339810:145609079",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 12",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573621",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 16",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339803:145573615",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 15",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    },
+    {
+      "identity": "1339810:145609087",
+      "category": "Alevín Mixto B",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 13",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339810/calendar/3714193/all"
+    },
+    {
+      "identity": "1339803:145573627",
+      "category": "Absoluto Masculino",
+      "previous_round_name": "Jornada 1",
+      "round_name": "Jornada 17",
+      "source": "https://actawp.natacio.cat/ca/tournament/1339803/calendar/3714121/all"
+    }
+  ]
+}

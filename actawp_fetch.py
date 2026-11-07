@@ -111,6 +111,10 @@ def _get_with_backoff(client, url, *, headers, timeout):
             _log_request(url, started, error=exc)
             raise
         _log_request(url, started, response=response)
+        if CHALLENGE_MARKER in _safe_text(response):
+            raise SourceChallengeError(
+                f'ActaWP respondió con un desafío de navegador (HTTP {response.status_code}); '
+                'se detienen las consultas sin reintentar ni cambiar de ruta.')
         if response.status_code != 429:
             return response
         retry = response.headers.get('Retry-After', '')

@@ -31,6 +31,17 @@ class BackoffTests(unittest.TestCase):
         return client
 
     @patch.object(fetch.time, 'sleep')
+    def test_429_browser_challenge_stops_without_retry(self, sleep):
+        blocked = response(429)
+        blocked._content = ('<html>' + fetch.CHALLENGE_MARKER + '</html>').encode('utf-8')
+        blocked.encoding = 'utf-8'
+        client = self.run_sequence([blocked])
+        with self.assertRaises(fetch.SourceChallengeError):
+            fetch._get_with_backoff(client, 'same', headers={}, timeout=1)
+        self.assertEqual(client.get.call_count, 1)
+        sleep.assert_not_called()
+
+    @patch.object(fetch.time, 'sleep')
     def test_seconds_then_success(self, sleep):
         client = self.run_sequence([response(429, {'Retry-After': '7'}), response(200)])
         self.assertEqual(fetch._get_with_backoff(client, 'same', headers={}, timeout=1).status_code, 200)

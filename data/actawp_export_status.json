@@ -24,7 +24,7 @@
   },
   "total_matches_found": 80,
   "errors": [],
-  "snapshot_sha256": "d23b826dd0ec7fdafe7dab538a9fdeda39a848336818a9da606c11a0e391788e",
+  "snapshot_sha256": "72e63e54738c1d18429baf840d7a48b0bdf57ff9919f520a9b8eb1effe86ffed",
   "last_complete_export_at": "2026-10-10T16:25:53+00:00",
   "last_complete_export_provenance": "Sembrado el 2026-10-18 a partir del historial de git: commit 7bf5e8f, último intento automático con complete=true. El exportador sustituirá este valor en su próxima exportación completa.",
   "reviewed_corrections": [
@@ -81,5 +81,12 @@
     "outdated_hours": 720,
     "reminder_hours": 720,
     "automated_attempts": false
+  },
+  "round_name_review": {
+    "date": "2026-11-07",
+    "categories_checked": 5,
+    "corrected": 29,
+    "complete_source_refresh": false,
+    "report": "docs/calendar-update-2026-11-07.md"
   }
 }

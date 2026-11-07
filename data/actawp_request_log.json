@@ -1,0 +1,102 @@
+[
+{
+"at": "2026-11-07T07:30:25+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339803/calendar/3714121/all",
+"elapsed_ms": 6759,
+"status": 200,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 315158,
+"challenge": false
+},
+{
+"at": "2026-11-07T07:30:57+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339810/calendar/3714189/all",
+"elapsed_ms": 256,
+"status": 200,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 39259,
+"challenge": false
+},
+{
+"at": "2026-11-07T07:31:29+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339810/calendar/3714193/all",
+"elapsed_ms": 1329,
+"status": 200,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 316338,
+"challenge": false
+},
+{
+"at": "2026-11-07T07:32:00+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339809/calendar/3714172/all",
+"elapsed_ms": 283,
+"status": 200,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 48036,
+"challenge": false
+},
+{
+"at": "2026-11-07T07:32:32+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339809/calendar/3714183/all",
+"elapsed_ms": 115,
+"status": 429,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 6669,
+"challenge": true,
+"body_hint": "<!DOCTYPE html> <html lang=\"ca\"> <head> <meta charset=\"utf-8\"> <meta name=\"viewport\" content=\"width=device-width, initia"
+},
+{
+"at": "2026-11-07T07:32:33+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339809/calendar/3714183/all",
+"elapsed_ms": 115,
+"status": 429,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 6669,
+"challenge": true,
+"body_hint": "<!DOCTYPE html> <html lang=\"ca\"> <head> <meta charset=\"utf-8\"> <meta name=\"viewport\" content=\"width=device-width, initia"
+},
+{
+"at": "2026-11-07T07:32:36+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339809/calendar/3714183/all",
+"elapsed_ms": 116,
+"status": 429,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 6669,
+"challenge": true,
+"body_hint": "<!DOCTYPE html> <html lang=\"ca\"> <head> <meta charset=\"utf-8\"> <meta name=\"viewport\" content=\"width=device-width, initia"
+},
+{
+"at": "2026-11-07T07:32:40+00:00",
+"host": "actawp.natacio.cat",
+"path": "/ca/tournament/1339809/calendar/3714183/all",
+"elapsed_ms": 113,
+"status": 429,
+"retry_after": null,
+"server": "envoy",
+"content_type": "text/html; charset=UTF-8",
+"bytes": 6669,
+"challenge": true,
+"body_hint": "<!DOCTYPE html> <html lang=\"ca\"> <head> <meta charset=\"utf-8\"> <meta name=\"viewport\" content=\"width=device-width, initia"
+}
+]

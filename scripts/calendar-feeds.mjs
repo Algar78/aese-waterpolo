@@ -228,6 +228,8 @@ export function generate(root = new URL('../', import.meta.url), now = new Date(
   }
   mkdirSync(new URL('calendars/',root),{recursive:true});
   for (const [name,slug] of Object.entries(categories)) writeFileSync(new URL(`calendars/${slug}.ics`,root),feed(name,matches,state));
+  // La vista de la app y los .ics salen de la misma lista validada, incluidos avisos de Clupik.
+  writeFileSync(new URL('calendars/matches.json',root),JSON.stringify({schema_version:1,total:matches.length,matches:matches.slice().sort((a,b)=>a.start.localeCompare(b.start)||a.match_id-b.match_id)},null,2)+'\n');
   writeFileSync(new URL('calendars/event-state.json',root),JSON.stringify(state,null,2)+'\n');
   // Copia de los partidos que solo existen por un aviso de Clupik, tal y como se publican: es lo que se conserva si el aviso deja de valer.
   const snapshotIds = new Set(snapshot.map(uid));

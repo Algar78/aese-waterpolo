@@ -1,10 +1,10 @@
-const CACHE="aese-waterpolo-v22";
+const CACHE="aese-waterpolo-v23";
 const CORE=[
   "./",
   "./index.html",
   "./mi-calendario.html",
   "./mi-calendario.js",
-  "./calendars/index.json",
+  "./official-schedule.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -39,7 +39,7 @@ self.addEventListener("activate",event=>{
 function fetchWithTimeout(request,ms){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),ms);
-  return fetch(request,{signal:controller.signal}).finally(()=>clearTimeout(timer));
+  return fetch(request,{signal:controller.signal,cache:'no-cache'}).finally(()=>clearTimeout(timer));
 }
 
 self.addEventListener("fetch",event=>{
@@ -48,6 +48,13 @@ self.addEventListener("fetch",event=>{
 
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
+
+  // El calendario en línea debe fallar de forma explícita si no hay conexión;
+  // no devolver una copia antigua como si acabara de sincronizarse.
+  if(url.pathname.includes('/calendars/')) {
+    event.respondWith(fetch(request,{cache:'no-store'}).catch(()=>Response.error()));
+    return;
+  }
 
   event.respondWith(
     fetchWithTimeout(request,3000)

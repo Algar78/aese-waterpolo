@@ -1,7 +1,10 @@
 name: Calendarios de familias
 on:
+  push:
+    branches: [main]
+    paths: ['data/**', 'scripts/**', 'tests/**', 'mi-calendario.*', 'official-schedule.js', 'index.html', 'sw.js', '.github/workflows/calendar-feeds.yml']
   pull_request:
-    paths: ['calendars/**', 'data/**', 'actawp_*.py', '*.gs', 'requirements-actawp.txt', 'scripts/**', 'tests/**', 'mi-calendario.*', '.github/workflows/*.yml']
+    paths: ['calendars/**', 'data/**', 'actawp_*.py', '*.gs', 'requirements-actawp.txt', 'scripts/**', 'tests/**', 'mi-calendario.*', 'official-schedule.js', 'index.html', 'sw.js', '.github/workflows/*.yml']
   workflow_dispatch:
   # Ejecutar después de publicar el snapshot evita competir con el push de ActaWP.
   # workflow_run también se dispara cuando el workflow anterior usa GITHUB_TOKEN.
