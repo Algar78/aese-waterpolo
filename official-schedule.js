@@ -20,7 +20,7 @@
       row.dataset.matchId = `${m.tournament_id}:${m.match_id}`;
       const time = node('time',format.format(new Date(m.start))); time.dateTime = m.start;
       const link = node('a','Ver partido en FCN ↗'); link.href = m.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
-      row.append(time,node('p',`${m.home_team} — ${m.away_team}`),node('small',`${m.category} · ${m.round_name || ''}`),node('p',`Piscina: ${m.venue}`));
+      row.append(time,node('p',`${m.home_team} — ${m.away_team}`),node('small',`${m.category}${m.round_verified && m.round_name ? ' · '+m.round_name : ''}`),node('p',`Piscina: ${m.venue}`));
       if (m.status === 'cancelled') row.append(node('strong','CANCELADO'));
       if (m.status === 'tentative') row.append(node('strong','APLAZADO / POR CONFIRMAR'));
       row.append(link); list.append(row);

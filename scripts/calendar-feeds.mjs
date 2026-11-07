@@ -229,7 +229,13 @@ export function generate(root = new URL('../', import.meta.url), now = new Date(
   mkdirSync(new URL('calendars/',root),{recursive:true});
   for (const [name,slug] of Object.entries(categories)) writeFileSync(new URL(`calendars/${slug}.ics`,root),feed(name,matches,state));
   // La vista de la app y los .ics salen de la misma lista validada, incluidos avisos de Clupik.
-  writeFileSync(new URL('calendars/matches.json',root),JSON.stringify({schema_version:1,total:matches.length,matches:matches.slice().sort((a,b)=>a.start.localeCompare(b.start)||a.match_id-b.match_id)},null,2)+'\n');
+  // El snapshot histórico tenía Jornada 1 como valor de respaldo. Solo mostramos jornadas contrastadas.
+  let reviewedCategories = new Set();
+  try { reviewedCategories = new Set(JSON.parse(readFileSync(new URL('data/calendar-round-review-2026-11-07.json',root))).pages_checked.map(p=>p.category)); } catch (_) {}
+  const roundsFromNotices = new Map((document.notices ?? []).map(m=>[uid(m),m.round_name]));
+  const snapshotRoundsVerified = ['manual_import','automated'].includes(status.source?.mode);
+  const displayMatches = matches.map(m=>({...m,round_verified: ((snapshotRoundsVerified || reviewedCategories.has(m.category)) && snapshot.some(base=>uid(base)===uid(m))) || (!!m.round_name && roundsFromNotices.get(uid(m))===m.round_name)}));
+  writeFileSync(new URL('calendars/matches.json',root),JSON.stringify({schema_version:1,total:matches.length,matches:displayMatches.sort((a,b)=>a.start.localeCompare(b.start)||a.match_id-b.match_id)},null,2)+'\n');
   writeFileSync(new URL('calendars/event-state.json',root),JSON.stringify(state,null,2)+'\n');
   // Copia de los partidos que solo existen por un aviso de Clupik, tal y como se publican: es lo que se conserva si el aviso deja de valer.
   const snapshotIds = new Set(snapshot.map(uid));

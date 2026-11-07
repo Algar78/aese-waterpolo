@@ -12,7 +12,8 @@
       "start": "2026-09-26T16:00:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573547/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573547/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -24,7 +25,8 @@
       "start": "2026-10-09T20:45:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 5",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573564/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573564/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -36,7 +38,8 @@
       "start": "2026-10-10T12:15:00+02:00",
       "venue": "188 - Vallirana, C.N.",
       "round_name": "Jornada 2",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608803/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608803/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -48,7 +51,8 @@
       "start": "2026-10-10T16:00:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574554/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574554/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -60,7 +64,8 @@
       "start": "2026-10-10T17:20:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145574246/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145574246/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto A",
@@ -72,7 +77,8 @@
       "start": "2026-10-11T10:15:00+02:00",
       "venue": "165 - Catalunya, CN - Can Toda",
       "round_name": "Jornada 2",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574536/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574536/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Femenino",
@@ -84,7 +90,8 @@
       "start": "2026-10-11T12:10:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573793/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573793/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -96,7 +103,8 @@
       "start": "2026-10-11T17:00:00+02:00",
       "venue": "183 - Poble Nou, CN - Can Felipa",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145574248/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145574248/results",
+      "round_verified": false
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -108,7 +116,8 @@
       "start": "2026-10-16T20:45:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574395/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574395/results",
+      "round_verified": false
     },
     {
       "category": "Alevín Mixto B",
@@ -120,7 +129,8 @@
       "start": "2026-10-17T16:00:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 2",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608996/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608996/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -132,7 +142,8 @@
       "start": "2026-10-17T17:20:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574534/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574534/results",
+      "round_verified": true
     },
     {
       "category": "Cadete Masculino",
@@ -144,7 +155,8 @@
       "start": "2026-10-17T18:40:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 3",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574490/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574490/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Femenino",
@@ -156,7 +168,8 @@
       "start": "2026-10-18T09:00:00+02:00",
       "venue": "163 - Terrassa C.N.",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573796/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573796/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -168,7 +181,8 @@
       "start": "2026-10-18T10:30:00+02:00",
       "venue": "181 - Premia, CN",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574547/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574547/results",
+      "round_verified": false
     },
     {
       "category": "Cadete Masculino",
@@ -180,7 +194,8 @@
       "start": "2026-10-24T13:00:00+02:00",
       "venue": "171 - Banyoles, CN",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574486/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -192,7 +207,8 @@
       "start": "2026-10-24T15:30:00+02:00",
       "venue": "297 - Sant Andreu, CN - Trinitat Vella",
       "round_name": "Jornada 3",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609003/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609003/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -204,7 +220,8 @@
       "start": "2026-10-24T17:20:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 3",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574539/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574539/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -216,7 +233,8 @@
       "start": "2026-10-24T18:45:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608801/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608801/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -228,7 +246,8 @@
       "start": "2026-10-25T09:00:00+01:00",
       "venue": "264 - Sabadell, CN - Can Llong - 33m",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574560/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574560/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Femenino",
@@ -240,7 +259,8 @@
       "start": "2026-10-25T10:30:00+01:00",
       "venue": "165 - Catalunya, CN - Can Toda",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573790/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573790/results",
+      "round_verified": false
     },
     {
       "category": "Absoluto Masculino",
@@ -253,7 +273,8 @@
       "venue": "100 - Granollers, CN - P3 - 25m coberta",
       "round_name": "Jornada 14",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573609/results",
-      "status": "confirmed"
+      "status": "confirmed",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -265,7 +286,8 @@
       "start": "2026-10-31T14:30:00+01:00",
       "venue": "177 - Caldes, C.N.",
       "round_name": "Jornada 2",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573552/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573552/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -277,7 +299,8 @@
       "venue": "260 - Sabadell, CN - Antoni Monés",
       "round_name": "Jornada 1",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791159/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791159/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -289,7 +312,8 @@
       "start": "2026-11-07T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 4",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609011/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609011/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -301,7 +325,8 @@
       "start": "2026-11-08T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574567/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574567/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Femenino",
@@ -313,7 +338,8 @@
       "start": "2026-11-08T12:10:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573799/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573799/results",
+      "round_verified": false
     },
     {
       "category": "Absoluto Masculino",
@@ -325,7 +351,8 @@
       "start": "2026-11-13T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 3",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573556/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573556/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -337,7 +364,8 @@
       "start": "2026-11-14T16:45:00+01:00",
       "venue": "186 - Rubí, CN - Can Rosés",
       "round_name": "Jornada 5",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609018/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609018/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -349,7 +377,8 @@
       "start": "2026-11-14T18:45:00+01:00",
       "venue": "185 - Sant Feliu, CN",
       "round_name": "Jornada 6",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573570/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573570/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -361,7 +390,8 @@
       "start": "2026-11-14T20:30:00+01:00",
       "venue": "185 - Sant Feliu, CN",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574412/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574412/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Femenino",
@@ -373,7 +403,8 @@
       "start": "2026-11-15T09:00:00+01:00",
       "venue": "164 - St Andreu, CN (25 M.)",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573802/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339811/match/145573802/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -385,7 +416,8 @@
       "start": "2026-11-15T09:00:00+01:00",
       "venue": "297 - Sant Andreu, CN - Trinitat Vella",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574573/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574573/results",
+      "round_verified": false
     },
     {
       "category": "Absoluto Masculino",
@@ -397,7 +429,8 @@
       "start": "2026-11-15T13:30:00+01:00",
       "venue": "173 - Olot, CN",
       "round_name": "Jornada 4",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573561/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573561/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -409,7 +442,8 @@
       "start": "2026-11-20T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 7",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573576/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573576/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -421,7 +455,8 @@
       "venue": "160 - Barcelona, CN - Nova Escollera - 50m",
       "round_name": "Jornada 3",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791163/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791163/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -433,7 +468,8 @@
       "start": "2026-11-22T09:00:00+01:00",
       "venue": "174 - Mediterrani CE, Regent Mendieta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145608988/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -445,7 +481,8 @@
       "venue": "175 - Martorell, CN",
       "round_name": "Jornada 1",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791290/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791290/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -458,7 +495,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 13",
       "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574452/results",
-      "status": "confirmed"
+      "status": "confirmed",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -470,7 +508,8 @@
       "venue": "177 - Caldes, C.N.",
       "round_name": "Jornada 3",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791411/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791411/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -482,7 +521,8 @@
       "start": "2026-11-27T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574418/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574418/results",
+      "round_verified": false
     },
     {
       "category": "Alevín Mixto B",
@@ -494,7 +534,8 @@
       "start": "2026-11-28T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 6",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609026/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609026/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -506,7 +547,8 @@
       "start": "2026-11-28T18:45:00+01:00",
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 8",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573582/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573582/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -518,7 +560,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 4",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791165/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791165/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -530,7 +573,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 3",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791302/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791302/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -542,7 +586,8 @@
       "start": "2026-11-29T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574580/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574580/results",
+      "round_verified": false
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -554,7 +599,8 @@
       "start": "2026-11-29T12:00:00+01:00",
       "venue": "346 - Manresa, CN - 50m",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574400/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -566,7 +612,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 4",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791415/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791415/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -578,7 +625,8 @@
       "start": "2026-12-11T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574430/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574430/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto A",
@@ -590,7 +638,8 @@
       "venue": "167 - Tarraco, C.N.",
       "round_name": "Jornada 4",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791308/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791308/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -602,7 +651,8 @@
       "venue": "163 - Terrassa C.N.",
       "round_name": "Jornada 5",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791167/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791167/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -614,7 +664,8 @@
       "venue": "167 - Tarraco, C.N.",
       "round_name": "Jornada 11",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791443/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791443/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -626,7 +677,8 @@
       "start": "2026-12-12T18:00:00+01:00",
       "venue": "298 - St Adria, Wp C (Marina Besós)",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574423/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574423/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -638,7 +690,8 @@
       "start": "2026-12-13T09:00:00+01:00",
       "venue": "346 - Manresa, CN - 50m",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574586/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574586/results",
+      "round_verified": false
     },
     {
       "category": "Alevín Mixto B",
@@ -651,7 +704,8 @@
       "venue": "179 - D'Horta, UE - 33m",
       "round_name": "Jornada 7",
       "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609048/results",
-      "status": "confirmed"
+      "status": "confirmed",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -663,7 +717,8 @@
       "venue": "171 - Banyoles, CN",
       "round_name": "Jornada 5",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791419/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791419/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -675,7 +730,8 @@
       "start": "2026-12-16T20:45:00+01:00",
       "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574389/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -687,7 +743,8 @@
       "start": "2026-12-18T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574435/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574435/results",
+      "round_verified": false
     },
     {
       "category": "Absoluto Masculino",
@@ -699,7 +756,8 @@
       "start": "2026-12-19T12:00:00+01:00",
       "venue": "175 - Martorell, CN",
       "round_name": "Jornada 10",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573592/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573592/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -711,7 +769,8 @@
       "start": "2026-12-19T16:30:00+01:00",
       "venue": "213 - Anglès, CWP",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574429/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574429/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -723,7 +782,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 12",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791447/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791447/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -735,7 +795,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 5",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791313/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791313/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -747,7 +808,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 6",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791169/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791169/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -759,7 +821,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 6",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791423/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791423/results",
+      "round_verified": true
     },
     {
       "category": "Cadete Masculino",
@@ -771,7 +834,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 5",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145814540/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145814540/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -783,7 +847,8 @@
       "start": "2027-01-08T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 11",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573597/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573597/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto A",
@@ -795,7 +860,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 2",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791161/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791161/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -807,7 +873,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 14",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791455/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791455/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -820,7 +887,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 9",
       "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574598/results",
-      "status": "confirmed"
+      "status": "confirmed",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -832,7 +900,8 @@
       "venue": "100 - Granollers, CN - P3 - 25m coberta",
       "round_name": "Jornada 6",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791319/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791319/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -844,7 +913,8 @@
       "start": "2027-01-10T09:30:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 9",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609062/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609062/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -856,7 +926,8 @@
       "venue": "100 - Granollers, CN - P3 - 25m coberta",
       "round_name": "Jornada 7",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791427/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791427/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -868,7 +939,8 @@
       "start": "2027-01-15T21:00:00+01:00",
       "venue": "188 - Vallirana, C.N.",
       "round_name": "Jornada 12",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573601/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573601/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -880,7 +952,8 @@
       "start": "2027-01-16T11:00:00+01:00",
       "venue": "346 - Manresa, CN - 50m",
       "round_name": "Jornada 10",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609069/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609069/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -892,7 +965,8 @@
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 10",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791343/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791343/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -904,7 +978,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 7",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791322/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791322/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -916,7 +991,8 @@
       "start": "2027-01-17T12:00:00+01:00",
       "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574600/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574600/results",
+      "round_verified": false
     },
     {
       "category": "Absoluto Masculino",
@@ -928,7 +1004,8 @@
       "start": "2027-01-22T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 13",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573606/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573606/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -940,7 +1017,8 @@
       "venue": "195 - Badia, CN - 25m",
       "round_name": "Jornada 13",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791451/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791451/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -952,7 +1030,8 @@
       "start": "2027-01-24T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574607/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574607/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -964,7 +1043,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 8",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791431/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791431/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -976,7 +1056,8 @@
       "start": "2027-01-30T12:00:00+01:00",
       "venue": "100 - Granollers, CN - P3 - 25m coberta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574441/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574441/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto A",
@@ -988,7 +1069,8 @@
       "venue": "298 - St Adria, Wp C (Marina Besós)",
       "round_name": "Jornada 8",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791329/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791329/results",
+      "round_verified": true
     },
     {
       "category": "Alevín Mixto B",
@@ -1000,7 +1082,8 @@
       "start": "2027-01-30T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 11",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609071/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609071/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -1012,7 +1095,8 @@
       "venue": "168 - G.E.I.E.G.",
       "round_name": "Jornada 9",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791435/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791435/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1024,7 +1108,8 @@
       "start": "2027-02-05T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574446/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574446/results",
+      "round_verified": false
     },
     {
       "category": "Alevín Mixto B",
@@ -1036,7 +1121,8 @@
       "start": "2027-02-06T09:00:00+01:00",
       "venue": "166 - Atlètic Barceloneta, CN - 33m coberta",
       "round_name": "Jornada 12",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609079/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609079/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -1048,7 +1134,8 @@
       "start": "2027-02-06T12:30:00+01:00",
       "venue": "291 - Calella, Crol Centre",
       "round_name": "Jornada 16",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573621/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573621/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto A",
@@ -1060,7 +1147,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 9",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791336/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791336/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -1072,7 +1160,8 @@
       "start": "2027-02-07T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574613/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574613/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -1084,7 +1173,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 10",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791439/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791439/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -1096,7 +1186,8 @@
       "start": "2027-02-12T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 15",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573615/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573615/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1108,7 +1199,8 @@
       "start": "2027-02-13T16:00:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574468/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574468/results",
+      "round_verified": false
     },
     {
       "category": "Alevín Mixto B",
@@ -1120,7 +1212,8 @@
       "start": "2027-02-13T17:20:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 13",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609087/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609087/results",
+      "round_verified": true
     },
     {
       "category": "Juvenil Masculino",
@@ -1132,7 +1225,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 2",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791407/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791407/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -1144,7 +1238,8 @@
       "start": "2027-02-14T12:45:00+01:00",
       "venue": "160 - Barcelona, CN - Nova Escollera - 50m",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574620/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574620/results",
+      "round_verified": false
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1156,7 +1251,8 @@
       "start": "2027-02-19T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574407/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574407/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1168,7 +1264,8 @@
       "start": "2027-02-21T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574626/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574626/results",
+      "round_verified": false
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1180,7 +1277,8 @@
       "start": "2027-02-26T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574457/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574457/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto A",
@@ -1192,7 +1290,8 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 11",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791350/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145791350/results",
+      "round_verified": true
     },
     {
       "category": "Absoluto Masculino",
@@ -1204,7 +1303,8 @@
       "start": "2027-03-05T20:45:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 17",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573627/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573627/results",
+      "round_verified": true
     },
     {
       "category": "Infantil Mixto B",
@@ -1216,7 +1316,8 @@
       "start": "2027-03-07T09:00:00+01:00",
       "venue": "174 - Mediterrani CE, Regent Mendieta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574633/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574633/results",
+      "round_verified": false
     },
     {
       "category": "Juvenil Masculino",
@@ -1228,7 +1329,8 @@
       "venue": "173 - Olot, CN",
       "round_name": "Jornada 1",
       "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791403/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145791403/results",
+      "round_verified": true
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1240,7 +1342,8 @@
       "start": "2027-03-12T21:15:00+01:00",
       "venue": "259 - Mataró, CN - Joan Serra - 25m coberta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574463/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574463/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1252,7 +1355,8 @@
       "start": "2027-03-14T10:50:00+01:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574639/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574639/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1264,7 +1368,8 @@
       "start": "2027-04-04T11:30:00+02:00",
       "venue": "163 - Terrassa C.N.",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574646/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574646/results",
+      "round_verified": false
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1276,7 +1381,8 @@
       "start": "2027-04-09T20:45:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574474/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574474/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1288,7 +1394,8 @@
       "start": "2027-04-11T10:50:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574652/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574652/results",
+      "round_verified": false
     },
     {
       "category": "1a Div Fem Absoluta B",
@@ -1300,7 +1407,8 @@
       "start": "2027-04-16T20:45:00+02:00",
       "venue": "188 - Vallirana, C.N.",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574475/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339806/match/145574475/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1312,7 +1420,8 @@
       "start": "2027-04-25T15:30:00+02:00",
       "venue": "186 - Rubí, CN - Can Rosés",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574664/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574664/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1324,7 +1433,8 @@
       "start": "2027-05-09T10:50:00+02:00",
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574666/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574666/results",
+      "round_verified": false
     },
     {
       "category": "Infantil Mixto B",
@@ -1336,7 +1446,8 @@
       "start": "2027-05-16T12:30:00+02:00",
       "venue": "259 - Mataró, CN - Joan Serra - 25m coberta",
       "round_name": "Jornada 1",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574673/results"
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574673/results",
+      "round_verified": false
     }
   ]
 }

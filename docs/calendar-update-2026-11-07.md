@@ -48,4 +48,8 @@ No se publica un snapshot parcial ni se cambia la fecha de última exportación 
 - 144 pruebas JavaScript y 80 Python.
 - Nueve feeds regenerados: 111 partidos, ninguna identidad eliminada o duplicada.
 - Prueba nueva de igualdad entre la lista de la app y las identidades, categorías y conteos de los nueve feeds.
-- La comprobación visual pública se registra después de la publicación. El acceso a la parte privada de Supabase requiere iniciar sesión y no se utiliza para modificar datos.
+- GitHub Pages y «Calendarios de familias» del commit f0564c4 terminaron correctamente (ejecuciones 42351881284 y 42351882644).
+- Comprobación visual en Chrome de la página pública: 111 partidos / toda la temporada, 89 desde hoy. Se probaron los nueve filtros, con conteos 16/8/12/3/13/20/5/18/16. Se observaron los partidos de hoy y Cadete–Premià del 20 de diciembre.
+- Se ocultan las etiquetas de jornada históricas que aún no se han verificado: mostrar Jornada 1 como respaldo sería engañoso. Las jornadas contrastadas y las que llegan en avisos oficiales sí se muestran.
+- El entorno de navegador disponible no ofrece emulación de viewport móvil. Se implementan reglas CSS para pantallas de 480 px o menos, pero no se presenta esta revisión como una prueba realizada en un teléfono real.
+- El acceso a la parte privada de Supabase requiere iniciar sesión y no se utiliza para modificar datos.

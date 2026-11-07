@@ -8,7 +8,7 @@ test('la vista oficial contiene las mismas identidades, horas y piscinas que los
  const effective=applyOverlay(snapshot,JSON.parse(read('data/actawp_export_status.json')),JSON.parse(read('data/clupik_overlay.json'))).matches;
  const published=JSON.parse(read('calendars/matches.json'));
  assert.equal(published.total,effective.length);
- assert.deepEqual(new Map(published.matches.map(m=>[uid(m),m])),new Map(effective.map(m=>[uid(m),m])));
+ assert.deepEqual(new Map(published.matches.map(({round_verified,...m})=>[uid(m),m])),new Map(effective.map(m=>[uid(m),m])));
  const manifest=JSON.parse(read('calendars/index.json'));
  for(const c of manifest.categories){
   const text=read('calendars/'+c.slug+'.ics').replace(/\r\n /g,'');
