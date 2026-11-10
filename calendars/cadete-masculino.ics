@@ -57,6 +57,23 @@ URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145814534/result
  s
 END:VEVENT
 BEGIN:VEVENT
+UID:actawp-1339808-145814538@aese-waterpolo
+DTSTAMP:20261110T082352Z
+DTSTART:20261115T123000Z
+SEQUENCE:0
+LAST-MODIFIED:20261110T082352Z
+STATUS:CONFIRMED
+SUMMARY:Cadete Masculino: C.N. MATARÓ B — A.E. SANTA EULÀLIA
+LOCATION:259 - Mataró\, CN - Joan Serra - 25m coberta
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339808/match/145814538/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Centre%20Nataci%C3
+ %B3%20Matar%C3%B3%20Complex%20Joan%20Serra%2C%20Passeig%20del%20Callao%2C%
+ 20Matar%C3%B3
+URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145814538/result
+ s
+END:VEVENT
+BEGIN:VEVENT
 UID:actawp-1339808-145814540@aese-waterpolo
 DTSTAMP:20261106T075351Z
 DTSTART:20261220T123000Z

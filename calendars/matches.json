@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "total": 112,
+  "total": 113,
   "matches": [
     {
       "category": "Absoluto Masculino",
@@ -443,6 +443,19 @@
       "venue": "173 - Olot, CN",
       "round_name": "Jornada 4",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573561/results",
+      "round_verified": true
+    },
+    {
+      "category": "Cadete Masculino",
+      "tournament_id": 1339808,
+      "match_id": 145814538,
+      "home_team": "C.N. MATARÓ B",
+      "away_team": "A.E. SANTA EULÀLIA",
+      "start": "2026-11-15T13:30:00+01:00",
+      "venue": "259 - Mataró, CN - Joan Serra - 25m coberta",
+      "round_name": "Jornada 4",
+      "status": "confirmed",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145814538/results",
       "round_verified": true
     },
     {
