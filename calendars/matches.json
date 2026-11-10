@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "total": 111,
+  "total": 112,
   "matches": [
     {
       "category": "Absoluto Masculino",
@@ -352,6 +352,19 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 3",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573556/results",
+      "round_verified": true
+    },
+    {
+      "category": "Cadete Masculino",
+      "tournament_id": 1339808,
+      "match_id": 145814534,
+      "home_team": "C.N. PREMIÀ",
+      "away_team": "A.E. SANTA EULÀLIA",
+      "start": "2026-11-14T15:30:00+01:00",
+      "venue": "181 - Premia, CN",
+      "round_name": "Jornada 2",
+      "status": "confirmed",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145814534/results",
       "round_verified": true
     },
     {

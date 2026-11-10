@@ -40,6 +40,23 @@ URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145574490/result
  s
 END:VEVENT
 BEGIN:VEVENT
+UID:actawp-1339808-145814534@aese-waterpolo
+DTSTAMP:20261110T073848Z
+DTSTART:20261114T143000Z
+SEQUENCE:0
+LAST-MODIFIED:20261110T073848Z
+STATUS:CONFIRMED
+SUMMARY:Cadete Masculino: C.N. PREMIÀ — A.E. SANTA EULÀLIA
+LOCATION:181 - Premia\, CN
+DESCRIPTION:Horario Europe/Madrid. Fuente: ActaWP\nhttps://actawp.natacio.c
+ at/ca/tournament/1339808/match/145814534/results\nEstado: confirmed\nGoogl
+ e Maps: https://www.google.com/maps/search/?api=1&query=Club%20Nataci%C3%B
+ 3%20Premi%C3%A0%2C%20Francesc%20Mas%20Abril%2013%2C%20Premi%C3%A0%20de%20M
+ ar
+URL:https://actawp.natacio.cat/ca/tournament/1339808/match/145814534/result
+ s
+END:VEVENT
+BEGIN:VEVENT
 UID:actawp-1339808-145814540@aese-waterpolo
 DTSTAMP:20261106T075351Z
 DTSTART:20261220T123000Z

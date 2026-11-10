@@ -172,6 +172,18 @@
     {
       "category": "Cadete Masculino",
       "tournament_id": 1339808,
+      "match_id": 145814534,
+      "home_team": "C.N. PREMIÀ",
+      "away_team": "A.E. SANTA EULÀLIA",
+      "start": "2026-11-14T15:30:00+01:00",
+      "venue": "181 - Premia, CN",
+      "round_name": "Jornada 2",
+      "status": "confirmed",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145814534/results"
+    },
+    {
+      "category": "Cadete Masculino",
+      "tournament_id": 1339808,
       "match_id": 145814540,
       "home_team": "A.E. SANTA EULÀLIA",
       "away_team": "C.N. PREMIÀ",
