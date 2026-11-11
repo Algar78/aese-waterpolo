@@ -128,8 +128,14 @@ function aeseKnownStart_(calendar) {
       const official=(AESE_SNAPSHOT_CACHE||[]).find(m=>actaWPIdentity_(m)===id);
       if (official && official.start) return official.start;
       const eventId=props.getProperty(ACTAWP_PROPERTY_PREFIX+id);
+      const format=e=>Utilities.formatDate(e.getStartTime(),'Europe/Madrid',"yyyy-MM-dd'T'HH:mm:ssXXX");
       const event=eventId?calendar.getEventById(eventId):null;
-      if (event) return Utilities.formatDate(event.getStartTime(),'Europe/Madrid',"yyyy-MM-dd'T'HH:mm:ssXXX");
+      if (event) return format(event);
+      // Un partido añadido a mano no tiene referencia guardada: se reconoce por su identificador
+      // en la descripción, igual que al aplicar el aviso (si hay dos eventos, no hay referencia).
+      const [tournament_id,match_id]=String(id).split(':');
+      const manual=findActaWPEvent_(calendar,{tournament_id,match_id},new Date());
+      if (manual) return format(manual);
       const saved=props.getProperty(AESE_NOTICE_PREFIX+id);
       if (saved) { const old=JSON.parse(saved); if (old.start) return old.start; }
     } catch (error) { /* sin referencia: la fecha ambigua se tratará como tal */ }
