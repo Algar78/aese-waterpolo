@@ -551,19 +551,6 @@
       "round_verified": false
     },
     {
-      "category": "Alevín Mixto B",
-      "tournament_id": 1339810,
-      "calendar_id": 3714193,
-      "match_id": 145609026,
-      "home_team": "A.E. SANTA EULÀLIA B",
-      "away_team": "C.N. MATARÓ",
-      "start": "2026-11-28T16:00:00+01:00",
-      "venue": "228 - Santa Eulàlia, AE",
-      "round_name": "Jornada 6",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609026/results",
-      "round_verified": true
-    },
-    {
       "category": "Absoluto Masculino",
       "tournament_id": 1339803,
       "calendar_id": 3714121,
@@ -1031,6 +1018,20 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 13",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573606/results",
+      "round_verified": true
+    },
+    {
+      "category": "Alevín Mixto B",
+      "tournament_id": 1339810,
+      "calendar_id": 3714193,
+      "match_id": 145609026,
+      "home_team": "A.E. SANTA EULÀLIA B",
+      "away_team": "C.N. MATARÓ \"B\"",
+      "start": "2027-01-23T16:00:00+01:00",
+      "venue": "228 - Santa Eulàlia, AE",
+      "round_name": "Jornada 6",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609026/results",
+      "status": "confirmed",
       "round_verified": true
     },
     {
