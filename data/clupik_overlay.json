@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-11-12T07:53:49.318Z",
-  "clupik_last_success": "2026-11-12T07:53:40.862Z",
+  "checked_at": "2026-11-13T17:09:15.718Z",
+  "clupik_last_success": "2026-11-13T17:08:37.537Z",
   "notices": [
     {
       "tournament_id": 1339803,
@@ -13,7 +13,8 @@
       "round_name": "Jornada 4",
       "start": "2026-11-15T13:30:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-15T08:39:12.000Z"
+      "received_at": "2026-10-15T08:39:12.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339803,
@@ -25,7 +26,8 @@
       "round_name": "Jornada 14",
       "start": "2026-10-30T21:30:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-27T07:47:10.000Z"
+      "received_at": "2026-10-27T07:47:10.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339806,
@@ -37,7 +39,8 @@
       "round_name": "Jornada 1",
       "start": "2026-12-16T20:45:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-15T11:19:11.000Z"
+      "received_at": "2026-10-15T11:19:11.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339806,
@@ -49,7 +52,8 @@
       "round_name": "Jornada 13",
       "start": "2026-11-22T12:10:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-23T11:08:13.000Z"
+      "received_at": "2026-10-23T11:08:13.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339807,
@@ -229,7 +233,8 @@
       "round_name": "Jornada 1",
       "start": "2026-10-24T13:00:00+02:00",
       "status": "confirmed",
-      "received_at": "2026-10-16T06:33:09.000Z"
+      "received_at": "2026-10-16T06:33:09.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339808,
@@ -277,7 +282,8 @@
       "round_name": "Jornada 9",
       "start": "2027-01-09T18:45:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-30T13:08:07.000Z"
+      "received_at": "2026-10-30T13:08:07.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339809,
@@ -409,7 +415,8 @@
       "round_name": "Jornada 1",
       "start": "2026-11-22T09:00:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-16T09:03:09.000Z"
+      "received_at": "2026-10-16T09:03:09.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339810,
@@ -433,7 +440,8 @@
       "round_name": "Jornada 7",
       "start": "2026-12-13T09:00:00+01:00",
       "status": "confirmed",
-      "received_at": "2026-10-29T12:33:06.000Z"
+      "received_at": "2026-10-29T12:33:06.000Z",
+      "acknowledged_snapshot": "2026-11-13T14:49:25.916499+00:00"
     },
     {
       "tournament_id": 1339810,
