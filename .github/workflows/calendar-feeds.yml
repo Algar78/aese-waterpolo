@@ -37,6 +37,12 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements-actawp.txt
       - run: python -m unittest discover -s tests -p 'test_*.py'
+      # Un snapshot nuevo (por ejemplo una lectura manual de ActaWP) deja `calendars/` desfasado hasta que se regenera: si las pruebas
+      # corrieran antes, fallarían las que comparan lo publicado con lo regenerado y nunca se llegaría a publicar (13/11/2026).
+      # Se regenera primero (igual que «Clupik overlay»); el generador sigue negándose a escribir si el snapshot es parcial o
+      # inconsistente, y solo se publica si después pasan todas las pruebas.
+      - name: Regenerar los feeds desde el último snapshot publicado
+        run: node scripts/calendar-feeds.mjs
       - run: node --test tests/*.test.mjs
       - run: node scripts/calendar-feeds.mjs
       - name: Publicar feeds validados
