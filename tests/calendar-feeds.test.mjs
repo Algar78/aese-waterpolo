@@ -63,3 +63,11 @@ test('workflow_run genera desde main publicado, sin depender del push de GITHUB_
   assert.match(workflow,/ref: \$\{\{ github.event_name == 'workflow_run' && 'main' \|\| github.ref \}\}/);
   assert.match(workflow,/github.event.workflow_run.conclusion == 'success'/);
 });
+test('un snapshot nuevo no bloquea la publicación: los feeds se regeneran antes de las pruebas que comparan lo publicado con lo regenerado',()=>{
+  const workflow=readFileSync(new URL('../.github/workflows/calendar-feeds.yml',import.meta.url),'utf8');
+  const steps=workflow.split('\n      - ');
+  const regenerate=steps.findIndex(step=>step.includes('node scripts/calendar-feeds.mjs'));
+  const tests=steps.findIndex(step=>step.includes('node --test tests/*.test.mjs'));
+  assert.ok(regenerate>=0&&tests>=0&&regenerate<tests,'la regeneración debe ir antes de node --test');
+  assert.ok(workflow.indexOf('Publicar feeds validados')>workflow.indexOf('node --test'));   // se publica solo si las pruebas pasan
+});
