@@ -532,6 +532,24 @@ test('un aviso ambiguo se resuelve con el evento que ya está en el calendario y
   assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(0,'Modificado un partido','2026-10-18T08:00:00Z',conFecha('03/05/2027')),h.calendar),/ambigua/);   // 5 de marzo (28 días) o 3 de mayo (31 días)
   assert.equal(h.events[0].getStartTime().toISOString(),'2027-04-02T11:00:00.000Z');
 });
+test('un partido añadido a mano (sin referencia guardada) sirve de dato conocido para resolver una fecha ambigua; dos eventos con el mismo identificador no',()=>{
+  const h=harness(),at='2026-10-16T08:00:00Z',ambiguo=h.msg(0,'Modificado un partido',at,conFecha('03/04/2027'));
+  const manual=()=>h.calendar.createEvent('10:00 A — B',new Date('2027-03-06T09:00:00Z'),new Date('2027-03-06T10:30:00Z'),{description:'ACTAWP_MATCH_ID:1339808:145574486\nCategoría: CADETE MASCULINO\n\nEvento añadido a mano',location:'x'});
+  // Sin ningún evento ni dato oficial: no se adivina.
+  assert.throws(()=>h.c.parseClupikNotice_(ambiguo,{reference:h.c.aeseKnownStart_(h.calendar)}),/ambigua/);
+  manual();
+  assert.equal(h.properties.size,0);   // no hay referencia guardada: solo el identificador de la descripción
+  const known=h.c.aeseKnownStart_(h.calendar)('1339808:145574486');
+  assert.equal(known,'2027-03-06T10:00:00+01:00');
+  const notice=h.c.parseClupikNotice_(ambiguo,{reference:h.c.aeseKnownStart_(h.calendar)});
+  assert.equal(notice.start,'2027-03-04T13:00:00+01:00');assert.equal(notice.date_resolution,'referencia');
+  // Otro partido con otro identificador no cuenta como referencia.
+  assert.equal(h.c.aeseKnownStart_(h.calendar)('1339808:145574487'),null);
+  // Identidad duplicada: sin referencia fiable, vuelve a no adivinar.
+  manual();
+  assert.equal(h.c.aeseKnownStart_(h.calendar)('1339808:145574486'),null);
+  assert.throws(()=>h.c.parseClupikNotice_(ambiguo,{reference:h.c.aeseKnownStart_(h.calendar)}),/ambigua/);
+});
 test('partido nuevo sin fecha: no es un error, no crea evento ni bloquea, y avisa por correo una sola vez; modificado sin fecha sigue siéndolo',()=>{
   const h=harness();
   const nuevo=h.c.parseClupikNotice_(h.msg(0,'Nuevo partido en Jornada 5','2026-10-16T08:00:00Z',sinFecha()));
