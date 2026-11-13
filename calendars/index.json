@@ -1,17 +1,81 @@
 {
   "source": "data/actawp_matches.json",
-  "snapshot_sha256": "72e63e54738c1d18429baf840d7a48b0bdf57ff9919f520a9b8eb1effe86ffed",
+  "snapshot_sha256": "7f1c59dcf4fbde8e2080c40388c86fca563cabf64c77b0e3073c187c864e2c52",
   "total": 113,
   "timeZone": "Europe/Madrid",
-  "last_complete_export_at": "2026-10-10T16:25:53+00:00",
+  "last_complete_export_at": "2026-11-13T14:49:25.916499+00:00",
   "freshness_policy": {
     "fresh_hours": 336,
     "outdated_hours": 720,
     "reminder_hours": 720,
     "automated_attempts": false
   },
-  "source_mode": null,
-  "pending_matches": [],
+  "source_mode": "manual_import",
+  "pending_matches": [
+    {
+      "category": "Absoluto Masculino",
+      "match_id": 145573588,
+      "teams": [
+        "A.E. SANTA EULÀLIA"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573588/results"
+    },
+    {
+      "category": "Absoluto Masculino",
+      "match_id": 145573633,
+      "teams": [
+        "A.E. SANTA EULÀLIA"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573633/results"
+    },
+    {
+      "category": "Juvenil Masculino",
+      "match_id": 145574251,
+      "teams": [
+        "A.E. SANTA EULÀLIA"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339807/match/145574251/results"
+    },
+    {
+      "category": "Cadete Masculino",
+      "match_id": 145574489,
+      "teams": [
+        "A.E. SANTA EULÀLIA"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339808/match/145574489/results"
+    },
+    {
+      "category": "Infantil Mixto B",
+      "match_id": 145574593,
+      "teams": [
+        "A.E. SANTA EULÀLIA B"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574593/results"
+    },
+    {
+      "category": "Infantil Mixto B",
+      "match_id": 145574659,
+      "teams": [
+        "A.E. SANTA EULÀLIA B"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574659/results"
+    },
+    {
+      "category": "Alevín Mixto B",
+      "match_id": 145609056,
+      "teams": [
+        "A.E. SANTA EULÀLIA B"
+      ],
+      "reason": "sin_rival_ni_fecha",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145609056/results"
+    }
+  ],
   "categories": [
     {
       "name": "Absoluto Masculino",
@@ -70,11 +134,7 @@
   ],
   "clupik_overlay": {
     "changed": [
-      "1339803:145573609",
-      "1339806:145574452",
-      "1339809:145574598",
-      "1339810:145609026",
-      "1339810:145609048"
+      "1339810:145609026"
     ],
     "added": [
       "1339807:145791403",
@@ -111,7 +171,9 @@
       "1339810:145791167",
       "1339810:145791169"
     ],
-    "discordant": [],
+    "discordant": [
+      "1339810:145609026"
+    ],
     "skipped": [],
     "retained": [],
     "attention": []
