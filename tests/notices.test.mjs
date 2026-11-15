@@ -66,6 +66,39 @@ test('la fuente debe confirmar un aviso antes de poder avanzar sin otro correo',
   vm.runInContext("ACTAWP_SNAPSHOT_TIME='2026-10-18T10:00:00Z'",h.c);
   assert.equal(h.c.applyClupikNotice_({...original,start:'2026-10-25T14:00:00+01:00'}).start,'2026-10-25T14:00:00+01:00');
 });
+// ---- Discordancia solo de nombre: no es una incidencia (15/11/2026) ---------------------------------
+// ActaWP escribe «C.N. MATARÓ» donde Clupik avisó «C.N. MATARÓ "B"» (mismo partido, misma fecha, misma sede). El correo
+// «discordancia_» salía cada 6 horas y no había nada que revisar. Una diferencia real de fecha, sede, estado o rival sigue avisando.
+function discordancia(official){
+  const h=harness();h.c.procesarMensajeAESE_(h.msg(),h.calendar);
+  const original=snapshot.find(m=>m.match_id===145574486),key='AESE_NOTICE_1339808:145574486',notice=JSON.parse(h.properties.get(key));
+  vm.runInContext("ACTAWP_SNAPSHOT_TIME='2026-10-17T10:00:00Z'",h.c);   // lectura posterior al aviso (16/10 06:33)
+  const result=h.c.applyClupikNotice_({...original,...notice,category:original.category,...official(notice)});
+  return {h,result,notice,alerts:h.mail.filter(x=>/discordancia_/.test(x[1]))};
+}
+test('discordancia solo de nombre del equipo: el aviso manda y no se envía correo',()=>{
+  for(const label of [n=>({away_team:n.away_team.replace(/^C\.N\. /,'CN ')}),n=>({home_team:n.home_team.toLowerCase()}),
+    n=>({away_team:n.away_team+' "B"'}),n=>({home_team:n.home_team.normalize('NFD').replace(/[\u0300-\u036f]/g,'')+' A'})]){
+    const {result,notice,alerts}=discordancia(label);
+    assert.equal(alerts.length,0,'no debe avisar por un nombre escrito de otra forma');
+    assert.equal(result.start,notice.start);assert.equal(result.away_team,notice.away_team);   // sigue mandando el aviso, con su nombre
+  }
+});
+test('discordancia real (fecha, sede, estado o rival distinto) sigue avisando por correo',()=>{
+  for(const real of [n=>({start:'2026-10-25T14:00:00+01:00'}),n=>({venue:'Otra piscina'}),n=>({status:'cancelled'}),
+    n=>({away_team:'C.N. SABADELL'}),n=>({away_team:n.away_team+' ZZZ'})]){
+    const {alerts,result,notice}=discordancia(real);
+    assert.equal(alerts.length,1,JSON.stringify(real(notice)));
+    assert.equal(result.start,notice.start);   // se conserva el aviso
+  }
+});
+test('discordancia solo de nombre sigue sin avisar en los ciclos siguientes',()=>{
+  const {h,notice}=discordancia(n=>({away_team:n.away_team+' "B"'}));
+  const original=snapshot.find(m=>m.match_id===145574486);
+  for(let i=0;i<4;i++)h.c.applyClupikNotice_({...original,...notice,category:original.category,away_team:notice.away_team+' "B"'});
+  assert.equal(h.mail.filter(x=>/discordancia_/.test(x[1])).length,0);
+  assert.ok(h.logs.some(l=>/escribe los equipos de otra forma/.test(l)),'queda constancia en el registro');
+});
 test('duplicados exactos bloquean escrituras y conservan evidencia',()=>{
   const h=harness();h.c.procesarMensajeAESE_(h.msg(),h.calendar);h.events.push(h.events[0]);
   assert.throws(()=>h.c.procesarMensajeAESE_(h.msg(),h.calendar),/duplicada/);
