@@ -143,6 +143,27 @@ function aeseKnownStart_(calendar) {
   };
 }
 
+// El mismo equipo escrito de otra manera no es un conflicto: «C.N. MATARÓ "B"» en Clupik y «C.N. MATARÓ» en ActaWP
+// (mayúsculas, acentos, comillas, puntos o una letra final de equipo A, B…). El partido lo identifica
+// torneo:partido, no el nombre; lo que importa a las familias es cuándo, dónde y si se juega.
+function aeseTeamTokens_(name) {
+  return String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase()
+    .replace(/[^A-Z0-9]+/g,' ').trim().split(' ').filter(Boolean);
+}
+function aeseSameTeamLabel_(a,b) {
+  const x=aeseTeamTokens_(a), y=aeseTeamTokens_(b);
+  if(!x.length||!y.length) return x.length===y.length;
+  const [short,long]=x.length<=y.length?[x,y]:[y,x];
+  if(long.length-short.length>1) return false;
+  if(!short.every((token,i)=>token===long[i])) return false;
+  return long.length===short.length || long[long.length-1].length<=2;
+}
+// Solo difieren los nombres: la fecha, la sede y el estado coinciden con lo avisado.
+function aeseOnlyTeamLabelsDiffer_(match,notice) {
+  return ['start','venue'].every(k=>match[k]===notice[k]) && (match.status||'confirmed')===notice.status &&
+    aeseSameTeamLabel_(match.home_team,notice.home_team) && aeseSameTeamLabel_(match.away_team,notice.away_team);
+}
+
 function applyClupikNotice_(match) {
   const saved=PropertiesService.getScriptProperties().getProperty(AESE_NOTICE_PREFIX+actaWPIdentity_(match));
   if (!saved) return match;
@@ -158,7 +179,12 @@ function applyClupikNotice_(match) {
       PropertiesService.getScriptProperties().setProperty(AESE_NOTICE_PREFIX+actaWPIdentity_(match),JSON.stringify(notice));
     }
     if(notice.acknowledged_snapshot && snapshotTime>=Date.parse(notice.acknowledged_snapshot)) return match;
-    if(!agrees) aeseAlert_('discordancia_'+actaWPIdentity_(match),'La fuente posterior no confirma el aviso FCN. Se conserva el aviso y se requiere revisión: '+actaWPIdentity_(match));
+    if(!agrees) {
+      // Si solo cambia cómo se escribe un equipo, el aviso manda igual (conserva el nombre de Clupik) pero no es una incidencia:
+      // no hay nada que revisar y el correo se repetiría cada 6 horas sin que nadie pueda resolverlo. Queda en el registro.
+      if(aeseOnlyTeamLabelsDiffer_(match,notice)) Logger.log('Clupik '+actaWPIdentity_(match)+': ActaWP escribe los equipos de otra forma ('+match.home_team+' / '+match.away_team+'); fecha, sede y estado coinciden');
+      else aeseAlert_('discordancia_'+actaWPIdentity_(match),'La fuente posterior no confirma el aviso FCN. Se conserva el aviso y se requiere revisión: '+actaWPIdentity_(match));
+    }
   }
   return Object.assign({},match,notice,{category:match.category});
 }
