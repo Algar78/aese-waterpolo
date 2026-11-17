@@ -588,19 +588,6 @@
       "round_verified": true
     },
     {
-      "category": "Infantil Mixto B",
-      "tournament_id": 1339809,
-      "calendar_id": 3714183,
-      "match_id": 145574580,
-      "home_team": "A.E. SANTA EULÀLIA B",
-      "away_team": "C.N. TERRASSA B",
-      "start": "2026-11-29T10:50:00+01:00",
-      "venue": "228 - Santa Eulàlia, AE",
-      "round_name": "Jornada 6",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574580/results",
-      "round_verified": true
-    },
-    {
       "category": "1a Div Fem Absoluta B",
       "tournament_id": 1339806,
       "calendar_id": 3713773,
@@ -718,6 +705,19 @@
       "round_verified": true
     },
     {
+      "category": "Alevín Mixto A",
+      "tournament_id": 1339810,
+      "match_id": 145791161,
+      "home_team": "A.E. SANTA EULÀLIA A",
+      "away_team": "C.N. TERRASSA A",
+      "start": "2026-12-13T12:15:00+01:00",
+      "venue": "228 - Santa Eulàlia, AE",
+      "round_name": "Jornada 2",
+      "status": "confirmed",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791161/results",
+      "round_verified": true
+    },
+    {
       "category": "Juvenil Masculino",
       "tournament_id": 1339807,
       "match_id": 145791419,
@@ -767,6 +767,20 @@
       "venue": "175 - Martorell, CN",
       "round_name": "Jornada 10",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573592/results",
+      "round_verified": true
+    },
+    {
+      "category": "Infantil Mixto B",
+      "tournament_id": 1339809,
+      "calendar_id": 3714183,
+      "match_id": 145574580,
+      "home_team": "A.E. SANTA EULÀLIA B",
+      "away_team": "C.N. TERRASSA B",
+      "start": "2026-12-19T16:00:00+01:00",
+      "venue": "228 - Santa Eulàlia, AE",
+      "round_name": "Jornada 6",
+      "url": "https://actawp.natacio.cat/ca/tournament/1339809/match/145574580/results",
+      "status": "confirmed",
       "round_verified": true
     },
     {
@@ -858,19 +872,6 @@
       "venue": "228 - Santa Eulàlia, AE",
       "round_name": "Jornada 11",
       "url": "https://actawp.natacio.cat/ca/tournament/1339803/match/145573597/results",
-      "round_verified": true
-    },
-    {
-      "category": "Alevín Mixto A",
-      "tournament_id": 1339810,
-      "match_id": 145791161,
-      "home_team": "A.E. SANTA EULÀLIA A",
-      "away_team": "C.N. TERRASSA A",
-      "start": "2027-01-09T16:00:00+01:00",
-      "venue": "228 - Santa Eulàlia, AE",
-      "round_name": "Jornada 2",
-      "status": "confirmed",
-      "url": "https://actawp.natacio.cat/ca/tournament/1339810/match/145791161/results",
       "round_verified": true
     },
     {
